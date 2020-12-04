@@ -24,15 +24,15 @@ def runSlideshow():
         exitSlideshow()
 
     #bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
-    bashCommand = ['sudo', 'fbi', '--noverbose', '-a', '-t', '7', 'images/*.jpg', '-T', '1']
-    #os.system(bashCommand)
-
-    #bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
-    #os.system(bashCommand)
+    bashCommand = ['fbi', '--noverbose', '-a', '-t', '7', 'images/1266.jpg', '-T', '1']
     process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, error = process.communicate()
     print(output)
 
+    #os.system(bashCommand)
+
+    #bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
+    #os.system(bashCommand)
 
 
 #api_id = 2640738
