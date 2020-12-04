@@ -24,7 +24,7 @@ def runSlideshow():
         exitSlideshow()
 
     #bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
-    bashCommand = ["sudo", "fbi", "--noverbose", "-a", "-t", "7", "/home/pi/python/smart-photo-frame/images/*.jpg", "-T", "1"]
+    bashCommand = ["sudo", "fbi", "--noverbose", "-a", "-t", "7", "images/*.jpg", "-T", "1"]
 #    os.system(bashCommand)
 
 #    bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
