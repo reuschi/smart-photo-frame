@@ -20,7 +20,9 @@ def exitSlideshow():
 
 
 def runSlideshow():
-    exitSlideshow()
+    try:
+        exitSlideshow()
+    
     bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
 #    os.system(bashCommand)
 
