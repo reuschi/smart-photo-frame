@@ -7,6 +7,8 @@ import time
 
 
 
+
+
 #api_id = 2640738
 #api_hash = "1a909a049af457fff5e5cffdd4524199"
 
@@ -21,11 +23,15 @@ import time
 
 
 if __name__ == '__main__':
-    
-    proc1 = subprocess.Popen(["sudo", "fbi", "--noverbose", "-a", "-t", "7", "./images/*.jpg", "-T", "1"])
-    print("Process with ID {} is running".format(proc1.pid))
-    time.sleep(20)
-    proc1.terminate()
-    print("Process terminated")
+
+    bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
+    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+    output, error = process.communicate()
+
+#    proc1 = subprocess.Popen(["sudo", "fbi", "--noverbose", "-a", "-t", "7", "./images/*.jpg", "-T", "1"])
+#    print("Process with ID {} is running".format(proc1.pid))
+#    time.sleep(20)
+#    proc1.terminate()
+#    print("Process terminated")
 
 
