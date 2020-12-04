@@ -22,6 +22,8 @@ def exitSlideshow():
 def runSlideshow():
     try:
         exitSlideshow()
+    except:
+        pass
 
     bashCommand = "sudo fbi --noverbose -t 7 -T 1 -a images/*"
     #bashCommand = ['fbi', '--noverbose', '-a', '-t', '7', '--vt', '1' 'images/1266.jpg']
