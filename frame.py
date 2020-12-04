@@ -23,7 +23,7 @@ def runSlideshow():
     try:
         exitSlideshow()
 
-    bashCommand = "sudo fbi --noverbose -a -t 7 -T 1 /home/pi/python/smart-photo-frame/images/*.jpg"
+    bashCommand = "sudo fbi --noverbose -t 7 -T 1 -a images/*"
     #bashCommand = ['fbi', '--noverbose', '-a', '-t', '7', '--vt', '1' 'images/1266.jpg']
     process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, error = process.communicate()
