@@ -22,7 +22,7 @@ import time
 
 if __name__ == '__main__':
 #    app.run()
-    proc1 = subprocess.Popen("sudo fbi -a -t 5 /home/pi/python/smart-photo-frame/images/*.jpg -T 1")
+    proc1 = subprocess.Popen(["sudo", "fbi", "-a", "-t", "5", "/home/pi/python/smart-photo-frame/images/*.jpg", "-T", "1"])
     print("Process with ID {} is running".format(proc1.pid))
     time.sleep(10)
     proc1.terminate()
