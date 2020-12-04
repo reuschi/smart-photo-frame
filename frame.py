@@ -22,13 +22,14 @@ def exitSlideshow():
 def runSlideshow():
     try:
         exitSlideshow()
-    
-    bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
+
+    #bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
+    bashCommand = ["sudo", "fbi", "--noverbose", "-a", "-t", "7", "/home/pi/python/smart-photo-frame/images/*.jpg", "-T", "1"]
 #    os.system(bashCommand)
 
 #    bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
 #    os.system(bashCommand)
-    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, shell=True)
+    process = subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True)
     output, error = process.communicate()
 
 
