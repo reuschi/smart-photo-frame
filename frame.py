@@ -39,7 +39,7 @@ if __name__ == '__main__':
     time.sleep(20)
     kill = os.system("pgrep fbi")
     print("fbi process number: {}".format(kill))
-    os.system("sudo kill {}".format(kill))
+    os.system("sudo pkill fbi")
 
 #    proc1 = subprocess.Popen(["sudo", "fbi", "--noverbose", "-a", "-t", "7", "./images/*.jpg", "-T", "1"])
 #    print("Process with ID {} is running".format(proc1.pid))
