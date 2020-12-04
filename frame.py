@@ -22,8 +22,12 @@ def exitSlideshow():
 def runSlideshow():
     exitSlideshow()
     bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
-    os.system(bashCommand)
+#    os.system(bashCommand)
 
+#    bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
+#    os.system(bashCommand)
+    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, shell=True)
+    output, error = process.communicate()
 
 
 
@@ -48,7 +52,7 @@ if __name__ == '__main__':
     #for file in images:
 #    bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
 #    os.system(bashCommand)
-    #    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+    #    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, shell=True)
     #    output, error = process.communicate()
     time.sleep(25)
     exitSlideshow()
