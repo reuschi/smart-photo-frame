@@ -32,7 +32,7 @@ if __name__ == '__main__':
     #images = getFiles()
 
     #for file in images:
-    bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/{} -T 1".format(file)
+    bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
     os.system(bashCommand)
     #    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     #    output, error = process.communicate()
