@@ -16,7 +16,7 @@ def getFiles():
 
 
 def exitSlideshow():
-    os.system("sudo pkill fbi")
+    os.system("sudo killall -15 fbi")
 
 
 def runSlideshow():
