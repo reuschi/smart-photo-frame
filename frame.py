@@ -20,16 +20,16 @@ def exitSlideshow():
 
 
 def runSlideshow():
-    try:
-        exitSlideshow()
-    except:
-        print("No Slideshow running")
+#    try:
+#        exitSlideshow()
+#    except:
+#        print("No Slideshow running")
 
-    bashCommand = "sudo fbi --noverbose -t 7 -T 1 -a images/*.jpg"
+    bashCommand = "sudo fbi --noverbose -a -t 7 -T 1 images/*.jpg"
     #bashCommand = ['fbi', '--noverbose', '-a', '-t', '7', '--vt', '1' 'images/1266.jpg']
     process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output, error = process.communicate()
-    print(output)
+    #output, error = process.communicate()
+    #print(output)
 
     #os.system(bashCommand)
 
