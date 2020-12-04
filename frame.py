@@ -1,12 +1,18 @@
 
 #from pyrogram import Client, filters
-#import os
+import os
 import subprocess
 import time
 
 
+images = []
 
 
+def getFiles():
+    for file in os.listdir(directory):
+        images[file] = os.fsdecode(file)
+
+    return images
 
 
 #api_id = 2640738
@@ -23,10 +29,13 @@ import time
 
 
 if __name__ == '__main__':
+    #images = getFiles()
 
-    bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
-    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-    output, error = process.communicate()
+    #for file in images:
+    bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/{} -T 1".format(file)
+    os.system(bashCommand)
+    #    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+    #    output, error = process.communicate()
 
 #    proc1 = subprocess.Popen(["sudo", "fbi", "--noverbose", "-a", "-t", "7", "./images/*.jpg", "-T", "1"])
 #    print("Process with ID {} is running".format(proc1.pid))
