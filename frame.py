@@ -36,6 +36,9 @@ if __name__ == '__main__':
     os.system(bashCommand)
     #    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     #    output, error = process.communicate()
+    time.sleep(20)
+    kill = os.system("pgrep fbi")
+    os.system("kill {}".format(kill))
 
 #    proc1 = subprocess.Popen(["sudo", "fbi", "--noverbose", "-a", "-t", "7", "./images/*.jpg", "-T", "1"])
 #    print("Process with ID {} is running".format(proc1.pid))
