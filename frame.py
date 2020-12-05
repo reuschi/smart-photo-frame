@@ -65,21 +65,23 @@ if __name__ == '__main__':
 
         input = int(input("Bitte wählen Sie: "))
 
-        if input == 1:
+        if int(input) == 1:
             runSlideshow()
-        elif input == 2:
+        elif int(input) == 2:
             exitSlideshow()
-        elif input == 3:
+        elif int(input) == 3:
             exitSlideshow()
             timer -= 2
             runSlideshow()
-        elif input == 4:
+        elif int(input) == 4:
             exitSlideshow()
             timer += 2
             runSlideshow()
-        elif input == 0:
+        elif int(input) == 0:
             exitSlideshow()
             break
+        else:
+            print("Keine Aktion durchführbar!")
 
 
 
