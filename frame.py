@@ -79,7 +79,7 @@ if __name__ == '__main__':
             exitSlideshow()
             timer += 2
             runSlideshow()
-        elif input == 0;
+        elif input == 0:
             exitSlideshow()
             break
 
