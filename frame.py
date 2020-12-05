@@ -6,7 +6,7 @@ import time
 
 
 images = []
-
+timer = 7
 
 def getFiles():
     for file in os.listdir(directory):
@@ -20,10 +20,11 @@ def exitSlideshow():
 
 
 def runSlideshow():
-
-    bashCommand = "sudo fbi --noverbose -a -t 7 -T 1 images/*.jpg"
+    global timer
+    bashCommand = "sudo fbi --noverbose -a -t {} -T 1 images/*.jpg".format(timer)
     #bashCommand = ['fbi', '--noverbose', '-a', '-t', '7', '--vt', '1' 'images/1266.jpg']
     process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    time.sleep(2)
 
 
     #output, error = process.communicate()
@@ -50,10 +51,38 @@ def runSlideshow():
 
 if __name__ == '__main__':
     #images = getFiles()
-
+    global timer
     exitSlideshow()
 
     runSlideshow()
+
+    while True:
+        print("Was möchten Sie tun?")
+        print("------")
+        print("1 - Slideshow starten")
+        print("2 - Slideshow beenden")
+        print("3 - Frequenz erhöhen (-2 Sekunden)")
+        print("3 - Frequenz verringern (+2 Sekunden)")
+        print("0 - Exit")
+
+        input = input("Bitte wählen Sie")
+
+        if input == 1:
+            runSlideshow()
+        elif input == 2:
+            exitSlideshow()
+        elif input == 3
+            exitSlideshow()
+            timer -= 2
+            runSlideshow()
+        elif input == 4:
+            exitSlideshow()
+            timer += 2
+            runSlideshow()
+        elif input == 0;
+            exitSlideshow()
+            break
+
 
 
     #for file in images:
@@ -61,7 +90,7 @@ if __name__ == '__main__':
 #    os.system(bashCommand)
     #    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, shell=True)
     #    output, error = process.communicate()
-    time.sleep(5)
+    #time.sleep(5)
     #exitSlideshow()
 #    kill = os.system("pgrep fbi")
 #    print("fbi process number: {}".format(kill))
