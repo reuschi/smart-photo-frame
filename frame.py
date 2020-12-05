@@ -65,19 +65,19 @@ if __name__ == '__main__':
 
         input = input("Bitte wählen Sie: ")
 
-        if int(input) == 1:
+        if input == "1":
             runSlideshow()
-        elif int(input) == 2:
+        elif input == "2":
             exitSlideshow()
-        elif int(input) == 3:
+        elif input == "3":
             exitSlideshow()
             timer -= 2
             runSlideshow()
-        elif int(input) == 4:
+        elif input == "4":
             exitSlideshow()
             timer += 2
             runSlideshow()
-        elif int(input) == 0:
+        elif input == "0":
             exitSlideshow()
             break
         else:
