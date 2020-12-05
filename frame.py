@@ -28,8 +28,7 @@ def runSlideshow():
     bashCommand = "sudo fbi --noverbose -a -t 7 -T 1 images/*.jpg"
     #bashCommand = ['fbi', '--noverbose', '-a', '-t', '7', '--vt', '1' 'images/1266.jpg']
     try:
-        while True:
-            process = subprocess.run(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     except KeyboardInterrupt:
         # Terminate the script and switch off all leds
