@@ -27,14 +27,8 @@ def runSlideshow():
 
     bashCommand = "sudo fbi --noverbose -a -t 7 -T 1 images/*.jpg"
     #bashCommand = ['fbi', '--noverbose', '-a', '-t', '7', '--vt', '1' 'images/1266.jpg']
-    try:
-        while True:
-            process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            time.sleep(21)
+    process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    except KeyboardInterrupt:
-        # Terminate the script and switch off all leds
-        print("Press Ctrl-C to terminate while statement")
 
 #output, error = process.communicate()
     #print(output)
@@ -61,14 +55,21 @@ def runSlideshow():
 if __name__ == '__main__':
     #images = getFiles()
 
-    runSlideshow()
+    try:
+        runSlideshow()
+
+    except KeyboardInterrupt:
+        # Terminate the script and switch off all leds
+        exitSlideshow()
+        print("Press Ctrl-C to terminate while statement")
+
     #for file in images:
 #    bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
 #    os.system(bashCommand)
     #    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, shell=True)
     #    output, error = process.communicate()
-    time.sleep(25)
-    exitSlideshow()
+    #time.sleep(25)
+    #exitSlideshow()
 #    kill = os.system("pgrep fbi")
 #    print("fbi process number: {}".format(kill))
 #    os.system("sudo pkill fbi")
