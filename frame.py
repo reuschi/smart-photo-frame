@@ -71,7 +71,7 @@ if __name__ == '__main__':
             runSlideshow()
         elif input == 2:
             exitSlideshow()
-        elif input == 3
+        elif input == 3:
             exitSlideshow()
             timer -= 2
             runSlideshow()
