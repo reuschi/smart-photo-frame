@@ -51,7 +51,7 @@ def runSlideshow():
 if __name__ == '__main__':
     #images = getFiles()
 
-    #exitSlideshow()
+    exitSlideshow()
 
     runSlideshow()
 
@@ -61,7 +61,7 @@ if __name__ == '__main__':
 #    os.system(bashCommand)
     #    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, shell=True)
     #    output, error = process.communicate()
-    #time.sleep(50)
+    time.sleep(5)
     #exitSlideshow()
 #    kill = os.system("pgrep fbi")
 #    print("fbi process number: {}".format(kill))
