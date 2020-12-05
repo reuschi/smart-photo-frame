@@ -60,10 +60,10 @@ if __name__ == '__main__':
         print("1 - Slideshow starten")
         print("2 - Slideshow beenden")
         print("3 - Frequenz erhöhen (-2 Sekunden)")
-        print("3 - Frequenz verringern (+2 Sekunden)")
+        print("4 - Frequenz verringern (+2 Sekunden)")
         print("0 - Exit")
 
-        input = input("Bitte wählen Sie")
+        input = int(input("Bitte wählen Sie: "))
 
         if input == 1:
             runSlideshow()
