@@ -63,7 +63,7 @@ if __name__ == '__main__':
         print("4 - Frequenz verringern (+2 Sekunden)")
         print("0 - Exit")
 
-        input = int(input("Bitte wählen Sie: "))
+        input = input("Bitte wählen Sie: ")
 
         if int(input) == 1:
             runSlideshow()
