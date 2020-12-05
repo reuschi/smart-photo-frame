@@ -63,21 +63,21 @@ if __name__ == '__main__':
         print("4 - Frequenz verringern (+2 Sekunden)")
         print("0 - Exit")
 
-        input = input("Bitte wählen Sie: ")
+        func = input("Bitte wählen Sie: ")
 
-        if input == "1":
+        if func == "1":
             runSlideshow()
-        elif input == "2":
+        elif func == "2":
             exitSlideshow()
-        elif input == "3":
+        elif func == "3":
             exitSlideshow()
             timer -= 2
             runSlideshow()
-        elif input == "4":
+        elif func == "4":
             exitSlideshow()
             timer += 2
             runSlideshow()
-        elif input == "0":
+        elif func == "0":
             exitSlideshow()
             break
         else:
