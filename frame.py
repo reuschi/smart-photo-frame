@@ -74,7 +74,7 @@ if __name__ == '__main__':
             if timer >= 4:
                 timer -= 2
             else:
-                print("Frequenzerhöhung nicht möglich!")
+                print("Timer bereits bei: {}. Frequenzerhöhung nicht möglich!".format(timer))
             runSlideshow()
         elif func == "4":
             exitSlideshow()
