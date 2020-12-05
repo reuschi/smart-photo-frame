@@ -6,7 +6,7 @@ import time
 
 
 images = []
-timer = 7
+timer = 8
 
 def getFiles():
     for file in os.listdir(directory):
@@ -71,7 +71,10 @@ if __name__ == '__main__':
             exitSlideshow()
         elif func == "3":
             exitSlideshow()
-            timer -= 2
+            if timer >= 4:
+                timer -= 2
+            else:
+                print("Frequenzerhöhung nicht möglich!")
             runSlideshow()
         elif func == "4":
             exitSlideshow()
