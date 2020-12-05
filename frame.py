@@ -50,10 +50,9 @@ def runSlideshow():
 
 
 if __name__ == '__main__':
-    #images = getFiles()
     global timer
-    exitSlideshow()
 
+    exitSlideshow()
     runSlideshow()
 
     while True:
