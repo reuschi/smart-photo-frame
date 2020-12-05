@@ -50,7 +50,6 @@ def runSlideshow():
 
 
 if __name__ == '__main__':
-    global timer
 
     exitSlideshow()
     runSlideshow()
