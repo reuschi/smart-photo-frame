@@ -175,55 +175,55 @@ def main():
     table = "telegram_bot"
 
     try:
-#        while True:
-        offset = get_Last_Update_Id(table)
-        print("Offset: {}".format(offset))
-        answer = read_Message(offset=offset)
+        while True:
+            offset = get_Last_Update_Id(table)
+            print("Offset: {}".format(offset))
+            answer = read_Message(offset=offset)
 
-        #print(json.dumps(answer, indent=2))
+            #print(json.dumps(answer, indent=2))
 
-        for message in answer['result']:
-            id = message['message']['from']['id']
-            if 'text' in message['message']:
-                print("Text: " + str(message['message']['text']))
-                if message['message']['text'] == "/help":
-                    send_Message(id, "/help - Zeige diese Hilfe an\n/batman - Ich Zeige dir, wer Batman ist!\n/batsignal - Rufe Batman""")
-                elif message['message']['text'] == "/batman":
-                    send_Message(id, "Ich bin Batman!")
-                    print("Batman")
-                elif message['message']['text'] == "/batsignal":
-                    file = "https://upload.wikimedia.org/wikipedia/en/c/c6/Bat-signal_1989_film.jpg"
-                    send_Photo(id, file)
-                    print("Batsignal")
-                print(message)
-            elif 'document' in message['message']:
-                print("Document: " + str(message['message']['document']))
-            elif 'photo' in message['message']:
-                #print("Photo: " + str(message['message']['caption']))
-                #print("ID: " + str(message['message']['photo'][0]['file_id']))
-                file = get_File_Link(message['message']['photo'][2]['file_id'])
-                extension = file.split(".")[-1]
-                #print(extension)
-                if 'caption' in message['message']:
-                    caption = message['message']['caption']
-                    caption = caption.replace(" ", "_")
-                    caption = caption.replace("/", "_")
-                    caption = caption.replace("\\", "_")
-                    filename = caption + "_tg" + extension
-                else:
-                    filename = time.strftime("%Y%m%d_%H%M%S") + "_tg." + extension
+            for message in answer['result']:
+                id = message['message']['from']['id']
+                if 'text' in message['message']:
+                    print("Text: " + str(message['message']['text']))
+                    if message['message']['text'] == "/help":
+                        send_Message(id, "/help - Zeige diese Hilfe an\n/batman - Ich Zeige dir, wer Batman ist!\n/batsignal - Rufe Batman""")
+                    elif message['message']['text'] == "/batman":
+                        send_Message(id, "Ich bin Batman!")
+                        print("Batman")
+                    elif message['message']['text'] == "/batsignal":
+                        file = "https://upload.wikimedia.org/wikipedia/en/c/c6/Bat-signal_1989_film.jpg"
+                        send_Photo(id, file)
+                        print("Batsignal")
+                    print(message)
+                elif 'document' in message['message']:
+                    print("Document: " + str(message['message']['document']))
+                elif 'photo' in message['message']:
+                    #print("Photo: " + str(message['message']['caption']))
+                    #print("ID: " + str(message['message']['photo'][0]['file_id']))
+                    file = get_File_Link(message['message']['photo'][2]['file_id'])
+                    extension = file.split(".")[-1]
+                    #print(extension)
+                    if 'caption' in message['message']:
+                        caption = message['message']['caption']
+                        caption = caption.replace(" ", "_")
+                        caption = caption.replace("/", "_")
+                        caption = caption.replace("\\", "_")
+                        filename = caption + "_tg" + extension
+                    else:
+                        filename = time.strftime("%Y%m%d_%H%M%S") + "_tg." + extension
 
-                send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert.")
-                download_File(file, filename)
-                #print(filename)
-                print(type(message['update_id']))
-                return filename
+                    send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert.")
+                    download_File(file, filename)
+                    #print(filename)
+                    print(type(message['update_id']))
+                    return filename
 
-            set_Last_Update_Id(message['update_id'] + 1, table)
-            db_connection.commit()
+                set_Last_Update_Id(message['update_id'] + 1, table)
+                db_connection.commit()
 
 
-        #time.sleep(5)
+            time.sleep(5)
 
     except KeyboardInterrupt:
         # Terminate the script and switch off all leds
