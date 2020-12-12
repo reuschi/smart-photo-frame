@@ -5,31 +5,50 @@ import subprocess
 import time
 import imap
 import telegram
+import module_log
+import glob
 
 
 images = []
 timer = 8
 
-def getFiles():
+
+def get_Files():
     for file in os.listdir(directory):
         images[file] = os.fsdecode(file)
 
     return images
 
 
-def exitSlideshow():
+def exit_Slideshow():
     try:
         os.system("sudo killall -15 fbi")
+        module_log.log("killall")
     except Exception as e:
-        print(e)
+        module_log.log(e)
 
 
-def runSlideshow():
-    global timer
-    bashCommand = "sudo fbi --noverbose -a -t {} -T 1 images/*.jpg".format(timer)
+def delete_Old_Files(directory="images/", max=50):
+    files = glob.glob(directory + "*.*")
+    files.sort(key=os.path.getmtime, reverse=True)
+
+    for x in range(max, len(files)):
+        print(files[x], os.path.getmtime(files[x]))
+        try:
+            os.remove(files[x])
+        except Exception as e:
+            module_log.log("Removing the file {} was NOT successful: {}".format(files[x], e))
+
+    #for file in files:
+    #print(files[10])
+    #print(files)
+
+
+def run_Slideshow(path='images/'):
+    bashCommand = "sudo fbi --noverbose -a -t {} -T 1 {}*.jpg".format(timer, path)
     #bashCommand = ['fbi', '--noverbose', '-a', '-t', '7', '--vt', '1' 'images/1266.jpg']
     process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    time.sleep(2)
+    time.sleep(0.5)
 
 
     #output, error = process.communicate()
@@ -53,11 +72,20 @@ def runSlideshow():
 #    await message.reply_text(f"Hello {message.from_user.mention}")
 
 
+def restart_Slideshow():
+    exit_Slideshow()
+    run_Slideshow()
+
 
 if __name__ == '__main__':
 
-    exitSlideshow()
-    runSlideshow()
+    restart_Slideshow()
+    ##exit_Slideshow()
+    #run_Slideshow()
+
+    delete_Old_Files()
+
+    i = 0
 
     while True:
         #print("Was möchten Sie tun?")
@@ -91,13 +119,26 @@ if __name__ == '__main__':
         #else:
         #    print("Keine Aktion durchführbar!")
 
+        #print("i: " + str(i))
+
+        if i == 0:
+            imap.main()
+
+        if i < 60:
+            i += 1
+        else:
+            i = 0
+
+
         tg = telegram.main()
         if tg != None:
-            print("Slideshow restart")
-            exitSlideshow()
-            runSlideshow()
+            module_log.log("Slideshow restart")
+            restart_Slideshow()
+            #exit_Slideshow()
+            #run_Slideshow()
 
-        time.sleep(5)
+        time.sleep(15)
+
 
 
 

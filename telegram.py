@@ -4,6 +4,7 @@ import time
 import urllib3
 import shutil
 import sqlite3
+import module_log
 
 
 token = "1290167159:AAGPAeuCiln78_O4nYA0WBE1Wq9PhQT_RDg"
@@ -13,8 +14,6 @@ http = urllib3.PoolManager()
 #offset = 0
 db_connection = ""
 
-#with open(API_CODE) as file:
-#    token = file.read()
 
 def telegram_POST(link, data=""):
     answer = requests.post(link, data=data)
@@ -35,21 +34,13 @@ def read_Message(**kwargs):
     for key, value in kwargs.items():
         data[key] = value
 
-    #answer = requests.post(link, data=data)
-    #print(type(answer.status_code))
-    #if answer.status_code == 200:
-    #    new_answer = answer.json()
-    #    print(new_answer['result'][0]['message']['text'])
-    #    return answer
-
     return telegram_POST(link, data)
 
 
 def return_Status_Code(answer):
 
-
     if answer.status_code == 200:
-        reply = answer.json()
+        #reply = answer.json()
         #return json.dumps(reply, indent=2)
         return answer.json()
     elif answer.status_code == 400:
@@ -106,7 +97,7 @@ def download_File(source, filename, destination="images/"):
 def print_Content(answer):
     content = answer.json()
     #data = json.loads(content)
-    print(content['result'].keys())
+    module_log.log(content['result'].keys())
 
 
 def send_Message(chat_id, message):
@@ -136,7 +127,7 @@ def set_Last_Update_Id(id, table):
     c = db_connection.cursor()
 
     if id == None:
-        print("ID is None")
+        module_log.log("ID is None")
         id = 0
 
     c.execute("""CREATE TABLE IF NOT EXISTS {} (
@@ -150,10 +141,10 @@ def set_Last_Update_Id(id, table):
         for row in c.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
             if row[0] == 1:
                 c.execute("UPDATE telegram_bot SET last_update_id='{}' WHERE id=1".format(id))
-                print("DB Update")
+                module_log.log("DB Update")
             else:
                 c.execute("INSERT INTO {} (last_update_id) VALUES ({})".format(table, id))
-                print("DB Insert")
+                module_log.log("DB Insert")
             #print("Eintrag 0: {}".format(row[1]))
     #    if c.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
         #c.execute("UPDATE telegram_bot SET last_update_id='{}' WHERE id=1".format(id))
@@ -161,10 +152,10 @@ def set_Last_Update_Id(id, table):
         #c.execute("INSERT OR REPLACE INTO {} (last_update_id) VALUES ({})".format(table, id))
         db_connection.commit()
 
-        print("Id: {}".format(id))
+        module_log.log("Id: {}".format(id))
 
     except sqlite3.Error as e:
-        print(e)
+        module_log.log(e)
 
 
 def get_Last_Update_Id(table):
@@ -183,10 +174,10 @@ def get_Last_Update_Id(table):
             return 0
 
     except sqlite3.Error as e:
-        print(type(e))
+        module_log.log(type(e))
         return 0
     except sqlite3.OperationalError as e:
-        print(type(e))
+        module_log.log(type(e))
         #if 'no such table' in e:
         #    print("Keine Tabelle gefunden" + e)
 
@@ -197,7 +188,7 @@ def main():
 
     try:
         offset = get_Last_Update_Id(table)
-        print("Offset: {}".format(offset))
+        module_log.log("Telegram offset: {}".format(offset))
         answer = read_Message(offset=offset)
 
         #print(json.dumps(answer, indent=2))
@@ -205,21 +196,21 @@ def main():
         for message in answer['result']:
             id = message['message']['from']['id']
             if 'text' in message['message']:
-                print("Text: " + str(message['message']['text']))
+                module_log.log("Text: " + str(message['message']['text']))
                 if message['message']['text'] == "/help":
                     send_Message(id, "/help - Zeige diese Hilfe an\n/batman - Ich Zeige dir, wer Batman ist!\n/batsignal - Rufe Batman""")
                 elif message['message']['text'] == "/batman":
                     send_Message(id, "Ich bin Batman!")
-                    print("Batman")
+                    module_log.log("Batman")
                 elif message['message']['text'] == "/batsignal":
                     file = "https://upload.wikimedia.org/wikipedia/en/c/c6/Bat-signal_1989_film.jpg"
                     send_Photo(id, file)
-                    print("Batsignal")
-                print(message)
+                    module_log.log("Batsignal")
+                module_log.log(message)
             elif 'document' in message['message']:
-                print("Document: " + str(message['message']['document']))
+                module_log.log("Document: " + str(message['message']['document']))
             elif 'photo' in message['message']:
-                print("Photo: " + str(message['message']))
+                module_log.log("Photo: " + str(message['message']))
                 #print("ID: " + str(message['message']['photo'][0]['file_id']))
                 file = get_File_Link(message['message']['photo'][2]['file_id'])
                 extension = file.split(".")[-1]
@@ -236,7 +227,7 @@ def main():
                 send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert.")
                 download_File(file, filename)
                 #print(filename)
-                print(message['update_id'])
+                module_log.log(message['update_id'])
                 set_Last_Update_Id(message['update_id'] + 1, table)
                 db_connection.commit()
                 return filename
