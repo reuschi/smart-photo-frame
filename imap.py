@@ -84,6 +84,7 @@ def initImap(username, password, hostname="imap.gmail.com"):
         print("ERROR: Unable to open mailbox {}".format(rv))
 
 
-while True:
-    initImap(EMAIL_ACCOUNT, EMAIL_PASS)
-    time.sleep(60)
+if __name__ == "__main__":
+    while True:
+        initImap(EMAIL_ACCOUNT, EMAIL_PASS)
+        time.sleep(60)
