@@ -238,7 +238,7 @@ def main():
                 #print(filename)
                 print(message['update_id'])
                 #set_Last_Update_Id(message['update_id'] + 1, table)
-                #return filename
+                return filename
 
             set_Last_Update_Id(message['update_id'] + 1, table)
             db_connection.commit()
