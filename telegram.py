@@ -11,7 +11,7 @@ weblink = f"https://api.telegram.org/bot{token}/"
 filelink = f"https://api.telegram.org/file/bot{token}/"
 http = urllib3.PoolManager()
 #offset = 0
-db_connection = sqlite3.connect("telegram_bot.db")
+db_connection = ""
 
 #with open(API_CODE) as file:
 #    token = file.read()
@@ -132,9 +132,11 @@ def send_Photo(chat_id, photo):
 
 
 def set_Last_Update_Id(id, table):
+    #global db_connection
     c = db_connection.cursor()
 
     if id == None:
+        print("ID is None")
         id = 0
 
     c.execute("""CREATE TABLE IF NOT EXISTS {} (
@@ -144,7 +146,19 @@ def set_Last_Update_Id(id, table):
 
     #last_update_id = c.execute("SELECT * FROM telegram_bot")
     try:
-        c.execute("UPDATE telegram_bot SET last_update_id='{}' WHERE id=1".format(id))
+        #print(c.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"))
+        for row in c.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
+            if row[0] == 1:
+                c.execute("UPDATE telegram_bot SET last_update_id='{}' WHERE id=1".format(id))
+                print("DB Update")
+            else:
+                c.execute("INSERT INTO {} (last_update_id) VALUES ({})".format(table, id))
+                print("DB Insert")
+            #print("Eintrag 0: {}".format(row[1]))
+    #    if c.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
+        #c.execute("UPDATE telegram_bot SET last_update_id='{}' WHERE id=1".format(id))
+    #    else:
+        #c.execute("INSERT OR REPLACE INTO {} (last_update_id) VALUES ({})".format(table, id))
         db_connection.commit()
 
         print("Id: {}".format(id))
@@ -154,13 +168,14 @@ def set_Last_Update_Id(id, table):
 
 
 def get_Last_Update_Id(table):
+    #global db_connection
     c = db_connection.cursor()
 
     try:
         for row in c.execute("SELECT last_update_id FROM telegram_bot WHERE id=1"):
             id = row[0]
 
-        db_connection.commit()
+        #db_connection.commit()
 
         if id != None:
             return id
@@ -168,10 +183,16 @@ def get_Last_Update_Id(table):
             return 0
 
     except sqlite3.Error as e:
-        print(e)
-
+        print(type(e))
+        return 0
+    except sqlite3.OperationalError as e:
+        print(type(e))
+        #if 'no such table' in e:
+        #    print("Keine Tabelle gefunden" + e)
 
 def main():
+    global db_connection
+    db_connection = sqlite3.connect("telegram_bot.db")
     table = "telegram_bot"
 
     try:
@@ -198,7 +219,7 @@ def main():
             elif 'document' in message['message']:
                 print("Document: " + str(message['message']['document']))
             elif 'photo' in message['message']:
-                #print("Photo: " + str(message['message']['caption']))
+                print("Photo: " + str(message['message']))
                 #print("ID: " + str(message['message']['photo'][0]['file_id']))
                 file = get_File_Link(message['message']['photo'][2]['file_id'])
                 extension = file.split(".")[-1]
@@ -215,8 +236,9 @@ def main():
                 send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert.")
                 download_File(file, filename)
                 #print(filename)
-                print(type(message['update_id']))
-                return filename
+                print(message['update_id'])
+                #set_Last_Update_Id(message['update_id'] + 1, table)
+                #return filename
 
             set_Last_Update_Id(message['update_id'] + 1, table)
             db_connection.commit()
@@ -227,8 +249,11 @@ def main():
     except KeyboardInterrupt:
         # Terminate the script and switch off all leds
         print("Press Ctrl-C to terminate while statement")
-        #db_connection.commit()
-        db_connection.close()
+        db_connection.commit()
+        #db_connection.close()
+
+    db_connection.commit()
+    db_connection.close()
 
 
 if __name__ == "__main__":

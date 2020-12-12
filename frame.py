@@ -93,6 +93,7 @@ if __name__ == '__main__':
 
         tg = telegram.main()
         if tg != None:
+            print("Slideshow restart")
             exitSlideshow()
             runSlideshow()
 
