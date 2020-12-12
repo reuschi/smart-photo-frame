@@ -1,20 +1,15 @@
 from imaplib import IMAP4_SSL
 import email
 import email.header
-import datetime
 import os.path
+import time
 
 
 EMAIL_ACCOUNT = "spfreuschglock@gmail.com"
 EMAIL_PASS = "lxLtuywaOS1gklsw2N1P"
 
 
-
-def process_mailbox(M):
-    """
-    Do something with emails messages in the folder.
-    For the sake of this example, print some headers.
-    """
+def downloadAttachment(M, directory):
 
     rv, data = M.search(None, 'ALL')
     if rv != 'OK':
@@ -33,15 +28,21 @@ def process_mailbox(M):
         msg = email.message_from_bytes(data[0][1])
         # downloading attachments
         for part in msg.walk():
-            # this part comes from the snipped I don't understand yet...
             if part.get_content_maintype() == 'multipart':
                 continue
             if part.get('Content-Disposition') is None:
                 continue
-            fileName = part.get_filename()
+
+            # get filename and extension of the downloadable file
+            fileName = "mail_" + part.get_filename()
             fileExtension = os.path.splitext(fileName)[1]
+
+            # only download file if its extension is .jpg or .png
             if bool(fileName) and (fileExtension == ".jpg" or fileExtension == ".png"):
-                filePath = os.path.join('images/', fileName)
+                # define path where to store the file
+                filePath = os.path.join(directory, fileName)
+
+                # if file is not yet downloaded
                 if not os.path.isfile(filePath):
                     fp = open(filePath, 'wb')
                     fp.write(part.get_payload(decode=True))
@@ -50,26 +51,15 @@ def process_mailbox(M):
                 else:
                     print("No new file downloaded!")
         try:
-            M.store(num, '+X-GM-LABELS', '\\Trash')
-            M.expunge()
+            if rv == 'OK':
+                M.store(num, '+X-GM-LABELS', '\\Trash')
+                M.expunge()
         except:
             continue
 
-        #decode = email.header.decode_header(msg['From'])[0]
-        #subject = str(decode[0])
-        #print("Message {}: {}".format(num, subject))
-        #print('Raw Date:', msg['Date'])
-        # Now convert to local date-time
-        #date_tuple = email.utils.parsedate_tz(msg['Date'])
-        #if date_tuple:
-        #    local_date = datetime.datetime.fromtimestamp(
-        #        email.utils.mktime_tz(date_tuple))
-        #    print("Local Date:", \
-        #        local_date.strftime("%a, %d %b %Y %H:%M:%S"))
 
-
-def initImap(username, password, host):
-    Mail = IMAP4_SSL(host=host, port=993)
+def initImap(username, password, hostname="imap.gmail.com"):
+    Mail = IMAP4_SSL(host=hostname, port=993)
     print(Mail.welcome)
     try:
         rv, data = Mail.login(username, password)
@@ -78,7 +68,6 @@ def initImap(username, password, host):
 
     print(rv, data)
 
-    #Mail.select("Smart Photo Frame", True)
     rv, mailboxes = Mail.list()
     if rv == 'OK':
         print("Mailboxes:")
@@ -88,15 +77,13 @@ def initImap(username, password, host):
     if rv == 'OK':
         print("Processing mailbox...\n")
         print(data)
-        process_mailbox(Mail)
+
+        downloadAttachment(Mail, 'images/')
         Mail.close()
     else:
         print("ERROR: Unable to open mailbox {}".format(rv))
 
-    #rv, data = Mail.search(None, 'X-GM-RAW "{search} label:Smart Photo Frame"'.format(search="Subscription"), 'ALL')
-    #if rv != 'OK':
-    #    print("No messages found!")
 
-
-
-initImap(EMAIL_ACCOUNT, EMAIL_PASS, "imap.gmail.com")
+while True:
+    initImap(EMAIL_ACCOUNT, EMAIL_PASS)
+    time.sleep(60)

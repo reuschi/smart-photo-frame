@@ -4,6 +4,7 @@ import os
 import subprocess
 import time
 import imap
+import telegram
 
 
 images = []
@@ -17,7 +18,10 @@ def getFiles():
 
 
 def exitSlideshow():
-    os.system("sudo killall -15 fbi")
+    try:
+        os.system("sudo killall -15 fbi")
+    except Exception as e:
+        print(e)
 
 
 def runSlideshow():
@@ -56,36 +60,46 @@ if __name__ == '__main__':
     runSlideshow()
 
     while True:
-        print("Was möchten Sie tun?")
-        print("------")
-        print("1 - Slideshow starten")
-        print("2 - Slideshow beenden")
-        print("3 - Frequenz erhöhen (-2 Sekunden)")
-        print("4 - Frequenz verringern (+2 Sekunden)")
-        print("0 - Exit")
+#        print("Was möchten Sie tun?")
+#        print("------")
+#        print("1 - Slideshow starten")
+#        print("2 - Slideshow beenden")
+#        print("3 - Frequenz erhöhen (-2 Sekunden)")
+#        print("4 - Frequenz verringern (+2 Sekunden)")
+#        print("0 - Exit")
 
-        func = input("Bitte wählen Sie: ")
+#        func = input("Bitte wählen Sie: ")
 
-        if func == "1":
+#        if func == "1":
+#            runSlideshow()
+#        elif func == "2":
+#            exitSlideshow()
+#        elif func == "3":
+#            exitSlideshow()
+#            if timer >= 4:
+#                timer -= 2
+#            else:
+#                print(f"Timer bereits bei: {timer}. Frequenzerhöhung nicht möglich!")
+#            runSlideshow()
+#        elif func == "4":
+#            exitSlideshow()
+#            timer += 2
+#            runSlideshow()
+#        elif func == "0":
+#            exitSlideshow()
+#            break
+#        else:
+#            print("Keine Aktion durchführbar!")
+
+        telegram = telegram.main()
+        if telegram != None
+            exitSlideshow()
             runSlideshow()
-        elif func == "2":
-            exitSlideshow()
-        elif func == "3":
-            exitSlideshow()
-            if timer >= 4:
-                timer -= 2
-            else:
-                print("Timer bereits bei: {}. Frequenzerhöhung nicht möglich!".format(timer))
-            runSlideshow()
-        elif func == "4":
-            exitSlideshow()
-            timer += 2
-            runSlideshow()
-        elif func == "0":
-            exitSlideshow()
-            break
-        else:
-            print("Keine Aktion durchführbar!")
+
+        time.sleep(5)
+
+
+
 
 
 
