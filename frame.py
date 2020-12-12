@@ -92,7 +92,7 @@ if __name__ == '__main__':
 #            print("Keine Aktion durchführbar!")
 
         telegram = telegram.main()
-        if telegram != None
+        if telegram != None:
             exitSlideshow()
             runSlideshow()
 
