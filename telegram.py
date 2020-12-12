@@ -237,11 +237,12 @@ def main():
                 download_File(file, filename)
                 #print(filename)
                 print(message['update_id'])
-                #set_Last_Update_Id(message['update_id'] + 1, table)
+                set_Last_Update_Id(message['update_id'] + 1, table)
+                db_connection.commit()
                 return filename
 
-            set_Last_Update_Id(message['update_id'] + 1, table)
-            db_connection.commit()
+            #set_Last_Update_Id(message['update_id'] + 1, table)
+            #db_connection.commit()
 
 
         #time.sleep(5)
