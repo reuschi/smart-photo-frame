@@ -16,13 +16,19 @@ db_connection = ""
 
 
 def telegram_POST(link, data=""):
-    answer = requests.post(link, data=data)
+    try:
+        answer = requests.post(link, data=data)
+    except requests.exceptions.ConnectionError:
+        r.status_code = "Connection refused"
 
     return return_Status_Code(answer)
 
 
 def telegram_GET(link, data):
-    answer = requests.get(link, params=data)
+    try:
+        answer = requests.get(link, params=data)
+    except requests.exceptions.ConnectionError:
+        r.status_code = "Connection refused"
 
     return return_Status_Code(answer)
 
