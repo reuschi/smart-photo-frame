@@ -8,7 +8,6 @@ import telegram
 import module_log
 import glob
 import pathlib
-import os
 
 
 images = []
