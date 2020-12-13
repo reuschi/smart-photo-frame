@@ -124,7 +124,7 @@ if __name__ == '__main__':
         if i == 0:
             imap.main()
 
-        if i < 60:
+        if i < 900:
             i += 1
         else:
             i = 0
@@ -137,7 +137,7 @@ if __name__ == '__main__':
             #exit_Slideshow()
             #run_Slideshow()
 
-        time.sleep(15)
+        time.sleep(1)
 
 
 
