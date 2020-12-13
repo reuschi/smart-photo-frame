@@ -7,6 +7,7 @@ import imap
 import telegram
 import module_log
 import glob
+import pathlib
 
 
 images = []
@@ -28,8 +29,10 @@ def exit_Slideshow():
         module_log.log(e)
 
 
-def delete_Old_Files(directory="/home/pi/python/smart-photo-frame/images/", max=50):
-    files = glob.glob(directory + "*.*")
+def delete_Old_Files(directory="images", max=50):
+    files = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / "*.*")
+
+    #files = glob.glob(directory + "*.*")
     files.sort(key=os.path.getmtime, reverse=True)
 
     for x in range(max, len(files)):
@@ -44,8 +47,10 @@ def delete_Old_Files(directory="/home/pi/python/smart-photo-frame/images/", max=
     #print(files)
 
 
-def run_Slideshow(path='/home/pi/python/smart-photo-frame/images/'):
-    bashCommand = "sudo fbi --noverbose --random --blend 1 -a -t {} -T 1 {}*.*".format(timer, path)
+def run_Slideshow(path='images'):
+
+    path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / path / "*.*")
+    bashCommand = "sudo fbi --noverbose --random --blend 1 -a -t {} -T 1 {}".format(timer, path)
     #bashCommand = ['fbi', '--noverbose', '-a', '-t', '7', '--vt', '1' 'images/1266.jpg']
     process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     time.sleep(0.5)

@@ -4,6 +4,7 @@ import email.header
 import os.path
 import time
 import module_log
+import pathlib
 
 
 EMAIL_ACCOUNT = "spfreuschglock@gmail.com"
@@ -12,7 +13,7 @@ EMAIL_PASS = "lxLtuywaOS1gklsw2N1P"
 
 
 
-def downloadAttachment(M, directory):
+def downloadAttachment(M, directory='images'):
 
     rv, data = M.search(None, 'ALL')
     if rv != 'OK':
@@ -49,7 +50,8 @@ def downloadAttachment(M, directory):
                 # only download file if its extension is .jpg or .png
                 if bool(fileName) and (fileExtension == ".jpg" or fileExtension == ".png"):
                     # define path where to store the file
-                    filePath = os.path.join(directory, fileName)
+                    #filePath = os.path.join(directory, fileName)
+                    filePath = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / fileName)
 
                     # if file is not yet downloaded
                     if not os.path.isfile(filePath):
@@ -90,7 +92,7 @@ def initImap(username, password, hostname="imap.gmail.com"):
             module_log.log("Processing mailbox...")
             #module_log.log(data)
 
-            downloadAttachment(Mail, 'images/')
+            downloadAttachment(Mail)
             Mail.close()
         else:
             return "ERROR: Unable to open mailbox {}".format(rv)

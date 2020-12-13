@@ -91,11 +91,13 @@ def get_File_Link(id):
     return filelink + file_json['result']['file_path']
 
 
-def download_File(source, filename, destination="/home/pi/python/smart-photo-frame/images/"):
+def download_File(source, filename, destination="images"):
+    file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / destination / filename)
+
     url = filelink + source
     #http = urllib3.PoolManager()
 
-    with http.request('GET', source, preload_content=False) as r, open(destination + filename, 'wb') as out_file:
+    with http.request('GET', source, preload_content=False) as r, open(file, 'wb') as out_file:
         shutil.copyfileobj(r, out_file)
     #urllib.request.urlretrieve(source, destination + filename)
 
@@ -190,7 +192,8 @@ def get_Last_Update_Id(table):
 
 def main():
     global db_connection
-    db_connection = sqlite3.connect("/home/pi/python/smart-photo-frame/telegram_bot.db")
+    db_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "telegram_bot.db")
+    db_connection = sqlite3.connect(db_path)
     table = "telegram_bot"
 
     try:
