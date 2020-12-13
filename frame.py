@@ -142,7 +142,7 @@ if __name__ == '__main__':
             #exit_Slideshow()
             #run_Slideshow()
 
-        time.sleep(1)
+        time.sleep(15)
 
 
 
