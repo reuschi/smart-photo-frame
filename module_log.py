@@ -11,8 +11,8 @@ def log_To_Screen(logging, **kwargs):
 
 def log_To_File(logging):
     logfile = open("message.log", "a")
-    datetime = time.strftime("%Y%m%d_%H%M%S")
-    #logfile.write(datetime + " " + logging)
+    datetime = time.strftime("%b %d %Y %H:%M:%S")
+    logfile.write(datetime + " " + logging + "\n")
     logfile.close()
 
 
