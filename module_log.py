@@ -11,7 +11,7 @@ def log_To_Screen(logging, **kwargs):
 
 
 def log_To_File(logging):
-    logging_path = pathlib.Path().absolute() + "message.log"
+    logging_path = "/home/pi/python/smart-photo-frame/" + "message.log"
     logfile = open(logging_path, "a")
     datetime = time.strftime("%b %d %Y %H:%M:%S")
     log = datetime + " " + logging + "\n"
