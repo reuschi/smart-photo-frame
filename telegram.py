@@ -91,7 +91,7 @@ def get_File_Link(id):
     return filelink + file_json['result']['file_path']
 
 
-def download_File(source, filename, destination="images/"):
+def download_File(source, filename, destination="/home/pi/python/smart-photo-frame/images/"):
     url = filelink + source
     #http = urllib3.PoolManager()
 
@@ -231,8 +231,8 @@ def main():
                 else:
                     filename = time.strftime("%Y%m%d_%H%M%S") + "_tg." + extension
 
-                send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert.")
                 download_File(file, filename)
+                send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert.")
                 #print(filename)
                 module_log.log(message['update_id'])
                 set_Last_Update_Id(message['update_id'] + 1, table)
