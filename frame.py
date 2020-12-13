@@ -28,7 +28,7 @@ def exit_Slideshow():
         module_log.log(e)
 
 
-def delete_Old_Files(directory="images/", max=50):
+def delete_Old_Files(directory="/home/pi/python/smart-photo-frame/images/", max=50):
     files = glob.glob(directory + "*.*")
     files.sort(key=os.path.getmtime, reverse=True)
 

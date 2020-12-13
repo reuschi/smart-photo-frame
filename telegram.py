@@ -167,6 +167,7 @@ def set_Last_Update_Id(id, table):
 def get_Last_Update_Id(table):
     #global db_connection
     c = db_connection.cursor()
+    module_log.log("get_Last_Update_Id")
 
     try:
         for row in c.execute("SELECT last_update_id FROM telegram_bot WHERE id=1"):
@@ -189,7 +190,7 @@ def get_Last_Update_Id(table):
 
 def main():
     global db_connection
-    db_connection = sqlite3.connect("telegram_bot.db")
+    db_connection = sqlite3.connect("/home/pi/python/smart-photo-frame/telegram_bot.db")
     table = "telegram_bot"
 
     try:
