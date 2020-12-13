@@ -45,7 +45,7 @@ def delete_Old_Files(directory="/home/pi/python/smart-photo-frame/images/", max=
 
 
 def run_Slideshow(path='/home/pi/python/smart-photo-frame/images/'):
-    bashCommand = "sudo fbi --noverbose -a -t {} -T 1 {}*.*".format(timer, path)
+    bashCommand = "sudo fbi --noverbose --random --blend 1 -a -t {} -T 1 {}*.*".format(timer, path)
     #bashCommand = ['fbi', '--noverbose', '-a', '-t', '7', '--vt', '1' 'images/1266.jpg']
     process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     time.sleep(0.5)
