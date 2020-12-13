@@ -1,4 +1,5 @@
 import time
+import pathlib
 
 
 logToFile = True
@@ -10,7 +11,8 @@ def log_To_Screen(logging, **kwargs):
 
 
 def log_To_File(logging):
-    logfile = open("message.log", "a")
+    logging_path = pathlib.Path.absolute() + "message.log"
+    logfile = open(logging_path, "a")
     datetime = time.strftime("%b %d %Y %H:%M:%S")
     log = datetime + " " + logging + "\n"
     logfile.write(log)
