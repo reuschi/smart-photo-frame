@@ -72,6 +72,7 @@ def downloadAttachment(M, directory='images'):
 
 def initImap(username, password, hostname="imap.gmail.com"):
     try:
+        module_log.log("Tying to fetch new mails")
         Mail = IMAP4_SSL(host=hostname, port=993)
         rv, data = Mail.login(username, password)
 
