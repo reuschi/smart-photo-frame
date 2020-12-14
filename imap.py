@@ -76,26 +76,27 @@ def initImap(username, password, hostname="imap.gmail.com"):
     try:
         rv, data = Mail.login(username, password)
 
-        #print(rv, data)
+        module_log.log(data)
 
         rv, mailboxes = Mail.list()
         if rv == 'OK':
             module_log.log("Mailboxes found: " + str(mailboxes))
             #module_log.log(mailboxes)
         else:
+            module_log.log("No Mailbox found")
             return "ERROR: No Mailbox to open"
 
         rv, data = Mail.select('"Smart Photo Frame"')
         if rv == 'OK':
             module_log.log("Processing mailbox...")
-            #module_log.log(data)
 
             downloadAttachment(Mail)
-            Mail.close()
         else:
             return "ERROR: Unable to open mailbox {}".format(rv)
     except IMAP4_SSL.error as e:
         module_log.log(e)
+
+    Mail.close()
 
 
 def main():

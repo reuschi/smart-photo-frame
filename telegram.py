@@ -228,6 +228,8 @@ def main():
 
         #print(json.dumps(answer, indent=2))
 
+        success = False
+
         for message in answer['result']:
             id = message['message']['from']['id']
             if 'text' in message['message']:
@@ -242,6 +244,7 @@ def main():
                     send_Photo(id, file)
                     module_log.log("Batsignal")
                 module_log.log(message)
+                success = True
             elif 'document' in message['message']:
                 module_log.log("Document: " + str(message['message']['document']))
             elif 'photo' in message['message']:
@@ -261,17 +264,18 @@ def main():
 
                 if download_File(file, filename) == True:
                     send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert.")
+                    success = True
 
                 #print(filename)
                 module_log.log(message['update_id'])
                 set_Last_Update_Id(message['update_id'] + 1, table)
                 db_connection.commit()
-                return filename
+                #return filename
 
             #set_Last_Update_Id(message['update_id'] + 1, table)
             #db_connection.commit()
 
-
+        return success
         #time.sleep(5)
 
     except KeyboardInterrupt:

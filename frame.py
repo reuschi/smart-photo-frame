@@ -25,23 +25,26 @@ def get_Files():
 def exit_Slideshow():
     try:
         os.system("sudo killall -15 fbi")
-        module_log.log("killall")
+        module_log.log("Slideshow killed")
     except Exception as e:
         module_log.log(e)
 
 
 def delete_Old_Files(directory="images", max=50):
     file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / "*.*")
+    
 
     files = glob.glob(str(file_path))
     files.sort(key=os.path.getmtime, reverse=True)
 
     for x in range(max, len(files)):
-        print(files[x], os.path.getmtime(files[x]))
+        #print(files[x], os.path.getmtime(files[x]))
         try:
             os.remove(files[x])
         except Exception as e:
             module_log.log("Removing the file {} was NOT successful: {}".format(files[x], e))
+
+    module_log.log("Deleting old files is done.")
 
     #for file in files:
     #print(files[10])
@@ -56,6 +59,8 @@ def run_Slideshow(path='images'):
     process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     time.sleep(0.5)
 
+    module_log.log("Slideshow running")
+
 
     #output, error = process.communicate()
     #print(output)
@@ -68,12 +73,12 @@ def run_Slideshow(path='images'):
 
 def restart_Slideshow():
     exit_Slideshow()
+    delete_Old_Files()
     run_Slideshow()
 
 
 if __name__ == '__main__':
 
-    delete_Old_Files()
     restart_Slideshow()
 
     i = 0
@@ -120,7 +125,7 @@ if __name__ == '__main__':
 
 
         tg = telegram.main()
-        if tg != None:
+        if tg == True:
             module_log.log("Slideshow restart")
             restart_Slideshow()
 
