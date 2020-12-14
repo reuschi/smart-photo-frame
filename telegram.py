@@ -214,6 +214,7 @@ def get_Last_Update_Id(table):
         #if 'no such table' in e:
         #    print("Keine Tabelle gefunden" + e)
 
+
 def main():
     try:
         global db_connection

@@ -12,6 +12,7 @@ import pathlib
 
 images = []
 timer = 8
+blend = 1000    # in milliseconds
 
 
 def get_Files():
@@ -50,7 +51,7 @@ def delete_Old_Files(directory="images", max=50):
 def run_Slideshow(path='images'):
 
     path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / path / "*.*")
-    bashCommand = "sudo fbi --noverbose --random --blend 1000 -a -t {} -T 1 {}".format(timer, path)
+    bashCommand = "sudo fbi --noverbose --random --blend {} -a -t {} -T 1 {}".format(blend, timer, path)
     #bashCommand = ['fbi', '--noverbose', '-a', '-t', '7', '--vt', '1' 'images/1266.jpg']
     process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     time.sleep(0.5)
@@ -65,18 +66,6 @@ def run_Slideshow(path='images'):
     #os.system(bashCommand)
 
 
-#api_id = 2640738
-#api_hash = "1a909a049af457fff5e5cffdd4524199"
-
-
-#app = Client("my_account")
-#app.run()
-
-#@app.on_message(filters.private)
-#async def hello(client, message):
-#    await message.reply_text(f"Hello {message.from_user.mention}")
-
-
 def restart_Slideshow():
     exit_Slideshow()
     run_Slideshow()
@@ -84,11 +73,8 @@ def restart_Slideshow():
 
 if __name__ == '__main__':
 
-    restart_Slideshow()
-    ##exit_Slideshow()
-    #run_Slideshow()
-
     delete_Old_Files()
+    restart_Slideshow()
 
     i = 0
 
@@ -104,22 +90,20 @@ if __name__ == '__main__':
         #func = input("Bitte wählen Sie: ")
 
         #if func == "1":
-        #    runSlideshow()
+        #    run_Slideshow()
         #elif func == "2":
-        #    exitSlideshow()
+        #    exit_Slideshow()
         #elif func == "3":
-        #    exitSlideshow()
         #    if timer >= 4:
         #        timer -= 2
         #    else:
         #        print(f"Timer bereits bei: {timer}. Frequenzerhöhung nicht möglich!")
-        #    runSlideshow()
+        #    restart_Slideshow()
         #elif func == "4":
-        #    exitSlideshow()
         #    timer += 2
-        #    runSlideshow()
+        #    restart_Slideshow()
         #elif func == "0":
-        #    exitSlideshow()
+        #    exit_Slideshow()
         #    break
         #else:
         #    print("Keine Aktion durchführbar!")
@@ -139,32 +123,8 @@ if __name__ == '__main__':
         if tg != None:
             module_log.log("Slideshow restart")
             restart_Slideshow()
-            #exit_Slideshow()
-            #run_Slideshow()
 
         time.sleep(15)
 
-
-
-
-
-
-
-    #for file in images:
-#    bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
-#    os.system(bashCommand)
-    #    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, shell=True)
-    #    output, error = process.communicate()
-    #time.sleep(5)
-    #exitSlideshow()
-#    kill = os.system("pgrep fbi")
-#    print("fbi process number: {}".format(kill))
-#    os.system("sudo pkill fbi")
-
-#    proc1 = subprocess.Popen(["sudo", "fbi", "--noverbose", "-a", "-t", "7", "./images/*.jpg", "-T", "1"])
-#    print("Process with ID {} is running".format(proc1.pid))
-#    time.sleep(20)
-#    proc1.terminate()
-#    print("Process terminated")
 
 

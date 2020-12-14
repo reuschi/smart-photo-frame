@@ -11,8 +11,6 @@ EMAIL_ACCOUNT = "spfreuschglock@gmail.com"
 EMAIL_PASS = "lxLtuywaOS1gklsw2N1P"
 
 
-
-
 def downloadAttachment(M, directory='images'):
 
     rv, data = M.search(None, 'ALL')
