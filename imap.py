@@ -71,9 +71,8 @@ def downloadAttachment(M, directory='images'):
 
 
 def initImap(username, password, hostname="imap.gmail.com"):
-    Mail = IMAP4_SSL(host=hostname, port=993)
-    #print(Mail.welcome)
     try:
+        Mail = IMAP4_SSL(host=hostname, port=993)
         rv, data = Mail.login(username, password)
 
         module_log.log(data)
@@ -93,10 +92,11 @@ def initImap(username, password, hostname="imap.gmail.com"):
             downloadAttachment(Mail)
         else:
             return "ERROR: Unable to open mailbox {}".format(rv)
+
+        Mail.close()
     except IMAP4_SSL.error as e:
         module_log.log(e)
 
-    Mail.close()
 
 
 def main():
