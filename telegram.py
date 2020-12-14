@@ -35,11 +35,15 @@ def telegram_GET(link, data):
 
 
 def read_Message(**kwargs):
-    link = weblink + "getUpdates"
-    data = {}
+    try:
+        link = weblink + "getUpdates"
+        data = {}
 
-    for key, value in kwargs.items():
-        data[key] = value
+        for key, value in kwargs.items():
+            data[key] = value
+
+    except Exception as e:
+        module_log.log(e)
 
     return telegram_POST(link, data)
 
@@ -79,28 +83,40 @@ def set_Webhook(url, **kwargs):
 
 
 def get_File_Link(id):
-    link = weblink + "getFile"
-    data = {
-        'file_id': id
-    }
+    try:
+        link = weblink + "getFile"
+        data = {
+            'file_id': id
+        }
 
-    #for key, value in kwargs.items():
-    #    data[key] = value
+        #for key, value in kwargs.items():
+        #    data[key] = value
 
-    file_json = telegram_POST(link, data)
-    #print(file_json['result']['file_path'])
+        file_json = telegram_POST(link, data)
+        #print(file_json['result']['file_path'])
+    except Exception as e:
+        module_log.log(e)
+
     return filelink + file_json['result']['file_path']
 
 
 def download_File(source, filename, destination="images"):
-    file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / destination / filename)
+    try:
+        file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / destination / filename)
 
-    url = filelink + source
-    #http = urllib3.PoolManager()
+        url = filelink + source
+        #http = urllib3.PoolManager()
 
-    with http.request('GET', source, preload_content=False) as r, open(file, 'wb') as out_file:
-        shutil.copyfileobj(r, out_file)
-    #urllib.request.urlretrieve(source, destination + filename)
+        with http.request('GET', source, preload_content=False) as r, open(file, 'wb') as out_file:
+            shutil.copyfileobj(r, out_file)
+        #urllib.request.urlretrieve(source, destination + filename)
+        return True
+    except Exception as e:
+        module_log.log(e)
+        return False
+    except IOError as e:
+        module_log.log("Unable to download file.")
+        return False
 
 
 def print_Content(answer):
@@ -110,42 +126,49 @@ def print_Content(answer):
 
 
 def send_Message(chat_id, message):
-    link = weblink + "sendMessage"
-    data = {
-        "chat_id": chat_id,
-        "text": message
-    }
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
-    #message = requests.post(url, params=data)
-    telegram_POST(link, data)
-    #print(message)
+    try:
+        link = weblink + "sendMessage"
+        data = {
+            "chat_id": chat_id,
+            "text": message
+        }
+        url = f"https://api.telegram.org/bot{token}/sendMessage"
+        #message = requests.post(url, params=data)
+        return telegram_POST(link, data)
+        #print(message)
+    except Exception as e:
+        module_log.log(e)
 
 
 def send_Photo(chat_id, photo):
-    link = weblink + "sendPhoto"
-    data = {
-        "chat_id": chat_id,
-        "photo": photo
-    }
+    try:
+        link = weblink + "sendPhoto"
+        data = {
+            "chat_id": chat_id,
+            "photo": photo
+        }
 
-    return telegram_POST(link, data)
+        return telegram_POST(link, data)
+
+    except Exception as e:
+        module_log.log(e)
 
 
 def set_Last_Update_Id(id, table):
     #global db_connection
-    c = db_connection.cursor()
-
-    if id == None:
-        module_log.log("ID is None")
-        id = 0
-
-    c.execute("""CREATE TABLE IF NOT EXISTS {} (
-                                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                last_update_id
-                            )""".format(table))
-
-    #last_update_id = c.execute("SELECT * FROM telegram_bot")
     try:
+        c = db_connection.cursor()
+
+        if id == None:
+            module_log.log("ID is None")
+            id = 0
+
+        c.execute("""CREATE TABLE IF NOT EXISTS {} (
+                                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                    last_update_id
+                                )""".format(table))
+
+        #last_update_id = c.execute("SELECT * FROM telegram_bot")
         #print(c.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"))
         for row in c.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
             if row[0] == 1:
@@ -169,10 +192,10 @@ def set_Last_Update_Id(id, table):
 
 def get_Last_Update_Id(table):
     #global db_connection
-    c = db_connection.cursor()
-    module_log.log("get_Last_Update_Id")
-
     try:
+        c = db_connection.cursor()
+        module_log.log("get_Last_Update_Id")
+
         for row in c.execute("SELECT last_update_id FROM telegram_bot WHERE id=1"):
             id = row[0]
 
@@ -192,12 +215,12 @@ def get_Last_Update_Id(table):
         #    print("Keine Tabelle gefunden" + e)
 
 def main():
-    global db_connection
-    db_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "telegram_bot.db")
-    db_connection = sqlite3.connect(db_path)
-    table = "telegram_bot"
-
     try:
+        global db_connection
+        db_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "telegram_bot.db")
+        db_connection = sqlite3.connect(db_path)
+        table = "telegram_bot"
+
         offset = get_Last_Update_Id(table)
         module_log.log("Telegram offset: {}".format(offset))
         answer = read_Message(offset=offset)
@@ -235,8 +258,9 @@ def main():
                 else:
                     filename = time.strftime("%Y%m%d_%H%M%S") + "_tg." + extension
 
-                download_File(file, filename)
-                send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert.")
+                if download_File(file, filename) == True:
+                    send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert.")
+
                 #print(filename)
                 module_log.log(message['update_id'])
                 set_Last_Update_Id(message['update_id'] + 1, table)
