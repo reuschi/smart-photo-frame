@@ -20,11 +20,11 @@ def telegram_POST(link, data=""):
     answer = requests.Response()
     try:
         answer = requests.post(link, data=data)
-        return return_Status_Code(answer)
+        return answer
     except requests.exceptions.ConnectionError:
         answer.status_code = "Connection refused"
         module_log.log(answer.status_code)
-        return status_code
+        return answer.status_code
     except urllib3.exceptions.NewConnectionError:
         answer.status_code = "Connection refused"
         module_log.log(answer.status_code)
@@ -263,55 +263,56 @@ def main():
         print(json.dumps(answer, indent=2))
 
         success = False
+        if answer.status_code == 200:
+            for message in answer['result']:
+                id = message['message']['from']['id']
+                if 'text' in message['message']:
+                    module_log.log("Text: " + str(message['message']['text']))
+                    if message['message']['text'] == "/help":
+                        send_Message(id, "/help - Zeige diese Hilfe an\n/batman - Ich Zeige dir, wer Batman ist!\n/batsignal - Rufe Batman""")
+                    elif message['message']['text'] == "/batman":
+                        send_Message(id, "Ich bin Batman!")
+                        module_log.log("Batman")
+                    elif message['message']['text'] == "/batsignal":
+                        file = "https://upload.wikimedia.org/wikipedia/en/c/c6/Bat-signal_1989_film.jpg"
+                        send_Photo(id, file)
+                        module_log.log("Batsignal")
+                    module_log.log(message)
+                    #success = True
+                elif 'document' in message['message']:
+                    module_log.log("Document: " + str(message['message']['document']))
+                elif 'photo' in message['message']:
+                    module_log.log("Photo: " + str(message['message']))
+                    #print("ID: " + str(message['message']['photo'][0]['file_id']))
+                    file = get_File_Link(message['message']['photo'][2]['file_id'])
+                    extension = file.split(".")[-1]
+                    #print(extension)
+                    if 'caption' in message['message']:
+                        caption = message['message']['caption']
+                        caption = caption.replace(" ", "_")
+                        caption = caption.replace("/", "_")
+                        caption = caption.replace("\\", "_")
+                        filename = caption + "_tg" + extension
+                    else:
+                        filename = time.strftime("%Y%m%d_%H%M%S") + "_tg." + extension
 
-        for message in answer['result']:
-            id = message['message']['from']['id']
-            if 'text' in message['message']:
-                module_log.log("Text: " + str(message['message']['text']))
-                if message['message']['text'] == "/help":
-                    send_Message(id, "/help - Zeige diese Hilfe an\n/batman - Ich Zeige dir, wer Batman ist!\n/batsignal - Rufe Batman""")
-                elif message['message']['text'] == "/batman":
-                    send_Message(id, "Ich bin Batman!")
-                    module_log.log("Batman")
-                elif message['message']['text'] == "/batsignal":
-                    file = "https://upload.wikimedia.org/wikipedia/en/c/c6/Bat-signal_1989_film.jpg"
-                    send_Photo(id, file)
-                    module_log.log("Batsignal")
-                module_log.log(message)
-                #success = True
-            elif 'document' in message['message']:
-                module_log.log("Document: " + str(message['message']['document']))
-            elif 'photo' in message['message']:
-                module_log.log("Photo: " + str(message['message']))
-                #print("ID: " + str(message['message']['photo'][0]['file_id']))
-                file = get_File_Link(message['message']['photo'][2]['file_id'])
-                extension = file.split(".")[-1]
-                #print(extension)
-                if 'caption' in message['message']:
-                    caption = message['message']['caption']
-                    caption = caption.replace(" ", "_")
-                    caption = caption.replace("/", "_")
-                    caption = caption.replace("\\", "_")
-                    filename = caption + "_tg" + extension
-                else:
-                    filename = time.strftime("%Y%m%d_%H%M%S") + "_tg." + extension
+                    if download_File(file, filename) == True:
+                        send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert.")
+                        success = True
 
-                if download_File(file, filename) == True:
-                    send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert.")
-                    success = True
+                    #print(filename)
+                module_log.log(message['update_id'])
+                set_Last_Update_Id(message['update_id'] + 1, table)
+                db_connection.commit()
+                #return filename
 
-                #print(filename)
-            module_log.log(message['update_id'])
-            set_Last_Update_Id(message['update_id'] + 1, table)
-            db_connection.commit()
-            #return filename
+                #set_Last_Update_Id(message['update_id'] + 1, table)
+                #db_connection.commit()
 
-            #set_Last_Update_Id(message['update_id'] + 1, table)
-            #db_connection.commit()
+            return success
 
-        return success
-        #time.sleep(5)
-
+    except TypeError:
+        print("TypeError")
     except KeyboardInterrupt:
         # Terminate the script and switch off all leds
         print("Press Ctrl-C to terminate while statement")
