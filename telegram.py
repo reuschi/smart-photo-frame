@@ -232,7 +232,7 @@ def main():
         db_connection = sqlite3.connect(db_path)
         table = "telegram_bot"
 
-        offset = get_Last_Update_Id(table)
+        offset = get_Last_Update_Id(table) + 1
         module_log.log("Telegram offset: {}".format(offset))
         answer = read_Message(offset=offset)
 
