@@ -82,6 +82,7 @@ if __name__ == '__main__':
     restart_Slideshow()
 
     i = 0
+    time.sleep(15)
 
     while True:
         #print("Was möchten Sie tun?")
@@ -115,7 +116,7 @@ if __name__ == '__main__':
 
         #print("i: " + str(i))
 
-        if i >= 900:
+        if i >= 60:
             imap.main()
             i = 0
         else:
