@@ -17,57 +17,59 @@ db_connection = ""
 
 
 def telegram_POST(link, data=""):
+    answer = requests.Response()
     try:
         answer = requests.post(link, data=data)
         return return_Status_Code(answer)
     except requests.exceptions.ConnectionError:
-        status_code = "Connection refused"
-        module_log.log(status_code)
+        answer.status_code = "Connection refused"
+        module_log.log(answer.status_code)
         return status_code
     except urllib3.exceptions.NewConnectionError:
-        status_code = "Connection refused"
-        module_log.log(status_code)
+        answer.status_code = "Connection refused"
+        module_log.log(answer.status_code)
         return status_code
     except urllib3.exceptions.MaxRetryError:
-        status_code = "Maximum retries reached"
-        module_log.log(status_code)
+        answer.status_code = "Maximum retries reached"
+        module_log.log(answer.status_code)
         return status_code
     except requests.exceptions.RequestException as e:
-        status_code = "No DNS available"
+        answer.status_code = "No DNS available"
         module_log.log(e)
-        module_log.log(status_code)
+        module_log.log(answer.status_code)
         return status_code
     finally:
-        status_code = "Could not send request POST"
-        module_log.log(status_code)
-        return status_code
+        answer.status_code = "Could not send request POST"
+        module_log.log(answer.status_code)
+        return answer.status_code
 
 
 def telegram_GET(link, data):
+    answer = requests.Response()
     try:
         answer = requests.get(link, params=data)
         return return_Status_Code(answer)
     except requests.exceptions.ConnectionError:
-        status_code = "Connection refused"
-        module_log.log(status_code)
-        return status_code
+        answer.status_code = "Connection refused"
+        module_log.log(answer.status_code)
+        return answer.status_code
     except urllib3.exceptions.NewConnectionError:
-        status_code = "Connection refused"
-        module_log.log(status_code)
-        return status_code
+        answer.status_code = "Connection refused"
+        module_log.log(answer.status_code)
+        return answer.status_code
     except urllib3.exceptions.MaxRetryError:
-        status_code = "Maximum retries reached"
-        module_log.log(status_code)
-        return status_code
+        answer.status_code = "Maximum retries reached"
+        module_log.log(answer.status_code)
+        return answer.status_code
     except requests.exceptions.RequestException as e:
-        status_code = "No DNS available"
+        answer.status_code = "No DNS available"
         module_log.log(e)
-        module_log.log(status_code)
-        return status_code
+        module_log.log(answer.status_code)
+        return answer.status_code
     finally:
-        status_code = "Could not send request POST"
-        module_log.log(status_code)
-        return status_code
+        answer.status_code = "Could not send request POST"
+        module_log.log(answer.status_code)
+        return answer.status_code
 
 
 def read_Message(**kwargs):
