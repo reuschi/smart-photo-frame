@@ -252,7 +252,7 @@ def main():
                     send_Photo(id, file)
                     module_log.log("Batsignal")
                 module_log.log(message)
-                success = True
+                #success = True
             elif 'document' in message['message']:
                 module_log.log("Document: " + str(message['message']['document']))
             elif 'photo' in message['message']:
