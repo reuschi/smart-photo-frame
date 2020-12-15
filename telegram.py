@@ -20,20 +20,15 @@ def telegram_POST(link, data=""):
     answer = requests.Response()
     try:
         answer = requests.post(link, data=data)
-        return answer
     except requests.exceptions.ConnectionError:
         answer.status_code = "Connection refused"
         module_log.log(answer.status_code)
         return answer.status_code
-    except urllib3.exceptions.NewConnectionError:
-        answer.status_code = "Connection refused"
-        module_log.log(answer.status_code)
-        return status_code
-    except urllib3.exceptions.MaxRetryError:
+    except requests.exceptions.HTTPError:
         answer.status_code = "Maximum retries reached"
         module_log.log(answer.status_code)
         return status_code
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.RetryError:
         answer.status_code = "No DNS available"
         module_log.log(e)
         module_log.log(answer.status_code)
@@ -42,6 +37,8 @@ def telegram_POST(link, data=""):
         answer.status_code = "Could not send request POST"
         module_log.log(answer.status_code)
         return answer.status_code
+
+    return return_Status_Code(answer)
 
 
 def telegram_GET(link, data):
@@ -263,7 +260,7 @@ def main():
         print(json.dumps(answer, indent=2))
 
         success = False
-        if answer.status_code == 200:
+        if type(answer) != 'str':
             for message in answer['result']:
                 id = message['message']['from']['id']
                 if 'text' in message['message']:
@@ -310,6 +307,8 @@ def main():
                 #db_connection.commit()
 
             return success
+        else:
+            return False
 
     except TypeError:
         print("TypeError")
