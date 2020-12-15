@@ -22,13 +22,20 @@ def telegram_POST(link, data=""):
         answer = requests.post(link, data=data)
     except requests.exceptions.ConnectionError:
         answer.status_code = "Connection refused"
+        module_log.log(answer.status_code)
     except urllib3.exceptions.NewConnectionError:
         answer.status_code = "Connection refused"
+        module_log.log(answer.status_code)
     except urllib3.exceptions.MaxRetryError:
         answer.status_code = "Maximum retries reached"
-    except Exception as e:
+        module_log.log(answer.status_code)
+    except requests.exceptions.RequestException as e:
         answer.status_code = "No DNS available"
+        module_log.log(answer.status_code)
         module_log.log(e)
+    finally:
+        module_log.log("Could not send request GET")
+
 
     return return_Status_Code(answer)
 
@@ -39,22 +46,26 @@ def telegram_GET(link, data):
         answer = requests.get(link, params=data)
     except requests.exceptions.ConnectionError:
         answer.status_code = "Connection refused"
+        module_log.log(answer.status_code)
     except urllib3.exceptions.NewConnectionError:
         answer.status_code = "Connection refused"
+        module_log.log(answer.status_code)
     except urllib3.exceptions.MaxRetryError:
         answer.status_code = "Maximum retries reached"
-    except Exception as e:
+        module_log.log(answer.status_code)
+    except requests.exceptions.RequestException as e:
         answer.status_code = "No DNS available"
+        module_log.log(answer.status_code)
         module_log.log(e)
+    finally:
+        module_log.log("Could not send request GET")
 
     return return_Status_Code(answer)
 
 
-def read_Message(offset=0, **kwargs):
+def read_Message(**kwargs):
     link = weblink + "getUpdates"
-    data = {
-        'offset': offset
-    }
+    data = {}
 
     for key, value in kwargs.items():
         data[key] = value
@@ -129,6 +140,8 @@ def download_File(source, filename, destination="images"):
         module_log.log(e)
     except IOError as e:
         module_log.log("Unable to download file.")
+    finally:
+        module_log.log("No Download possible")
 
     return False
 
@@ -197,7 +210,9 @@ def set_Last_Update_Id(id, table):
     except sqlite3.Error as e:
         module_log.log(e)
     except Exception as e:
-        module_log.log()
+        module_log.log(e)
+    finally:
+        module_log.log("set_Last_Update_Id not possible")
 
     return False
 
