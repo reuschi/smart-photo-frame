@@ -50,9 +50,11 @@ def telegram_GET(link, data):
     return return_Status_Code(answer)
 
 
-def read_Message(**kwargs):
+def read_Message(offset=0, **kwargs):
     link = weblink + "getUpdates"
-    data = {}
+    data = {
+        'offset': offset
+    }
 
     for key, value in kwargs.items():
         data[key] = value
