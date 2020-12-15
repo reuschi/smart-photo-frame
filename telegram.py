@@ -21,6 +21,9 @@ def telegram_POST(link, data=""):
         answer = requests.post(link, data=data)
     except requests.exceptions.ConnectionError:
         answer.status_code = "Connection refused"
+    except Exception as e:
+        answer.status_code = "No DNS available"
+        module_log.log(e)
 
     return return_Status_Code(answer)
 
@@ -30,20 +33,19 @@ def telegram_GET(link, data):
         answer = requests.get(link, params=data)
     except requests.exceptions.ConnectionError:
         answer.status_code = "Connection refused"
+    except Exception as e:
+        answer.status_code = "No DNS available"
+        module_log.log(e)
 
     return return_Status_Code(answer)
 
 
 def read_Message(**kwargs):
-    try:
-        link = weblink + "getUpdates"
-        data = {}
+    link = weblink + "getUpdates"
+    data = {}
 
-        for key, value in kwargs.items():
-            data[key] = value
-
-    except Exception as e:
-        module_log.log(e)
+    for key, value in kwargs.items():
+        data[key] = value
 
     return telegram_POST(link, data)
 
@@ -113,10 +115,10 @@ def download_File(source, filename, destination="images"):
         return True
     except Exception as e:
         module_log.log(e)
-        return False
     except IOError as e:
         module_log.log("Unable to download file.")
-        return False
+
+    return False
 
 
 def print_Content(answer):
@@ -126,32 +128,25 @@ def print_Content(answer):
 
 
 def send_Message(chat_id, message):
-    try:
-        link = weblink + "sendMessage"
-        data = {
-            "chat_id": chat_id,
-            "text": message
-        }
-        url = f"https://api.telegram.org/bot{token}/sendMessage"
-        #message = requests.post(url, params=data)
-        return telegram_POST(link, data)
-        #print(message)
-    except Exception as e:
-        module_log.log(e)
+    link = weblink + "sendMessage"
+    data = {
+        "chat_id": chat_id,
+        "text": message
+    }
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    #message = requests.post(url, params=data)
+    return telegram_POST(link, data)
+    #print(message)
 
 
 def send_Photo(chat_id, photo):
-    try:
-        link = weblink + "sendPhoto"
-        data = {
-            "chat_id": chat_id,
-            "photo": photo
-        }
+    link = weblink + "sendPhoto"
+    data = {
+        "chat_id": chat_id,
+        "photo": photo
+    }
 
-        return telegram_POST(link, data)
-
-    except Exception as e:
-        module_log.log(e)
+    return telegram_POST(link, data)
 
 
 def set_Last_Update_Id(id, table):
@@ -185,13 +180,17 @@ def set_Last_Update_Id(id, table):
         db_connection.commit()
 
         module_log.log("Id: {}".format(id))
+        return True
 
     except sqlite3.Error as e:
         module_log.log(e)
+    except Exception as e:
+        module_log.log()
+
+    return False
 
 
 def get_Last_Update_Id(table):
-    #global db_connection
     try:
         c = db_connection.cursor()
         module_log.log("get_Last_Update_Id")
@@ -203,16 +202,15 @@ def get_Last_Update_Id(table):
 
         if id != None:
             return id
-        else:
-            return 0
 
     except sqlite3.Error as e:
         module_log.log(type(e))
-        return 0
     except sqlite3.OperationalError as e:
         module_log.log(type(e))
         #if 'no such table' in e:
         #    print("Keine Tabelle gefunden" + e)
+
+    return False
 
 
 def main():
