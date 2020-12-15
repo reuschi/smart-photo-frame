@@ -115,13 +115,11 @@ if __name__ == '__main__':
 
         #print("i: " + str(i))
 
-        if i == 0:
+        if i >= 900:
             imap.main()
-
-        if i < 900:
-            i += 1
-        else:
             i = 0
+        else:
+            i += 1
 
 
         tg = telegram.main()
