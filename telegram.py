@@ -33,9 +33,11 @@ def telegram_POST(link, data=""):
         module_log.log(status_code)
         #return status_code
     except requests.exceptions as e:
+        status_code = "Any other Exception from Requests has been raised"
+        module_log.log(status_code)
         module_log.log(e)
-    finally:
-        status_code = "Could not send request POST"
+    except Exception as e:
+        status_code = "Unknown exception: {}".format(e)
         module_log.log(status_code)
         #return answer.status_code
 
@@ -258,7 +260,7 @@ def main():
         module_log.log("Telegram offset: {}".format(offset))
         answer = read_Message(offset=offset)
 
-        print(json.dumps(answer, indent=2))
+        #print(json.dumps(answer, indent=2))
 
         success = False
         if type(answer) != 'str':
