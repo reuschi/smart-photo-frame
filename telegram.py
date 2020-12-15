@@ -260,7 +260,7 @@ def main():
         module_log.log("Telegram offset: {}".format(offset))
         answer = read_Message(offset=offset)
 
-        #print(json.dumps(answer, indent=2))
+        print(json.dumps(answer, indent=2))
 
         success = False
 
