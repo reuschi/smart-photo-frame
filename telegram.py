@@ -275,9 +275,9 @@ def main():
                     success = True
 
                 #print(filename)
-                module_log.log(message['update_id'])
-                set_Last_Update_Id(message['update_id'] + 1, table)
-                db_connection.commit()
+            module_log.log(message['update_id'])
+            set_Last_Update_Id(message['update_id'] + 1, table)
+            db_connection.commit()
                 #return filename
 
             #set_Last_Update_Id(message['update_id'] + 1, table)
