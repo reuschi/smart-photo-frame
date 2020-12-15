@@ -1,4 +1,5 @@
 from imaplib import IMAP4_SSL
+from socket import gethostbyname,gaierror
 import email
 import email.header
 import os.path
@@ -72,7 +73,7 @@ def downloadAttachment(M, directory='images'):
 
 def initImap(username, password, hostname="imap.gmail.com"):
     try:
-        module_log.log("Tying to fetch new mails")
+        module_log.log("Trying to fetch new mails")
         Mail = IMAP4_SSL(host=hostname, port=993)
         rv, data = Mail.login(username, password)
 
@@ -95,7 +96,12 @@ def initImap(username, password, hostname="imap.gmail.com"):
             return "ERROR: Unable to open mailbox {}".format(rv)
 
         Mail.close()
+        Mail.logout()
+    except gaierror as e:
+        module_log.log("DNS name not resolveable. Try again later.")
     except IMAP4_SSL.error as e:
+        module_log.log(e)
+    except Exception as e:
         module_log.log(e)
 
 

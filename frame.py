@@ -32,7 +32,7 @@ def exit_Slideshow():
 
 def delete_Old_Files(directory="images", max=50):
     file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / "*.*")
-    
+    module_log.log("Files should be deleted")
 
     files = glob.glob(str(file_path))
     files.sort(key=os.path.getmtime, reverse=True)
