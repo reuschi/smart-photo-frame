@@ -17,10 +17,15 @@ db_connection = ""
 
 
 def telegram_POST(link, data=""):
+    answer = ""
     try:
         answer = requests.post(link, data=data)
     except requests.exceptions.ConnectionError:
         answer.status_code = "Connection refused"
+    except urllib3.exceptions.NewConnectionError:
+        answer.status_code = "Connection refused"
+    except urllib3.exceptions.MaxRetryError:
+        answer.status_code = "Maximum retries reached"
     except Exception as e:
         answer.status_code = "No DNS available"
         module_log.log(e)
@@ -29,10 +34,15 @@ def telegram_POST(link, data=""):
 
 
 def telegram_GET(link, data):
+    answer = ""
     try:
         answer = requests.get(link, params=data)
     except requests.exceptions.ConnectionError:
         answer.status_code = "Connection refused"
+    except urllib3.exceptions.NewConnectionError:
+        answer.status_code = "Connection refused"
+    except urllib3.exceptions.MaxRetryError:
+        answer.status_code = "Maximum retries reached"
     except Exception as e:
         answer.status_code = "No DNS available"
         module_log.log(e)
@@ -47,7 +57,7 @@ def read_Message(**kwargs):
     for key, value in kwargs.items():
         data[key] = value
 
-    return telegram_POST(link, data)
+    return telegram_POST(link, str(data))
 
 
 def return_Status_Code(answer):
