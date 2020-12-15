@@ -116,7 +116,7 @@ if __name__ == '__main__':
 
         #print("i: " + str(i))
 
-        if i >= 60:
+        if i >= 4:
             imap.main()
             i = 0
         else:
