@@ -12,7 +12,6 @@ token = "1290167159:AAGPAeuCiln78_O4nYA0WBE1Wq9PhQT_RDg"
 weblink = f"https://api.telegram.org/bot{token}/"
 filelink = f"https://api.telegram.org/file/bot{token}/"
 http = urllib3.PoolManager()
-#offset = 0
 db_connection = ""
 
 
@@ -23,15 +22,12 @@ def telegram_POST(link, data=""):
     except requests.exceptions.ConnectionError:
         status_code = "Connection refused"
         module_log.log(status_code)
-        #return answer.status_code
     except requests.exceptions.HTTPError:
         status_code = "Maximum retries reached"
         module_log.log(status_code)
-        #return status_code
     except requests.exceptions.RetryError:
         status_code = "No DNS available"
         module_log.log(status_code)
-        #return status_code
     except requests.exceptions as e:
         status_code = "Any other Exception from Requests has been raised"
         module_log.log(status_code)
@@ -39,7 +35,6 @@ def telegram_POST(link, data=""):
     except Exception as e:
         status_code = "Unknown exception: {}".format(e)
         module_log.log(status_code)
-        #return answer.status_code
 
     return return_Status_Code(answer)
 
@@ -50,26 +45,23 @@ def telegram_GET(link, data):
         answer = requests.get(link, params=data)
         return return_Status_Code(answer)
     except requests.exceptions.ConnectionError:
-        answer.status_code = "Connection refused"
-        module_log.log(answer.status_code)
-        return answer.status_code
-    except urllib3.exceptions.NewConnectionError:
-        answer.status_code = "Connection refused"
-        module_log.log(answer.status_code)
-        return answer.status_code
-    except urllib3.exceptions.MaxRetryError:
-        answer.status_code = "Maximum retries reached"
-        module_log.log(answer.status_code)
-        return answer.status_code
-    except requests.exceptions.RequestException as e:
-        answer.status_code = "No DNS available"
+        status_code = "Connection refused"
+        module_log.log(status_code)
+    except requests.exceptions.HTTPError:
+        status_code = "Maximum retries reached"
+        module_log.log(status_code)
+    except requests.exceptions.RetryError:
+        status_code = "No DNS available"
+        module_log.log(status_code)
+    except requests.exceptions as e:
+        status_code = "Any other Exception from Requests has been raised"
+        module_log.log(status_code)
         module_log.log(e)
-        module_log.log(answer.status_code)
-        return answer.status_code
-    finally:
-        answer.status_code = "Could not send request POST"
-        module_log.log(answer.status_code)
-        return answer.status_code
+    except Exception as e:
+        status_code = "Unknown exception: {}".format(e)
+        module_log.log(status_code)
+
+    return return_Status_Code(answer)
 
 
 def read_Message(**kwargs):
@@ -103,7 +95,7 @@ def return_Status_Code(answer):
     elif answer.status_code == 500:
         return "500 - An internal server error occurred while a request was being processed"
     else:
-        return "Unknown Error!" + str(answer)
+        return "Unknown Error! " + str(answer)
 
 
 def set_Webhook(url, **kwargs):
@@ -123,11 +115,7 @@ def get_File_Link(id):
             'file_id': id
         }
 
-        #for key, value in kwargs.items():
-        #    data[key] = value
-
         file_json = telegram_POST(link, data)
-        #print(file_json['result']['file_path'])
     except Exception as e:
         module_log.log(e)
 
@@ -167,10 +155,9 @@ def send_Message(chat_id, message):
         "chat_id": chat_id,
         "text": message
     }
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    #url = f"https://api.telegram.org/bot{token}/sendMessage"
     #message = requests.post(url, params=data)
     return telegram_POST(link, data)
-    #print(message)
 
 
 def send_Photo(chat_id, photo):
@@ -184,9 +171,9 @@ def send_Photo(chat_id, photo):
 
 
 def set_Last_Update_Id(id, table):
-    #global db_connection
     try:
         c = db_connection.cursor()
+        module_log.log("Setting last update id in database...")
 
         if id == None:
             module_log.log("ID is None")
@@ -197,15 +184,13 @@ def set_Last_Update_Id(id, table):
                                     last_update_id
                                 )""".format(table))
 
-        #last_update_id = c.execute("SELECT * FROM telegram_bot")
-        #print(c.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"))
         for row in c.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
             if row[0] == 1:
                 c.execute("UPDATE telegram_bot SET last_update_id='{}' WHERE id=1".format(id))
-                module_log.log("DB Update")
+                module_log.log("DB Update successful! ID: {}".format(id))
             else:
                 c.execute("INSERT INTO {} (last_update_id) VALUES ({})".format(table, id))
-                module_log.log("DB Insert")
+                module_log.log("DB Insert successful! ID: {}".format(id))
             #print("Eintrag 0: {}".format(row[1]))
     #    if c.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
         #c.execute("UPDATE telegram_bot SET last_update_id='{}' WHERE id=1".format(id))
@@ -213,15 +198,15 @@ def set_Last_Update_Id(id, table):
         #c.execute("INSERT OR REPLACE INTO {} (last_update_id) VALUES ({})".format(table, id))
         db_connection.commit()
 
-        module_log.log("Id: {}".format(id))
+        #module_log.log("Id: {}".format(id))
         return True
 
     except sqlite3.Error as e:
         module_log.log(e)
     except Exception as e:
         module_log.log(e)
-    finally:
-        module_log.log("set_Last_Update_Id not possible")
+
+    module_log.log("Setting last Update id was not possible.")
 
     return False
 
@@ -234,9 +219,7 @@ def get_Last_Update_Id(table):
         for row in c.execute("SELECT last_update_id FROM telegram_bot WHERE id=1"):
             id = row[0]
 
-        #db_connection.commit()
-
-        if id != None:
+        if id is not None:
             module_log.log("Done.")
             return id
 
@@ -244,8 +227,6 @@ def get_Last_Update_Id(table):
         module_log.log(e)
     except sqlite3.OperationalError as e:
         module_log.log(e)
-        #if 'no such table' in e:
-        #    print("Keine Tabelle gefunden" + e)
 
     module_log.log("Failed!")
     return False
@@ -299,7 +280,7 @@ def main():
                         filename = time.strftime("%Y%m%d_%H%M%S") + "_tg." + extension
 
                     if download_File(file, filename) == True:
-                        send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert.")
+                        send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert und die Präsentation neu gestartet.")
                         success = True
 
                     #print(filename)

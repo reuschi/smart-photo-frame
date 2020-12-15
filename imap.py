@@ -16,14 +16,14 @@ def downloadAttachment(M, directory='images'):
 
     rv, data = M.search(None, 'ALL')
     if rv != 'OK':
-        module_log.log("Request to Mailbox unsuccessfull!")
+        module_log.log("Request to Mailbox was not successfull!")
         return
 
     if not data[0]:
         module_log.log("No new mail found")
     else:
         for num in data[0].split():
-            module_log.log("Trying to donwload mail attachment...")
+            module_log.log("Trying to download mail attachment...")
 
             rv, data = M.fetch(num, '(RFC822)')
             if rv != 'OK':
@@ -103,7 +103,6 @@ def initImap(username, password, hostname="imap.gmail.com"):
         module_log.log(e)
     except Exception as e:
         module_log.log(e)
-
 
 
 def main():

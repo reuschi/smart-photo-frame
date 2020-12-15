@@ -11,8 +11,8 @@ import pathlib
 
 
 images = []
-timer = 8
-blend = 1000    # in milliseconds
+timer = 10
+blend = 750    # in milliseconds
 
 
 def get_Files():
@@ -46,10 +46,6 @@ def delete_Old_Files(directory="images", max=50):
 
     module_log.log("Deleting old files is done.")
 
-    #for file in files:
-    #print(files[10])
-    #print(files)
-
 
 def run_Slideshow(path='images'):
 
@@ -62,16 +58,8 @@ def run_Slideshow(path='images'):
     module_log.log("Slideshow running")
 
 
-    #output, error = process.communicate()
-    #print(output)
-
-    #os.system(bashCommand)
-
-    #bashCommand = "sudo fbi --noverbose -a -t 7 /home/pi/python/smart-photo-frame/images/*.jpg -T 1"
-    #os.system(bashCommand)
-
-
 def restart_Slideshow():
+    module_log.log("Slideshow restarting")
     exit_Slideshow()
     delete_Old_Files()
     run_Slideshow()
@@ -122,10 +110,8 @@ if __name__ == '__main__':
         else:
             i += 1
 
-
         tg = telegram.main()
-        if tg == True:
-            module_log.log("Slideshow restart")
+        if tg:
             restart_Slideshow()
 
         time.sleep(15)
