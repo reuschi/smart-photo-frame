@@ -21,22 +21,23 @@ def telegram_POST(link, data=""):
     try:
         answer = requests.post(link, data=data)
     except requests.exceptions.ConnectionError:
-        answer.status_code = "Connection refused"
-        module_log.log(answer.status_code)
-        return answer.status_code
+        status_code = "Connection refused"
+        module_log.log(status_code)
+        #return answer.status_code
     except requests.exceptions.HTTPError:
-        answer.status_code = "Maximum retries reached"
-        module_log.log(answer.status_code)
-        return status_code
+        status_code = "Maximum retries reached"
+        module_log.log(status_code)
+        #return status_code
     except requests.exceptions.RetryError:
-        answer.status_code = "No DNS available"
+        status_code = "No DNS available"
+        module_log.log(status_code)
+        #return status_code
+    except requests.exceptions as e:
         module_log.log(e)
-        module_log.log(answer.status_code)
-        return status_code
     finally:
-        answer.status_code = "Could not send request POST"
-        module_log.log(answer.status_code)
-        return answer.status_code
+        status_code = "Could not send request POST"
+        module_log.log(status_code)
+        #return answer.status_code
 
     return return_Status_Code(answer)
 
