@@ -59,7 +59,7 @@ def read_Message(offset=0, **kwargs):
     for key, value in kwargs.items():
         data[key] = value
 
-    return telegram_POST(link, str(data))
+    return telegram_POST(link, data)
 
 
 def return_Status_Code(answer):
@@ -232,7 +232,7 @@ def main():
         db_connection = sqlite3.connect(db_path)
         table = "telegram_bot"
 
-        offset = get_Last_Update_Id(table) + 1
+        offset = get_Last_Update_Id(table)
         module_log.log("Telegram offset: {}".format(offset))
         answer = read_Message(offset=offset)
 
