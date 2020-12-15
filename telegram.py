@@ -229,7 +229,7 @@ def set_Last_Update_Id(id, table):
 def get_Last_Update_Id(table):
     try:
         c = db_connection.cursor()
-        module_log.log("get_Last_Update_Id")
+        module_log.log("Getting last update id from database...")
 
         for row in c.execute("SELECT last_update_id FROM telegram_bot WHERE id=1"):
             id = row[0]
@@ -237,15 +237,17 @@ def get_Last_Update_Id(table):
         #db_connection.commit()
 
         if id != None:
+            module_log.log("Done.")
             return id
 
     except sqlite3.Error as e:
-        module_log.log(type(e))
+        module_log.log(e)
     except sqlite3.OperationalError as e:
-        module_log.log(type(e))
+        module_log.log(e)
         #if 'no such table' in e:
         #    print("Keine Tabelle gefunden" + e)
 
+    module_log.log("Failed!")
     return False
 
 
@@ -313,10 +315,10 @@ def main():
         else:
             return False
 
-    except TypeError:
-        print("TypeError")
+    except TypeError as e:
+        print("TypeError: ", e)
     except KeyboardInterrupt:
-        # Terminate the script and switch off all leds
+        # Terminate the script
         print("Press Ctrl-C to terminate while statement")
         db_connection.commit()
         #db_connection.close()
