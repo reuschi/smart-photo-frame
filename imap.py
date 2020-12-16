@@ -6,10 +6,18 @@ import os.path
 import time
 import module_log
 import pathlib
+import static_variables
 
 
-EMAIL_ACCOUNT = "spfreuschglock@gmail.com"
-EMAIL_PASS = "lxLtuywaOS1gklsw2N1P"
+# EMAIL_ACCOUNT = "spfreuschglock@gmail.com"
+# EMAIL_PASS = "lxLtuywaOS1gklsw2N1P"
+
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+EMAIL_ACCOUNT = static_variables.EMAIL_ACCOUNT
+EMAIL_PASS = static_variables.EMAIL_PASS
+
 
 
 def downloadAttachment(M, directory='images'):

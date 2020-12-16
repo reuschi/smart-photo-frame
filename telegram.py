@@ -6,9 +6,11 @@ import shutil
 import sqlite3
 import module_log
 import pathlib
+import static_variables
 
 
-token = "1290167159:AAGPAeuCiln78_O4nYA0WBE1Wq9PhQT_RDg"
+token = static_variables.token
+# token = "1290167159:AAGPAeuCiln78_O4nYA0WBE1Wq9PhQT_RDg"
 weblink = f"https://api.telegram.org/bot{token}/"
 filelink = f"https://api.telegram.org/file/bot{token}/"
 http = urllib3.PoolManager()
@@ -127,11 +129,11 @@ def download_File(source, filename, destination="images"):
         file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / destination / filename)
 
         url = filelink + source
-        #http = urllib3.PoolManager()
+        # http = urllib3.PoolManager()
 
         with http.request('GET', source, preload_content=False) as r, open(file, 'wb') as out_file:
             shutil.copyfileobj(r, out_file)
-        #urllib.request.urlretrieve(source, destination + filename)
+        # urllib.request.urlretrieve(source, destination + filename)
         return True
     except Exception as e:
         module_log.log(e)
@@ -145,7 +147,7 @@ def download_File(source, filename, destination="images"):
 
 def print_Content(answer):
     content = answer.json()
-    #data = json.loads(content)
+    # data = json.loads(content)
     module_log.log(content['result'].keys())
 
 
@@ -155,8 +157,8 @@ def send_Message(chat_id, message):
         "chat_id": chat_id,
         "text": message
     }
-    #url = f"https://api.telegram.org/bot{token}/sendMessage"
-    #message = requests.post(url, params=data)
+    # url = f"https://api.telegram.org/bot{token}/sendMessage"
+    # message = requests.post(url, params=data)
     return telegram_POST(link, data)
 
 
@@ -191,14 +193,14 @@ def set_Last_Update_Id(id, table):
             else:
                 c.execute("INSERT INTO {} (last_update_id) VALUES ({})".format(table, id))
                 module_log.log("DB Insert successful! ID: {}".format(id))
-            #print("Eintrag 0: {}".format(row[1]))
-    #    if c.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
-        #c.execute("UPDATE telegram_bot SET last_update_id='{}' WHERE id=1".format(id))
-    #    else:
-        #c.execute("INSERT OR REPLACE INTO {} (last_update_id) VALUES ({})".format(table, id))
+            # print("Eintrag 0: {}".format(row[1]))
+#        if c.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
+#           c.execute("UPDATE telegram_bot SET last_update_id='{}' WHERE id=1".format(id))
+#        else:
+#           c.execute("INSERT OR REPLACE INTO {} (last_update_id) VALUES ({})".format(table, id))
         db_connection.commit()
 
-        #module_log.log("Id: {}".format(id))
+        # module_log.log("Id: {}".format(id))
         return True
 
     except sqlite3.Error as e:
@@ -243,7 +245,7 @@ def main():
         module_log.log("Telegram offset: {}".format(offset))
         answer = read_Message(offset=offset)
 
-        #print(json.dumps(answer, indent=2))
+        # print(json.dumps(answer, indent=2))
 
         success = False
         if type(answer) != 'str':
@@ -261,7 +263,7 @@ def main():
                         send_Photo(id, file)
                         module_log.log("Batsignal")
                     module_log.log(message)
-                    #success = True
+                    # success = True
                 elif 'document' in message['message']:
                     module_log.log("Document: " + str(message['message']['document']))
                 elif 'photo' in message['message']:
@@ -269,7 +271,7 @@ def main():
                     #print("ID: " + str(message['message']['photo'][0]['file_id']))
                     file = get_File_Link(message['message']['photo'][2]['file_id'])
                     extension = file.split(".")[-1]
-                    #print(extension)
+                    # print(extension)
                     if 'caption' in message['message']:
                         caption = message['message']['caption']
                         caption = caption.replace(" ", "_")
@@ -287,10 +289,10 @@ def main():
                 module_log.log(message['update_id'])
                 set_Last_Update_Id(message['update_id'] + 1, table)
                 db_connection.commit()
-                #return filename
+                # return filename
 
-                #set_Last_Update_Id(message['update_id'] + 1, table)
-                #db_connection.commit()
+                # set_Last_Update_Id(message['update_id'] + 1, table)
+                # db_connection.commit()
 
             return success
         else:
@@ -302,7 +304,7 @@ def main():
         # Terminate the script
         print("Press Ctrl-C to terminate while statement")
         db_connection.commit()
-        #db_connection.close()
+        # db_connection.close()
 
     db_connection.commit()
     db_connection.close()

@@ -8,11 +8,12 @@ import telegram
 import module_log
 import glob
 import pathlib
+import static_variables
 
 
 images = []
-timer = 10
-blend = 750    # in milliseconds
+timer = static_variables.timer
+blend = static_variables.blend    # in milliseconds
 
 
 def get_Files():
@@ -104,7 +105,7 @@ if __name__ == '__main__':
 
         #print("i: " + str(i))
 
-        if i >= 4:
+        if i >= 7:
             imap.main()
             i = 0
         else:
