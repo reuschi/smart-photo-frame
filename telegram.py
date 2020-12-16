@@ -10,7 +10,6 @@ import static_variables
 
 
 token = static_variables.token
-# token = "1290167159:AAGPAeuCiln78_O4nYA0WBE1Wq9PhQT_RDg"
 weblink = f"https://api.telegram.org/bot{token}/"
 filelink = f"https://api.telegram.org/file/bot{token}/"
 http = urllib3.PoolManager()

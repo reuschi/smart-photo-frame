@@ -1,8 +1,10 @@
 import configparser
 import pathlib
 
+
 config = configparser.ConfigParser()
 config.read(pathlib.Path(pathlib.Path(__file__).parent.absolute() / 'config.ini'))
+
 
 # FRAME VARIABLES
 timer = 10

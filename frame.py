@@ -71,7 +71,7 @@ if __name__ == '__main__':
     restart_Slideshow()
 
     i = 0
-    time.sleep(15)
+    # time.sleep(15)
 
     while True:
         #print("Was möchten Sie tun?")
