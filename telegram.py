@@ -78,8 +78,6 @@ def read_Message(**kwargs):
 def return_Status_Code(answer):
 
     if answer.status_code == 200:
-        #reply = answer.json()
-        #return json.dumps(reply, indent=2)
         return answer.json()
     elif answer.status_code == 400:
         return "400 - Bad Request!"

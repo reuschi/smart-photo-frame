@@ -1,5 +1,3 @@
-
-#from pyrogram import Client, filters
 import os
 import subprocess
 import time
