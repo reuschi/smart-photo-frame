@@ -12,8 +12,8 @@ import static_variables
 # EMAIL_ACCOUNT = "spfreuschglock@gmail.com"
 # EMAIL_PASS = "lxLtuywaOS1gklsw2N1P"
 
-config = configparser.ConfigParser()
-config.read('config.ini')
+# config = configparser.ConfigParser()
+# config.read('config.ini')
 
 EMAIL_ACCOUNT = static_variables.EMAIL_ACCOUNT
 EMAIL_PASS = static_variables.EMAIL_PASS
