@@ -263,25 +263,27 @@ def main():
                     # success = True
                 elif 'document' in message['message']:
                     module_log.log("Document: " + str(message['message']['document']))
-                elif 'photo' in message['message'] and (message['message']['from']['id'] == '28068117'):
+                elif 'photo' in message['message']:
                     module_log.log("Photo: " + str(message['message']))
-                    file = get_File_Link(message['message']['photo'][2]['file_id'])
-                    extension = file.split(".")[-1]
-                    # print(extension)
-                    if 'caption' in message['message']:
-                        caption = message['message']['caption']
-                        caption = caption.replace(" ", "_")
-                        caption = caption.replace("/", "_")
-                        caption = caption.replace("\\", "_")
-                        filename = caption + "_tg" + extension
+                    if message['message']['from']['id'] == '28068117':
+                        file = get_File_Link(message['message']['photo'][2]['file_id'])
+                        extension = file.split(".")[-1]
+                        # print(extension)
+                        if 'caption' in message['message']:
+                            caption = message['message']['caption']
+                            caption = caption.replace(" ", "_")
+                            caption = caption.replace("/", "_")
+                            caption = caption.replace("\\", "_")
+                            filename = caption + "_tg" + extension
+                        else:
+                            filename = time.strftime("%Y%m%d_%H%M%S") + "_tg." + extension
+
+                        if download_File(file, filename) == True:
+                            send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert und die Präsentation neu gestartet.")
+                            success = True
                     else:
-                        filename = time.strftime("%Y%m%d_%H%M%S") + "_tg." + extension
+                        module_log.log("Sender not allowed to send pictures: {}".format(message['message']['from']['id']))
 
-                    if download_File(file, filename) == True:
-                        send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert und die Präsentation neu gestartet.")
-                        success = True
-
-                    #print(filename)
                 module_log.log(message['update_id'])
                 set_Last_Update_Id(message['update_id'] + 1, table)
                 db_connection.commit()
