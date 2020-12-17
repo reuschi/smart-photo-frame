@@ -10,6 +10,7 @@ import static_variables
 
 
 token = static_variables.token
+allowed_senders = static_variables.tg_allowed_senders
 weblink = f"https://api.telegram.org/bot{token}/"
 filelink = f"https://api.telegram.org/file/bot{token}/"
 http = urllib3.PoolManager()
@@ -265,7 +266,7 @@ def main():
                     module_log.log("Document: " + str(message['message']['document']))
                 elif 'photo' in message['message']:
                     module_log.log("Photo: " + str(message['message']))
-                    if message['message']['from']['id'] == 28068117:
+                    if message['message']['from']['id'] == 28068117 or message['message']['from']['id'] == 45509850:
                         file = get_File_Link(message['message']['photo'][2]['file_id'])
                         extension = file.split(".")[-1]
                         # print(extension)
