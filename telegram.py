@@ -136,8 +136,8 @@ def download_File(source, filename, destination="images"):
         module_log.log(e)
     except IOError as e:
         module_log.log("Unable to download file.")
-    finally:
-        module_log.log("No Download possible")
+    #finally:
+    #    module_log.log("No Download possible")
 
     return False
 
