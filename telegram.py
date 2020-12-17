@@ -265,7 +265,7 @@ def main():
                     module_log.log("Document: " + str(message['message']['document']))
                 elif 'photo' in message['message']:
                     module_log.log("Photo: " + str(message['message']))
-                    if message['message']['from']['id'] == '28068117':
+                    if message['message']['from']['id'] == 28068117:
                         file = get_File_Link(message['message']['photo'][2]['file_id'])
                         extension = file.split(".")[-1]
                         # print(extension)
