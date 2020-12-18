@@ -248,7 +248,7 @@ def main():
                     module_log.log("Document: " + str(message['message']['document']))
                 elif 'photo' in message['message']:
                     module_log.log("Photo: " + str(message['message']))
-                    if message['message']['from']['id'] in static_variables.tg_allowed_senders:
+                    if message['message']['from']['id'] in allowed_senders:
                         # only allow specific senders to send a photo to the frame
                         file = get_File_Link(message['message']['photo'][-1]['file_id'])
                         extension = file.split(".")[-1]
