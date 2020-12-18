@@ -70,7 +70,6 @@ if __name__ == '__main__':
     restart_Slideshow()
 
     i = 0
-    # time.sleep(15)
 
     while True:
         #print("Was möchten Sie tun?")
@@ -105,13 +104,14 @@ if __name__ == '__main__':
         #print("i: " + str(i))
 
         if i >= 7:
-            imap.main()
+            imap = imap.main()
             i = 0
         else:
             i += 1
 
         tg = telegram.main()
-        if tg:
+
+        if tg or imap:
             restart_Slideshow()
 
         time.sleep(15)
