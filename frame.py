@@ -14,11 +14,13 @@ timer = static_variables.timer
 blend = static_variables.blend    # in milliseconds
 
 
+"""
 def get_Files():
     for file in os.listdir(directory):
         images[file] = os.fsdecode(file)
 
     return images
+"""
 
 
 def exit_Slideshow():
@@ -37,7 +39,6 @@ def delete_Old_Files(directory="images", max=50):
     files.sort(key=os.path.getmtime, reverse=True)
 
     for x in range(max, len(files)):
-        #print(files[x], os.path.getmtime(files[x]))
         try:
             os.remove(files[x])
         except Exception as e:
@@ -47,10 +48,8 @@ def delete_Old_Files(directory="images", max=50):
 
 
 def run_Slideshow(path='images'):
-
     path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / path / "*.*")
     bashCommand = "sudo fbi --noverbose --random --blend {} -a -t {} -T 1 {}".format(blend, timer, path)
-    #bashCommand = ['fbi', '--noverbose', '-a', '-t', '7', '--vt', '1' 'images/1266.jpg']
     process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     time.sleep(0.5)
 
@@ -101,16 +100,12 @@ if __name__ == '__main__':
         #else:
         #    print("Keine Aktion durchführbar!")
 
-        #print("i: " + str(i))
-
         if i >= 7:
             mail = imap.main()
             i = 0
         else:
             i += 1
             mail = False
-
-        print(f"Mail: {mail}")
 
         tg = telegram.main()
 

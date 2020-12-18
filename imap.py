@@ -3,7 +3,6 @@ from socket import gethostbyname,gaierror
 import email
 import email.header
 import os.path
-import time
 import module_log
 import pathlib
 import static_variables
@@ -18,7 +17,7 @@ def downloadAttachment(M, directory='images'):
     rv, data = M.search(None, 'ALL')
     if rv != 'OK':
         module_log.log("Request to Mailbox was not successfull!")
-        return
+        return False
 
     if not data[0]:
         module_log.log("No new mail found")
@@ -26,15 +25,17 @@ def downloadAttachment(M, directory='images'):
         for num in data[0].split():
             module_log.log("Trying to download mail attachment...")
 
+            # try to fetch new mails
             rv, data = M.fetch(num, '(RFC822)')
             if rv != 'OK':
                 module_log.log("ERROR getting message", num)
-                return
+                return False
 
             msg = email.message_from_bytes(data[0][1])
 
             # downloading attachments
             for part in msg.walk():
+                # only download attachments, if they are real attachments
                 if part.get_content_maintype() == 'multipart':
                     continue
                 else:
@@ -47,35 +48,34 @@ def downloadAttachment(M, directory='images'):
                 fileName = "mail_" + part.get_filename()
                 fileExtension = os.path.splitext(fileName)[1]
 
-                # only download file if its extension is .jpg or .png
+                # only download file if its extension is .jpg, .JPG, .png or .PNG
                 if bool(fileName) and (fileExtension == ".jpg" or fileExtension == ".JPG" or fileExtension == ".png" or fileExtension == ".PNG"):
                     # define path where to store the file
-                    #filePath = os.path.join(directory, fileName)
                     filePath = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / fileName)
 
-                    # if file is not yet downloaded
                     if not os.path.isfile(filePath):
+                        # if file is not yet downloaded
                         fp = open(filePath, 'wb')
                         fp.write(part.get_payload(decode=True))
                         fp.close()
                         module_log.log("New file downloaded: {}".format(filePath))
                         success = True
                     elif os.path.isfile(filePath):
+                        # if file already exists, don't download it
                         module_log.log("Filename already exists!")
                     else:
+                        # if there is no new file to download
                         module_log.log("No new file downloaded!")
                 else:
+                    # if file extension is not allowed to download
                     module_log.log(f"File Extension not allowed ('{fileExtension}')")
 
-            #if msg == False:
-            #    logging.log("No new mails arrived.")
             try:
                 if rv == 'OK':
                     M.store(num, '+X-GM-LABELS', '\\Trash')
                     M.expunge()
             except Exception as e:
                 module_log.log(e)
-                #continue
 
     return success
 

@@ -14,10 +14,10 @@ allowed_senders = static_variables.tg_allowed_senders
 weblink = f"https://api.telegram.org/bot{token}/"
 filelink = f"https://api.telegram.org/file/bot{token}/"
 http = urllib3.PoolManager()
-db_connection = ""
+db_connection = None
 
 
-def telegram_POST(link, data=""):
+def telegram_POST(link, data={}):
     answer = requests.Response()
     try:
         answer = requests.post(link, data=data)
@@ -77,7 +77,6 @@ def read_Message(**kwargs):
 
 
 def return_Status_Code(answer):
-
     if answer.status_code == 200:
         return answer.json()
     elif answer.status_code == 400:
@@ -108,18 +107,17 @@ def set_Webhook(url, **kwargs):
         data[key] = value
 
 
-def get_File_Link(id):
+def get_File_Link(file_id):
     try:
         link = weblink + "getFile"
         data = {
-            'file_id': id
+            'file_id': file_id
         }
 
         file_json = telegram_POST(link, data)
+        return filelink + file_json['result']['file_path']
     except Exception as e:
         module_log.log(e)
-
-    return filelink + file_json['result']['file_path']
 
 
 def download_File(source, filename, destination="images"):
@@ -127,25 +125,21 @@ def download_File(source, filename, destination="images"):
         file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / destination / filename)
 
         url = filelink + source
-        # http = urllib3.PoolManager()
 
         with http.request('GET', source, preload_content=False) as r, open(file, 'wb') as out_file:
             shutil.copyfileobj(r, out_file)
-        # urllib.request.urlretrieve(source, destination + filename)
+
         return True
     except Exception as e:
         module_log.log(e)
     except IOError as e:
         module_log.log("Unable to download file.")
-    #finally:
-    #    module_log.log("No Download possible")
 
     return False
 
 
 def print_Content(answer):
     content = answer.json()
-    # data = json.loads(content)
     module_log.log(content['result'].keys())
 
 
@@ -155,8 +149,6 @@ def send_Message(chat_id, message):
         "chat_id": chat_id,
         "text": message
     }
-    # url = f"https://api.telegram.org/bot{token}/sendMessage"
-    # message = requests.post(url, params=data)
     return telegram_POST(link, data)
 
 
@@ -170,14 +162,14 @@ def send_Photo(chat_id, photo):
     return telegram_POST(link, data)
 
 
-def set_Last_Update_Id(id, table):
+def set_Last_Update_Id(update_id, table):
     try:
         c = db_connection.cursor()
         module_log.log("Setting last update id in database...")
 
-        if id == None:
+        if update_id is None:
             module_log.log("ID is None")
-            id = 0
+            update_id = 0
 
         c.execute("""CREATE TABLE IF NOT EXISTS {} (
                                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -186,19 +178,13 @@ def set_Last_Update_Id(id, table):
 
         for row in c.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
             if row[0] == 1:
-                c.execute("UPDATE telegram_bot SET last_update_id='{}' WHERE id=1".format(id))
-                module_log.log("DB Update successful! ID: {}".format(id))
+                c.execute("UPDATE telegram_bot SET last_update_id='{}' WHERE id=1".format(update_id))
+                module_log.log("DB Update successful! ID: {}".format(update_id))
             else:
-                c.execute("INSERT INTO {} (last_update_id) VALUES ({})".format(table, id))
-                module_log.log("DB Insert successful! ID: {}".format(id))
-            # print("Eintrag 0: {}".format(row[1]))
-#        if c.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
-#           c.execute("UPDATE telegram_bot SET last_update_id='{}' WHERE id=1".format(id))
-#        else:
-#           c.execute("INSERT OR REPLACE INTO {} (last_update_id) VALUES ({})".format(table, id))
-        db_connection.commit()
+                c.execute("INSERT INTO {} (last_update_id) VALUES ({})".format(table, update_id))
+                module_log.log("DB Insert successful! ID: {}".format(update_id))
 
-        # module_log.log("Id: {}".format(id))
+        db_connection.commit()
         return True
 
     except sqlite3.Error as e:
@@ -207,7 +193,6 @@ def set_Last_Update_Id(id, table):
         module_log.log(e)
 
     module_log.log("Setting last Update id was not possible.")
-
     return False
 
 
@@ -220,7 +205,7 @@ def get_Last_Update_Id(table):
             id = row[0]
 
         if id is not None:
-            module_log.log("Done.")
+            module_log.log(f"Done. Last Update ID is: {id}")
             return id
 
     except sqlite3.Error as e:
@@ -235,24 +220,22 @@ def get_Last_Update_Id(table):
 def main():
     try:
         global db_connection
+
+        table = "telegram_bot"
+        success = False
+
         db_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "telegram_bot.db")
         db_connection = sqlite3.connect(db_path)
-        table = "telegram_bot"
-
         offset = get_Last_Update_Id(table)
-        module_log.log("Telegram offset: {}".format(offset))
         answer = read_Message(offset=offset)
 
-        # print(json.dumps(answer, indent=2))
-
-        success = False
         if type(answer) != 'str':
             for message in answer['result']:
                 id = message['message']['from']['id']
                 if 'text' in message['message']:
                     module_log.log("Text: " + str(message['message']['text']))
                     if message['message']['text'] == "/help":
-                        send_Message(id, "/help - Zeige diese Hilfe an\n/batman - Ich Zeige dir, wer Batman ist!\n/batsignal - Rufe Batman""")
+                        send_Message(id, "/help - Zeige diese Hilfe an\n/batman - Ich zeige dir, wer Batman ist!\n/batsignal - Rufe Batman""")
                     elif message['message']['text'] == "/batman":
                         send_Message(id, "Ich bin Batman!")
                         module_log.log("Batman")
@@ -260,38 +243,35 @@ def main():
                         file = "https://upload.wikimedia.org/wikipedia/en/c/c6/Bat-signal_1989_film.jpg"
                         send_Photo(id, file)
                         module_log.log("Batsignal")
-                    module_log.log(message)
                     # success = True
                 elif 'document' in message['message']:
                     module_log.log("Document: " + str(message['message']['document']))
                 elif 'photo' in message['message']:
                     module_log.log("Photo: " + str(message['message']))
-                    if message['message']['from']['id'] == 28068117 or message['message']['from']['id'] == 45509850:
+                    if message['message']['from']['id'] in static_variables.tg_allowed_senders:
+                        # only allow specific senders to send a photo to the frame
                         file = get_File_Link(message['message']['photo'][-1]['file_id'])
                         extension = file.split(".")[-1]
-                        # print(extension)
                         if 'caption' in message['message']:
+                            # reformat the caption to use it as filename
                             caption = message['message']['caption']
                             caption = caption.replace(" ", "_")
                             caption = caption.replace("/", "_")
                             caption = caption.replace("\\", "_")
-                            filename = caption + "_tg" + extension
+                            caption = caption.replace("*", "-")
+                            filename = caption + "_tg." + extension
                         else:
                             filename = time.strftime("%Y%m%d_%H%M%S") + "_tg." + extension
 
-                        if download_File(file, filename) == True:
+                        if download_File(file, filename):
                             send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert und die Präsentation neu gestartet.")
                             success = True
                     else:
-                        module_log.log("Sender not allowed to send pictures: {}".format(message['message']['from']['id']))
+                        module_log.log("Sender not allowed to send pictures. ID: {}".format(message['message']['from']['id']))
 
                 module_log.log(message['update_id'])
                 set_Last_Update_Id(message['update_id'] + 1, table)
                 db_connection.commit()
-                # return filename
-
-                # set_Last_Update_Id(message['update_id'] + 1, table)
-                # db_connection.commit()
 
             return success
         else:
