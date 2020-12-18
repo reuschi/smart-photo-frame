@@ -7,11 +7,18 @@ import module_log
 import glob
 import pathlib
 import static_variables
+import RPi.GPIO as GPIO
 
 
 images = []
 timer = static_variables.timer
 blend = static_variables.blend    # in milliseconds
+
+# Initialize GPIOs für Buttons
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(13, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(26, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
 def exit_Slideshow():
@@ -60,42 +67,48 @@ def restart_Slideshow():
     run_Slideshow()
 
 
+def rise_Timer(channel):
+    # rise timer of presentation, to lower the frequency
+    global timer
+
+    timer += 2
+    restart_Slideshow()
+
+
+def lower_Timer(channel):
+    # lower timer of presentation, to rise the frequency
+    global timer
+
+    if timer >= 4:
+        timer -= 2
+        restart_Slideshow()
+    else:
+        module_log.log(f"Timer already at: {timer}. Lowering not possible!")
+
+
+def system_Shut_Down(channel):
+    # Shutdown system
+    module_log.log("!!!! SYSTEM IS GOING TO SHUTDOWN !!!!")
+    os.system("sudo poweroff")
+    time.sleep(1)
+
+
 if __name__ == '__main__':
 
     restart_Slideshow()
 
     i = 0
 
+    # Rise presentation Timer
+    GPIO.add_event_detect(13, GPIO.FALLING, callback=rise_Timer, bouncetime=400)
+
+    # Lower presentation timer
+    GPIO.add_event_detect(23, GPIO.FALLING, callback=lower_Timer, bouncetime=400)
+
+    # Shutdown the system
+    GPIO.add_event_detect(26, GPIO.FALLING, callback=system_Shut_Down, bouncetime=400)
+
     while True:
-        #print("Was möchten Sie tun?")
-        #print("------")
-        #print("1 - Slideshow starten")
-        #print("2 - Slideshow beenden")
-        #print("3 - Frequenz erhöhen (-2 Sekunden)")
-        #print("4 - Frequenz verringern (+2 Sekunden)")
-        #print("0 - Exit")
-
-        #func = input("Bitte wählen Sie: ")
-
-        #if func == "1":
-        #    run_Slideshow()
-        #elif func == "2":
-        #    exit_Slideshow()
-        #elif func == "3":
-        #    if timer >= 4:
-        #        timer -= 2
-        #    else:
-        #        print(f"Timer bereits bei: {timer}. Frequenzerhöhung nicht möglich!")
-        #    restart_Slideshow()
-        #elif func == "4":
-        #    timer += 2
-        #    restart_Slideshow()
-        #elif func == "0":
-        #    exit_Slideshow()
-        #    break
-        #else:
-        #    print("Keine Aktion durchführbar!")
-
         if i >= 7:
             mail = imap.main()
             i = 0
