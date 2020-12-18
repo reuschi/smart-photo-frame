@@ -110,6 +110,8 @@ if __name__ == '__main__':
             i += 1
             mail = False
 
+        print(f"Mail: {mail}")
+
         tg = telegram.main()
 
         if tg or mail:
