@@ -14,15 +14,6 @@ timer = static_variables.timer
 blend = static_variables.blend    # in milliseconds
 
 
-"""
-def get_Files():
-    for file in os.listdir(directory):
-        images[file] = os.fsdecode(file)
-
-    return images
-"""
-
-
 def exit_Slideshow():
     try:
         os.system("sudo killall -15 fbi")
@@ -32,8 +23,9 @@ def exit_Slideshow():
 
 
 def delete_Old_Files(directory="images", max=50):
+    module_log.log("Checking for old files to be deleted...")
     file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / "*.*")
-    module_log.log("Files should be deleted")
+    delete = False
 
     files = glob.glob(str(file_path))
     files.sort(key=os.path.getmtime, reverse=True)
@@ -41,10 +33,14 @@ def delete_Old_Files(directory="images", max=50):
     for x in range(max, len(files)):
         try:
             os.remove(files[x])
+            delete = True
         except Exception as e:
             module_log.log("Removing the file {} was NOT successful: {}".format(files[x], e))
 
-    module_log.log("Deleting old files is done.")
+    if delete:
+        module_log.log("Deleting old files is done.")
+    else:
+        module_log.log("There were no files to be deleted.")
 
 
 def run_Slideshow(path='images'):
