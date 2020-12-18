@@ -94,7 +94,7 @@ def system_Shut_Down(channel):
 
 
 if __name__ == '__main__':
-
+    module_log.log("!!!! SYSTEM STARTED !!!!")
     restart_Slideshow()
 
     i = 0
