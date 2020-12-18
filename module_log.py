@@ -8,7 +8,7 @@ logToScreen = static_variables.logToScreen
 logging_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
 
 
-def flush_Log_File(max=10000):
+def flush_Log_File(max=100000):
     with open(logging_path) as f:
         for i, l in enumerate(f):
             pass
@@ -47,7 +47,3 @@ def log(logging):
         log_To_File(logging)
     if logToScreen == True:
         log_To_Screen(logging)
-
-
-if __name__ == "__main__":
-    flush_Log_File(280)
