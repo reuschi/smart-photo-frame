@@ -58,6 +58,7 @@ def run_Slideshow(path='images'):
 
 
 def restart_Slideshow():
+    module_log.flush_Log_File()
     module_log.log("Slideshow restarting")
     exit_Slideshow()
     delete_Old_Files()

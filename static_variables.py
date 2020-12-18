@@ -27,3 +27,9 @@ elements = config.get('telegram', 'allowedsenders').split(',')
 tg_allowed_senders = [int(x) for x in elements]
 
 
+# LOGGING VARIABLES
+# ------------------------------
+logToFile = bool(config['logging']['logToFile'])
+logToScreen = bool(config['logging']['logToScreen'])
+#logToFile = True
+#logToScreen = True
