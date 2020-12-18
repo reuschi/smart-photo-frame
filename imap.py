@@ -113,7 +113,7 @@ def initImap(username, password, hostname="imap.gmail.com"):
 
 
 def main():
-    initImap(EMAIL_ACCOUNT, EMAIL_PASS)
+    return initImap(EMAIL_ACCOUNT, EMAIL_PASS)
 
 
 if __name__ == "__main__":
