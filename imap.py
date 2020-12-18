@@ -14,7 +14,7 @@ EMAIL_PASS = static_variables.EMAIL_PASS
 
 
 def downloadAttachment(M, directory='images'):
-
+    success = False
     rv, data = M.search(None, 'ALL')
     if rv != 'OK':
         module_log.log("Request to Mailbox was not successfull!")
@@ -48,7 +48,7 @@ def downloadAttachment(M, directory='images'):
                 fileExtension = os.path.splitext(fileName)[1]
 
                 # only download file if its extension is .jpg or .png
-                if bool(fileName) and (fileExtension == ".jpg" or fileExtension == ".png"):
+                if bool(fileName) and (fileExtension == ".jpg" or fileExtension == ".JPG" or fileExtension == ".png" or fileExtension == ".PNG"):
                     # define path where to store the file
                     #filePath = os.path.join(directory, fileName)
                     filePath = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / fileName)
@@ -59,6 +59,7 @@ def downloadAttachment(M, directory='images'):
                         fp.write(part.get_payload(decode=True))
                         fp.close()
                         module_log.log("New file downloaded: {}".format(filePath))
+                        success = True
                     else:
                         module_log.log("No new file downloaded!")
             #if msg == False:
@@ -71,8 +72,11 @@ def downloadAttachment(M, directory='images'):
                 module_log.log(e)
                 #continue
 
+    return success
+
 
 def initImap(username, password, hostname="imap.gmail.com"):
+    success = False
     try:
         module_log.log("Trying to fetch new mails")
         Mail = IMAP4_SSL(host=hostname, port=993)
@@ -92,7 +96,7 @@ def initImap(username, password, hostname="imap.gmail.com"):
         if rv == 'OK':
             module_log.log("Processing mailbox...")
 
-            downloadAttachment(Mail)
+            success = downloadAttachment(Mail)
         else:
             return "ERROR: Unable to open mailbox {}".format(rv)
 
@@ -104,6 +108,8 @@ def initImap(username, password, hostname="imap.gmail.com"):
         module_log.log(e)
     except Exception as e:
         module_log.log(e)
+
+    return success
 
 
 def main():
