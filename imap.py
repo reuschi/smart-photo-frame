@@ -60,8 +60,13 @@ def downloadAttachment(M, directory='images'):
                         fp.close()
                         module_log.log("New file downloaded: {}".format(filePath))
                         success = True
+                    elif os.path.isfile(filePath):
+                        module_log.log("Filename already exists!")
                     else:
                         module_log.log("No new file downloaded!")
+                else:
+                    module_log.log(f"File Extension not allowed ('{fileExtension}')")
+
             #if msg == False:
             #    logging.log("No new mails arrived.")
             try:
