@@ -8,26 +8,6 @@ logToScreen = static_variables.logToScreen
 logging_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
 
 
-def flush_Log_File(max=100000):
-    with open(logging_path) as f:
-        for i, l in enumerate(f):
-            pass
-
-    result = i + 1 - max
-
-    if result > 0:
-        with open(logging_path, "r+") as file:
-            line = file.readlines()
-            file.seek(0)
-            j = 1
-            for text in line:
-                if j > result:
-                    file.write(text)
-                j += 1
-            file.truncate()
-
-
-
 def log_To_Screen(logging, **kwargs):
     print(logging)
 
@@ -47,3 +27,26 @@ def log(logging):
         log_To_File(logging)
     if logToScreen == True:
         log_To_Screen(logging)
+
+
+def flush_Log_File(max=100000):
+    with open(logging_path) as f:
+        for i, l in enumerate(f):
+            pass
+
+    result = i + 1 - max
+
+    if result > 0:
+        log("Flushing log file")
+
+        with open(logging_path, "r+") as file:
+            line = file.readlines()
+            file.seek(0)
+            j = 1
+            for text in line:
+                if j > result:
+                    file.write(text)
+                j += 1
+            file.truncate()
+
+        log("Flushing done!")
