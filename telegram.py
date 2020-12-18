@@ -267,7 +267,7 @@ def main():
                 elif 'photo' in message['message']:
                     module_log.log("Photo: " + str(message['message']))
                     if message['message']['from']['id'] == 28068117 or message['message']['from']['id'] == 45509850:
-                        file = get_File_Link(message['message']['photo'][2]['file_id'])
+                        file = get_File_Link(message['message']['photo'][-1]['file_id'])
                         extension = file.split(".")[-1]
                         # print(extension)
                         if 'caption' in message['message']:
