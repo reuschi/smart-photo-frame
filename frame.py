@@ -72,6 +72,7 @@ def rise_Timer(channel):
     global timer
 
     timer += 2
+    module_log.log(f"Timer raised to: {timer}.")
     restart_Slideshow()
 
 
@@ -81,6 +82,7 @@ def lower_Timer(channel):
 
     if timer >= 4:
         timer -= 2
+        module_log.log(f"Timer lowered to: {timer}.")
         restart_Slideshow()
     else:
         module_log.log(f"Timer already at: {timer}. Lowering not possible!")
