@@ -16,9 +16,9 @@ blend = static_variables.blend    # in milliseconds
 
 # Initialize GPIOs für Buttons
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(13, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(26, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(9, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
 def exit_Slideshow():
@@ -100,13 +100,13 @@ if __name__ == '__main__':
     i = 0
 
     # Rise presentation Timer
-    GPIO.add_event_detect(13, GPIO.FALLING, callback=rise_Timer, bouncetime=400)
+    GPIO.add_event_detect(27, GPIO.FALLING, callback=rise_Timer, bouncetime=400)
 
     # Lower presentation timer
-    GPIO.add_event_detect(23, GPIO.FALLING, callback=lower_Timer, bouncetime=400)
+    GPIO.add_event_detect(19, GPIO.FALLING, callback=lower_Timer, bouncetime=400)
 
     # Shutdown the system
-    GPIO.add_event_detect(26, GPIO.FALLING, callback=system_Shut_Down, bouncetime=400)
+    GPIO.add_event_detect(9, GPIO.FALLING, callback=system_Shut_Down, bouncetime=400)
 
     while True:
         if i >= 7:
