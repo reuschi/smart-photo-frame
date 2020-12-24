@@ -8,8 +8,9 @@ config.read(pathlib.Path(pathlib.Path(__file__).parent.absolute() / 'config.ini'
 
 # FRAME VARIABLES
 # ------------------------------
-timer = 10
-blend = 750    # in milliseconds
+timer = int(config['frame']['timer'])
+blend = int(config['frame']['blend'])    # in milliseconds
+photocount = int(config['frame']['photocount'])
 
 
 # IMAP STATICS

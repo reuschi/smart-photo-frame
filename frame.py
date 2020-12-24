@@ -13,6 +13,7 @@ import RPi.GPIO as GPIO
 images = []
 timer = static_variables.timer
 blend = static_variables.blend    # in milliseconds
+photocount = static_variables.photocount
 
 # Initialize GPIOs für Buttons
 GPIO.setmode(GPIO.BCM)
@@ -29,7 +30,7 @@ def exit_Slideshow():
         module_log.log(e)
 
 
-def delete_Old_Files(directory="images", max=50):
+def delete_Old_Files(directory="images", max=photocount):
     module_log.log("Checking for old files to be deleted...")
     file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / "*.*")
     delete = False
