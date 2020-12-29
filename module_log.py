@@ -9,8 +9,7 @@ logging_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.
 
 
 def log_To_Screen(logging, **kwargs):
-    datetime = time.strftime("%b %d %H:%M:%S")
-    print(f"{datetime} - {logging}", flush=True)
+    print(f"{logging}", flush=True)
 
 
 def log_To_File(logging):
