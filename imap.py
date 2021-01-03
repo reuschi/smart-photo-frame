@@ -10,6 +10,7 @@ import static_variables
 
 EMAIL_ACCOUNT = static_variables.EMAIL_ACCOUNT
 EMAIL_PASS = static_variables.EMAIL_PASS
+allowedExtensions = static_variables.fileExtensions
 
 
 def downloadAttachment(M, directory='images'):
@@ -46,10 +47,10 @@ def downloadAttachment(M, directory='images'):
 
                 # get filename and extension of the downloadable file
                 fileName = "mail_" + part.get_filename()
-                fileExtension = os.path.splitext(fileName)[1]
+                fileExtension = os.path.splitext(fileName)[1].lower()
 
                 # only download file if its extension is .jpg, .JPG, .png or .PNG
-                if bool(fileName) and (fileExtension == ".jpg" or fileExtension == ".JPG" or fileExtension == ".png" or fileExtension == ".PNG"):
+                if bool(fileName) and (fileExtension in allowedExtensions):
                     # define path where to store the file
                     filePath = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / fileName)
 

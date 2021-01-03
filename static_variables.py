@@ -17,6 +17,8 @@ photocount = int(config['frame']['photocount'])
 # ------------------------------
 EMAIL_ACCOUNT = config['gmail']['account']
 EMAIL_PASS = config['gmail']['password']
+mail_elements = config.get('gmail', 'fileExtension').split(',')
+fileExtensions = [str(ext) for ext in mail_elements]
 
 
 # TELEGRAM STATICS
@@ -24,8 +26,8 @@ EMAIL_PASS = config['gmail']['password']
 token = config['telegram']['token']
 
 # Fetch allowed senders
-elements = config.get('telegram', 'allowedsenders').split(',')
-tg_allowed_senders = [int(x) for x in elements]
+tg_elements = config.get('telegram', 'allowedsenders').split(',')
+tg_allowed_senders = [int(x) for x in tg_elements]
 
 
 # LOGGING VARIABLES

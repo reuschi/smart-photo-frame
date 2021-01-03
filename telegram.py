@@ -7,6 +7,7 @@ import sqlite3
 import module_log
 import pathlib
 import static_variables
+import sys
 
 
 token = static_variables.token
@@ -37,8 +38,8 @@ def telegram_POST(link, data={}):
     except Exception as e:
         status_code = "Unknown exception: {}".format(e)
         module_log.log(status_code)
-
-    return return_Status_Code(answer)
+    finally:
+        return return_Status_Code(answer)
 
 
 def telegram_GET(link, data):
@@ -62,8 +63,8 @@ def telegram_GET(link, data):
     except Exception as e:
         status_code = "Unknown exception: {}".format(e)
         module_log.log(status_code)
-
-    return return_Status_Code(answer)
+    finally:
+        return return_Status_Code(answer)
 
 
 def read_Message(**kwargs):
@@ -184,13 +185,14 @@ def set_Last_Update_Id(update_id, table):
                 c.execute("INSERT INTO {} (last_update_id) VALUES ({})".format(table, update_id))
                 module_log.log("DB Insert successful! ID: {}".format(update_id))
 
-        db_connection.commit()
         return True
 
     except sqlite3.Error as e:
         module_log.log(e)
     except Exception as e:
-        module_log.log(e)
+        module_log.log(sys.exc_info()[0] + ": " + sys.exc_info()[1])
+    finally:
+        db_connection.commit()
 
     module_log.log("Setting last Update id was not possible.")
     return False
@@ -212,14 +214,15 @@ def get_Last_Update_Id(table):
         module_log.log(e)
     except sqlite3.OperationalError as e:
         module_log.log(e)
-
-    module_log.log("Failed!")
-    return False
+    else:
+        module_log.log(sys.exc_info()[0] + ": " + sys.exc_info()[1])
+        module_log.log("Failed!")
+        return False
 
 
 def main():
+    global db_connection
     try:
-        global db_connection
 
         table = "telegram_bot"
         success = False
@@ -232,21 +235,21 @@ def main():
         if type(answer) != 'str':
             for message in answer['result']:
                 id = message['message']['from']['id']
-                if 'text' in message['message']:
-                    module_log.log("Text: " + str(message['message']['text']))
-                    if message['message']['text'] == "/help":
-                        send_Message(id, "/help - Zeige diese Hilfe an\n/batman - Ich zeige dir, wer Batman ist!\n/batsignal - Rufe Batman""")
-                    elif message['message']['text'] == "/batman":
-                        send_Message(id, "Ich bin Batman!")
-                        module_log.log("Batman")
-                    elif message['message']['text'] == "/batsignal":
-                        file = "https://upload.wikimedia.org/wikipedia/en/c/c6/Bat-signal_1989_film.jpg"
-                        send_Photo(id, file)
-                        module_log.log("Batsignal")
+                #if 'text' in message['message']:
+                #    module_log.log("Text: " + str(message['message']['text']))
+                #    if message['message']['text'] == "/help":
+                #        send_Message(id, "/help - Zeige diese Hilfe an\n/batman - Ich zeige dir, wer Batman ist!\n/batsignal - Rufe Batman""")
+                #    elif message['message']['text'] == "/batman":
+                #        send_Message(id, "Ich bin Batman!")
+                #        module_log.log("Batman")
+                #    elif message['message']['text'] == "/batsignal":
+                #        file = "https://upload.wikimedia.org/wikipedia/en/c/c6/Bat-signal_1989_film.jpg"
+                #        send_Photo(id, file)
+                #        module_log.log("Batsignal")
                     # success = True
-                elif 'document' in message['message']:
-                    module_log.log("Document: " + str(message['message']['document']))
-                elif 'photo' in message['message']:
+                #elif 'document' in message['message']:
+                #    module_log.log("Document: " + str(message['message']['document']))
+                if 'photo' in message['message']:
                     module_log.log("Photo: " + str(message['message']))
                     if message['message']['from']['id'] in allowed_senders:
                         # only allow specific senders to send a photo to the frame
@@ -282,11 +285,11 @@ def main():
     except KeyboardInterrupt:
         # Terminate the script
         print("Press Ctrl-C to terminate while statement")
-        db_connection.commit()
+        # db_connection.commit()
         # db_connection.close()
-
-    db_connection.commit()
-    db_connection.close()
+    finally:
+        db_connection.commit()
+        db_connection.close()
 
 
 if __name__ == "__main__":
