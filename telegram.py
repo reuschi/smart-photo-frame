@@ -213,10 +213,12 @@ def get_Last_Update_Id(table):
     except sqlite3.Error as e:
         module_log.log(e)
         module_log.log("SQLite3.Error")
+        if "no such table" in e:
+            set_Last_Update_Id(0, table)
     except sqlite3.OperationalError as e:
         module_log.log(e)
         module_log.log("SQLite3.OperationalError")
-        set_Last_Update_Id(0, table)
+        #set_Last_Update_Id(0, table)
     else:
         #module_log.log(sys.exc_info()[0] + ": " + sys.exc_info()[1])
         module_log.log("Failed!")
