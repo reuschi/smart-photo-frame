@@ -17,7 +17,7 @@ photocount = int(config['frame']['photocount'])
 # ------------------------------
 EMAIL_ACCOUNT = config['gmail']['account']
 EMAIL_PASS = config['gmail']['password']
-mail_elements = config.get('gmail', 'fileExtension').split(',')
+mail_elements = config.get('gmail', 'fileExtensions').split(',')
 fileExtensions = [str(ext) for ext in mail_elements]
 
 
