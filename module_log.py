@@ -30,6 +30,7 @@ def log(logging):
 
 
 def flush_Log_File(max=100000):
+    # Delete lines of logging file that are over max amount
     with open(logging_path) as f:
         for i, l in enumerate(f):
             pass
