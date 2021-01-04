@@ -259,7 +259,7 @@ def main():
 
                     elif 'text' in message['message']:
                         module_log.log("Text: " + str(message['message']['text']))
-                        if "/adsndr" in message['message']['text']:
+                        if "/addsender" in message['message']['text']:
                             add_id = message['message']['text'].split(" ")
                             module_log.log(add_id)
                             static_variables.add_Value_To_Config("telegram", "allowedsenders", add_id[1])
@@ -269,7 +269,7 @@ def main():
                     #    module_log.log("Document: " + str(message['message']['document']))
 
                 else:
-                    module_log.log("Sender not allowed to send pictures. ID: {}".format(from_id))
+                    module_log.log("Sender not allowed to send photos. ID: {}".format(from_id))
                     send_Message(from_id, "Not allowed! ID: {}".format(from_id))
 
                 set_Last_Update_Id(message['update_id'] + 1, table)
