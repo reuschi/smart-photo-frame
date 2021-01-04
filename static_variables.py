@@ -3,7 +3,8 @@ import pathlib
 
 
 config = configparser.ConfigParser()
-config.read(pathlib.Path(pathlib.Path(__file__).parent.absolute() / 'config.ini'))
+config_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / 'config.ini')
+config.read(config_path)
 
 
 # FRAME VARIABLES
@@ -36,3 +37,10 @@ logToFile = bool(config['logging']['logToFile'])
 logToScreen = bool(config['logging']['logToScreen'])
 #logToFile = True
 #logToScreen = True
+
+
+def write_Config(section: str, parameter: str, value: str):
+    config[section][parameter] += "," + str(value)
+    with open(config_path, 'w') as conf:
+        config.write(conf)
+

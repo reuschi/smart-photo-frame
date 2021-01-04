@@ -277,6 +277,15 @@ def main():
                     else:
                         module_log.log("Sender not allowed to send pictures. ID: {}".format(message['message']['from']['id']))
 
+                elif 'text' in message['message']:
+                    module_log.log("Text: " + str(message['message']['text']))
+                    if "/adsndr" in message['message']['text']:
+                        #send_Message(id, "/help - Zeige diese Hilfe an\n/batman - Ich zeige dir, wer Batman ist!\n/batsignal - Rufe Batman""")
+                        add_id = message['message']['text'].split(" ")
+                        module_log.log(add_id)
+                        static_variables.write_Config(add_id[1])
+                        send_Message(id, "Neue ID ist aufgenommen.")
+
                 module_log.log(message['update_id'])
                 set_Last_Update_Id(message['update_id'] + 1, table)
                 db_connection.commit()
