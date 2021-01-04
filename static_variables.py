@@ -40,7 +40,7 @@ logToScreen = bool(config['logging']['logToScreen'])
 
 
 def write_Config(section: str, parameter: str, value: str):
-    config[section][parameter] += "," + str(value)
+    config[section][parameter] = str(value)
     with open(config_path, 'w') as conf:
         config.write(conf)
 

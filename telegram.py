@@ -283,7 +283,7 @@ def main():
                         #send_Message(id, "/help - Zeige diese Hilfe an\n/batman - Ich zeige dir, wer Batman ist!\n/batsignal - Rufe Batman""")
                         add_id = message['message']['text'].split(" ")
                         module_log.log(add_id)
-                        static_variables.write_Config("telegram", "allowedsenders" ,add_id[1])
+                        static_variables.write_Config("telegram", "allowedsenders" , static_variables.tg_elements + "," + str(add_id[1]))
                         send_Message(id, "Neue ID ist aufgenommen.")
 
                 module_log.log(message['update_id'])
