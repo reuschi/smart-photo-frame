@@ -35,11 +35,10 @@ tg_allowed_senders = [int(x) for x in tg_elements]
 # ------------------------------
 logToFile = bool(config['logging']['logToFile'])
 logToScreen = bool(config['logging']['logToScreen'])
-#logToFile = True
-#logToScreen = True
 
 
 def add_Value_To_Config(section: str, parameter: str, value: str):
+    # Add a new 'value' to a 'parameter' in 'section' in the config file
     config[section][parameter] += "," + str(value)
     with open(config_path, 'w') as conf:
         config.write(conf)

@@ -10,6 +10,7 @@ import static_variables
 import RPi.GPIO as GPIO
 
 
+# Initialize static variables
 images = []
 timer = static_variables.timer
 blend = static_variables.blend    # in milliseconds
@@ -23,6 +24,7 @@ GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
 def exit_Slideshow():
+    # Kill all running processes of the slideshow
     try:
         os.system("sudo killall -15 fbi")
         module_log.log("Slideshow killed")
@@ -31,6 +33,7 @@ def exit_Slideshow():
 
 
 def delete_Old_Files(directory="images", max=photocount):
+    # Delete older image files in 'directory' that are over amount 'max'
     module_log.log("Checking for old files to be deleted...")
     file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / "*.*")
     delete = False
@@ -62,7 +65,7 @@ def run_Slideshow(path='images'):
 
 
 def restart_Slideshow():
-    # Stop slideshow and restart the slideshow with the new files
+    # Stop slideshow and restart the slideshow with the new added image files
     module_log.flush_Log_File()
     module_log.log("Slideshow restarting")
     exit_Slideshow()
@@ -71,7 +74,7 @@ def restart_Slideshow():
 
 
 def rise_Timer(channel):
-    # Rise timer of presentation, to lower the frequency
+    # Rise timer of presentation, to lower the showing frequency
     global timer
 
     timer += 2
@@ -80,7 +83,7 @@ def rise_Timer(channel):
 
 
 def lower_Timer(channel):
-    # Lower timer of presentation, to rise the frequency
+    # Lower timer of presentation, to rise the showing frequency
     global timer
 
     if timer >= 4:
@@ -92,7 +95,7 @@ def lower_Timer(channel):
 
 
 def system_Shut_Down(channel):
-    # Shutdown system
+    # Shutdown the whole system
     module_log.log("!!!! SYSTEM IS GOING TO SHUTDOWN !!!!")
     os.system("sudo poweroff")
     time.sleep(1)
@@ -114,6 +117,7 @@ if __name__ == '__main__':
     GPIO.add_event_detect(9, GPIO.FALLING, callback=system_Shut_Down, bouncetime=400)
 
     while True:
+        # Request for new mails every 2 minutes
         if i >= 7:
             mail = imap.main()
             i = 0
@@ -121,8 +125,10 @@ if __name__ == '__main__':
             i += 1
             mail = False
 
+        # Request for new Telegram message
         tg = telegram.main()
 
+        # If new images received by mail or Telegram restart the slideshow with the new images
         if tg or mail:
             restart_Slideshow()
 
