@@ -272,12 +272,13 @@ def main():
                     #elif 'document' in message['message']:
                     #    module_log.log("Document: " + str(message['message']['document']))
 
-                    module_log.log(message['update_id'])
-                    set_Last_Update_Id(message['update_id'] + 1, table)
-                    db_connection.commit()
                 else:
                     module_log.log("Sender not allowed to send pictures. ID: {}".format(from_id))
                     send_Message(from_id, "Not allowed!")
+
+                module_log.log(message['update_id'])
+                set_Last_Update_Id(message['update_id'] + 1, table)
+                db_connection.commit()
 
             return success
         else:
