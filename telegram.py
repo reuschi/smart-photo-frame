@@ -240,10 +240,10 @@ def main():
         if type(answer) != 'str':
             for message in answer['result']:
                 from_id = message['message']['from']['id']
-                if 'photo' in message['message']:
-                    module_log.log("Photo: " + str(message['message']))
-                    if message['message']['from']['id'] in allowed_senders:
-                        # only allow specific senders to send a photo to the frame
+                if from_id in allowed_senders:
+                    # only allow specific senders to send a photo to the frame
+                    if 'photo' in message['message']:
+                        module_log.log("Photo: " + str(message['message']))
                         file = get_File_Link(message['message']['photo'][-1]['file_id'])
                         extension = file.split(".")[-1]
                         if 'caption' in message['message']:
@@ -260,23 +260,24 @@ def main():
                         if download_File(file, filename):
                             send_Message(from_id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert und die Präsentation neu gestartet.")
                             success = True
-                    else:
-                        module_log.log("Sender not allowed to send pictures. ID: {}".format(from_id))
 
-                elif 'text' in message['message']:
-                    module_log.log("Text: " + str(message['message']['text']))
-                    if "/adsndr" in message['message']['text']:
-                        add_id = message['message']['text'].split(" ")
-                        module_log.log(add_id)
-                        static_variables.add_Value_To_Config("telegram", "allowedsenders", add_id[1])
-                        send_Message(from_id, "Neue ID ist aufgenommen.")
+                    elif 'text' in message['message']:
+                        module_log.log("Text: " + str(message['message']['text']))
+                        if "/adsndr" in message['message']['text']:
+                            add_id = message['message']['text'].split(" ")
+                            module_log.log(add_id)
+                            static_variables.add_Value_To_Config("telegram", "allowedsenders", add_id[1])
+                            send_Message(from_id, "Neue ID ist aufgenommen.")
 
-                #elif 'document' in message['message']:
-                #    module_log.log("Document: " + str(message['message']['document']))
+                    #elif 'document' in message['message']:
+                    #    module_log.log("Document: " + str(message['message']['document']))
 
-                module_log.log(message['update_id'])
-                set_Last_Update_Id(message['update_id'] + 1, table)
-                db_connection.commit()
+                    module_log.log(message['update_id'])
+                    set_Last_Update_Id(message['update_id'] + 1, table)
+                    db_connection.commit()
+                else:
+                    module_log.log("Sender not allowed to send pictures. ID: {}".format(from_id))
+                    send_Message(from_id, "Not allowed!")
 
             return success
         else:
