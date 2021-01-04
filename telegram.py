@@ -238,8 +238,9 @@ def main():
                 from_id = message['message']['from']['id']
                 if from_id in allowed_senders:
                     # only allow specific senders to send a photo to the frame
+                    module_log.log("Message: " + str(message['message']))
                     if 'photo' in message['message']:
-                        module_log.log("Photo: " + str(message['message']))
+                        #module_log.log("Photo: " + str(message['message']))
                         file = get_File_Link(message['message']['photo'][-1]['file_id'])
                         extension = file.split(".")[-1]
                         if 'caption' in message['message']:
@@ -258,13 +259,17 @@ def main():
                             success = True
 
                     elif 'text' in message['message']:
-                        module_log.log("Text: " + str(message['message']['text']))
+                        #module_log.log("Text: " + str(message['message']['text']))
                         if "/addsender" in message['message']['text']:
                             add_id = message['message']['text'].split(" ")
                             module_log.log(f"Adding new sender to allowed sender list: {add_id[1]}")
                             static_variables.add_Value_To_Config("telegram", "allowedsenders", add_id[1])
                             send_Message(from_id, "Neue ID ist aufgenommen.")
                             module_log.log("Done.")
+                        elif message['message']['text'] == "/getident":
+                            ip = requests.get("https://api.ipify.org").text
+                            send_Message(from_id, ip)
+                            module_log.log(f"Request for Identity. Identity is: {ip}")
 
                     #elif 'document' in message['message']:
                     #    module_log.log("Document: " + str(message['message']['document']))
