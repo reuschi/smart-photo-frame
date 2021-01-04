@@ -37,7 +37,7 @@ def telegram_POST(link, data={}):
         module_log.log(status_code)
         module_log.log(e)
     except Exception as e:
-        status_code = "Unknown exception: {}".format(e)
+        status_code = f"Unknown exception: {e}"
         module_log.log(status_code)
     finally:
         return return_Status_Code(answer)
@@ -62,7 +62,7 @@ def telegram_GET(link, data):
         module_log.log(status_code)
         module_log.log(e)
     except Exception as e:
-        status_code = "Unknown exception: {}".format(e)
+        status_code = f"Unknown exception: {e}"
         module_log.log(status_code)
     finally:
         return return_Status_Code(answer)
@@ -186,19 +186,19 @@ def set_Last_Update_Id(update_id, table):
             update_id = 0
 
         # If there is no table in the database then create it first
-        c.execute("""CREATE TABLE IF NOT EXISTS {} (
+        c.execute(f"""CREATE TABLE IF NOT EXISTS {table} (
                                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                                     last_update_id
-                                )""".format(table))
+                                )""")
 
         # Write the last update id into the database. If the value already exists just update the value of the field
         for row in c.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
             if row[0] == 1:
-                c.execute("UPDATE telegram_bot SET last_update_id='{}' WHERE id=1".format(update_id))
-                module_log.log("DB Update successful! ID: {}".format(update_id))
+                c.execute(f"UPDATE telegram_bot SET last_update_id='{update_id}' WHERE id=1")
+                module_log.log(f"DB Update successful! ID: {update_id}")
             else:
-                c.execute("INSERT INTO {} (last_update_id) VALUES ({})".format(table, update_id))
-                module_log.log("DB Insert successful! ID: {}".format(update_id))
+                c.execute(f"INSERT INTO {table} (last_update_id) VALUES ({update_id})")
+                module_log.log(f"DB Insert successful! ID: {update_id}")
 
         return True
 
@@ -297,8 +297,8 @@ def main():
                     #    module_log.log("Document: " + str(message['message']['document']))
                 else:
                     # If no allowed sender was found in config
-                    module_log.log("Sender not allowed to send photos. ID: {}".format(from_id))
-                    send_Message(from_id, "Not allowed! ID: {}".format(from_id))
+                    module_log.log(f"Sender not allowed to send photos. ID: {from_id}")
+                    send_Message(from_id, f"Not allowed! ID: {from_id}")
 
                 set_Last_Update_Id(message['update_id'] + 1, table)
                 db_connection.commit()

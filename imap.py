@@ -61,7 +61,7 @@ def downloadAttachment(M, directory='images'):
                         fp = open(filePath, 'wb')
                         fp.write(part.get_payload(decode=True))
                         fp.close()
-                        module_log.log("New file downloaded: {}".format(filePath))
+                        module_log.log(f"New file downloaded: {filePath}")
                         success = True
                     elif os.path.isfile(filePath):
                         # If file already exists, don't download it
@@ -110,7 +110,7 @@ def initImap(username, password, hostname="imap.gmail.com"):
 
             success = downloadAttachment(Mail)
         else:
-            return "ERROR: Unable to open mailbox {}".format(rv)
+            return f"ERROR: Unable to open mailbox {rv}"
 
         # Close connection to mail server
         Mail.close()

@@ -46,7 +46,7 @@ def delete_Old_Files(directory="images", max=photocount):
             os.remove(files[x])
             delete = True
         except Exception as e:
-            module_log.log("Removing the file {} was NOT successful: {}".format(files[x], e))
+            module_log.log(f"Removing the file {files[x]} was NOT successful: {e}")
 
     if delete:
         module_log.log("Deleting old files is done.")
@@ -57,7 +57,7 @@ def delete_Old_Files(directory="images", max=photocount):
 def run_Slideshow(path='images'):
     # Start the slideshow with all present files in subfolder defined in variable 'path'
     path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / path / "*.*")
-    bashCommand = "sudo fbi --noverbose --random --blend {} -a -t {} -T 1 {}".format(blend, timer, path)
+    bashCommand = f"sudo fbi --noverbose --random --blend {blend} -a -t {timer} -T 1 {path}"
     process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     time.sleep(0.5)
 
