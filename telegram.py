@@ -239,21 +239,7 @@ def main():
 
         if type(answer) != 'str':
             for message in answer['result']:
-                id = message['message']['from']['id']
-                #if 'text' in message['message']:
-                #    module_log.log("Text: " + str(message['message']['text']))
-                #    if message['message']['text'] == "/help":
-                #        send_Message(id, "/help - Zeige diese Hilfe an\n/batman - Ich zeige dir, wer Batman ist!\n/batsignal - Rufe Batman""")
-                #    elif message['message']['text'] == "/batman":
-                #        send_Message(id, "Ich bin Batman!")
-                #        module_log.log("Batman")
-                #    elif message['message']['text'] == "/batsignal":
-                #        file = "https://upload.wikimedia.org/wikipedia/en/c/c6/Bat-signal_1989_film.jpg"
-                #        send_Photo(id, file)
-                #        module_log.log("Batsignal")
-                    # success = True
-                #elif 'document' in message['message']:
-                #    module_log.log("Document: " + str(message['message']['document']))
+                from_id = message['message']['from']['id']
                 if 'photo' in message['message']:
                     module_log.log("Photo: " + str(message['message']))
                     if message['message']['from']['id'] in allowed_senders:
@@ -272,19 +258,21 @@ def main():
                             filename = time.strftime("%Y%m%d_%H%M%S") + "_tg." + extension
 
                         if download_File(file, filename):
-                            send_Message(id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert und die Präsentation neu gestartet.")
+                            send_Message(from_id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert und die Präsentation neu gestartet.")
                             success = True
                     else:
-                        module_log.log("Sender not allowed to send pictures. ID: {}".format(message['message']['from']['id']))
+                        module_log.log("Sender not allowed to send pictures. ID: {}".format(from_id))
 
                 elif 'text' in message['message']:
                     module_log.log("Text: " + str(message['message']['text']))
                     if "/adsndr" in message['message']['text']:
-                        #send_Message(id, "/help - Zeige diese Hilfe an\n/batman - Ich zeige dir, wer Batman ist!\n/batsignal - Rufe Batman""")
                         add_id = message['message']['text'].split(" ")
                         module_log.log(add_id)
-                        static_variables.write_Config("telegram", "allowedsenders" , static_variables.tg_elements + "," + str(add_id[1]))
-                        send_Message(id, "Neue ID ist aufgenommen.")
+                        static_variables.add_Value_To_Config("telegram", "allowedsenders", add_id[1])
+                        send_Message(from_id, "Neue ID ist aufgenommen.")
+
+                #elif 'document' in message['message']:
+                #    module_log.log("Document: " + str(message['message']['document']))
 
                 module_log.log(message['update_id'])
                 set_Last_Update_Id(message['update_id'] + 1, table)
