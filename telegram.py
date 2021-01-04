@@ -46,7 +46,6 @@ def telegram_GET(link, data):
     answer = requests.Response()
     try:
         answer = requests.get(link, params=data)
-        return return_Status_Code(answer)
     except requests.exceptions.ConnectionError:
         status_code = "Connection refused"
         module_log.log(status_code)
@@ -131,10 +130,11 @@ def download_File(source, filename, destination="images"):
             shutil.copyfileobj(r, out_file)
 
         return True
-    except Exception as e:
-        module_log.log(e)
+
     except IOError as e:
         module_log.log("Unable to download file.")
+    except Exception as e:
+        module_log.log(e)
 
     return False
 
@@ -212,15 +212,11 @@ def get_Last_Update_Id(table):
 
     except sqlite3.Error as e:
         module_log.log(e)
-        module_log.log("SQLite3.Error")
         if "no such table" in str(e):
             set_Last_Update_Id(0, table)
     except sqlite3.OperationalError as e:
         module_log.log(e)
-        module_log.log("SQLite3.OperationalError")
-        #set_Last_Update_Id(0, table)
     else:
-        #module_log.log(sys.exc_info()[0] + ": " + sys.exc_info()[1])
         module_log.log("Failed!")
         return False
 
@@ -274,13 +270,13 @@ def main():
 
                 else:
                     module_log.log("Sender not allowed to send pictures. ID: {}".format(from_id))
-                    send_Message(from_id, "Not allowed!")
+                    send_Message(from_id, "Not allowed! ID: {}".format(from_id))
 
-                module_log.log(message['update_id'])
                 set_Last_Update_Id(message['update_id'] + 1, table)
                 db_connection.commit()
 
             return success
+
         else:
             return False
 
