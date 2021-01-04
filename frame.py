@@ -52,6 +52,7 @@ def delete_Old_Files(directory="images", max=photocount):
 
 
 def run_Slideshow(path='images'):
+    # Start the slideshow with all present files in subfolder defined in variable 'path'
     path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / path / "*.*")
     bashCommand = "sudo fbi --noverbose --random --blend {} -a -t {} -T 1 {}".format(blend, timer, path)
     process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -61,6 +62,7 @@ def run_Slideshow(path='images'):
 
 
 def restart_Slideshow():
+    # Stop slideshow and restart the slideshow with the new files
     module_log.flush_Log_File()
     module_log.log("Slideshow restarting")
     exit_Slideshow()
@@ -69,7 +71,7 @@ def restart_Slideshow():
 
 
 def rise_Timer(channel):
-    # rise timer of presentation, to lower the frequency
+    # Rise timer of presentation, to lower the frequency
     global timer
 
     timer += 2
@@ -78,7 +80,7 @@ def rise_Timer(channel):
 
 
 def lower_Timer(channel):
-    # lower timer of presentation, to rise the frequency
+    # Lower timer of presentation, to rise the frequency
     global timer
 
     if timer >= 4:
@@ -105,7 +107,7 @@ if __name__ == '__main__':
     # Rise presentation Timer
     GPIO.add_event_detect(27, GPIO.FALLING, callback=rise_Timer, bouncetime=400)
 
-    # Lower presentation timer
+    # Lower presentation Timer
     GPIO.add_event_detect(19, GPIO.FALLING, callback=lower_Timer, bouncetime=400)
 
     # Shutdown the system
