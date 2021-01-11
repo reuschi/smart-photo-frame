@@ -305,8 +305,9 @@ def main():
                                 if img != "/deleteimg":
                                     bashCommand = f"sudo rm /home/pi/python/smart-photo-frame/images/{img}"
                                     reply = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                    stdout, stderr = reply.communicate()
                                     # os.system(f"sudo rm /home/pi/python/smart-photo-frame/images/{img}")
-                                    if not str(reply).startswith("rm: "):
+                                    if stderr is None:
                                         module_log.log(f"{img} deleted.")
                                         send_Message(from_id, f"{img} erfolgreich gelöscht")
                                         success = True
