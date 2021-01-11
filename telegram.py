@@ -308,6 +308,7 @@ def main():
                                     stdout, stderr = reply.communicate()
                                     # os.system(f"sudo rm /home/pi/python/smart-photo-frame/images/{img}")
                                     if stderr is "b''":
+                                        print(stderr)
                                         send_Message(from_id, f"{img} erfolgreich gelöscht")
                                         module_log.log(f"{img} deleted.")
                                         success = True
