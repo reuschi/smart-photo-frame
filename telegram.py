@@ -307,7 +307,7 @@ def main():
                                     reply = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                                     stdout, stderr = reply.communicate()
                                     # os.system(f"sudo rm /home/pi/python/smart-photo-frame/images/{img}")
-                                    if stderr is None:
+                                    if stderr is "b''":
                                         send_Message(from_id, f"{img} erfolgreich gelöscht")
                                         module_log.log(f"{img} deleted.")
                                         success = True
