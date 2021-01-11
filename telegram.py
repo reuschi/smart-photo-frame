@@ -9,6 +9,7 @@ import pathlib
 import static_variables
 import sys
 import os
+import subprocess
 
 
 token = static_variables.token
@@ -302,9 +303,13 @@ def main():
                             images = message['message']['text'].split(" ")
                             for img in images:
                                 if img != "/deleteimg":
-                                    os.system(f"sudo rm /home/pi/python/smart-photo-frame/images/{img}")
-                                    module_log.log(f"{img} deleted.")
-                                    success = True
+                                    bashCommand = f"sudo rm /home/pi/python/smart-photo-frame/images/{img}"
+                                    reply = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                    # os.system(f"sudo rm /home/pi/python/smart-photo-frame/images/{img}")
+                                    if not str(reply).startswith("rm: "):
+                                        module_log.log(f"{img} deleted.")
+                                        send_Message(from_id, f"{img} erfolgreich gelöscht")
+                                        success = True
 
                     #elif 'document' in message['message']:
                         # If user sent photo as a document
