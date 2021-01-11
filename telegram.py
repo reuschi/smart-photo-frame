@@ -242,6 +242,15 @@ def get_Last_Update_Id(table):
         return False
 
 
+def replace_special_signs(input_text: str):
+    text = input_text.replace(" ", "_")
+    text = text.replace("/", "_")
+    text = text.replace("\\", "_")
+    text = text.replace("*", "-")
+
+    return text
+
+
 def main():
     global db_connection
     try:
@@ -267,11 +276,7 @@ def main():
                         extension = file.split(".")[-1]
                         if 'caption' in message['message']:
                             # Reformat the caption of the image to use it as filename
-                            caption = message['message']['caption']
-                            caption = caption.replace(" ", "_")
-                            caption = caption.replace("/", "_")
-                            caption = caption.replace("\\", "_")
-                            caption = caption.replace("*", "-")
+                            caption = replace_special_signs(message['message']['caption'])
                             filename = caption + "_tg." + extension
                         else:
                             # If no caption is set use the current date and time as filename
@@ -338,8 +343,6 @@ def main():
     except KeyboardInterrupt:
         # Terminate the script
         print("Press Ctrl-C to terminate while statement")
-        # db_connection.commit()
-        # db_connection.close()
     finally:
         db_connection.commit()
         db_connection.close()
