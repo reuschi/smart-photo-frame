@@ -8,6 +8,7 @@ import module_log
 import pathlib
 import static_variables
 import sys
+import os
 
 
 token = static_variables.token
@@ -280,7 +281,7 @@ def main():
                             success = True
                     elif 'text' in message['message']:
                         # If user sent text
-                        if "/addsender" in message['message']['text']:
+                        if message['message']['text'].startswith("/addsender"):
                             # Add new senders into the config file
                             add_id = message['message']['text'].split(" ")
                             module_log.log(f"Adding new sender to allowed sender list: {add_id[1]}")
@@ -292,6 +293,19 @@ def main():
                             ip = requests.get("https://api.ipify.org").text
                             send_Message(from_id, ip)
                             module_log.log(f"Request for Identity. Identity is: {ip}")
+                        elif message['message']['text'] == "/listimg":
+                            # List all images stored on frame
+                            files = os.listdir("/home/pi/python/smart-photo-frame/images/")
+                            send_Message(from_id, str(files))
+                        elif message['message']['text'].startswith("/deleteimg"):
+                            # Delete images from frame and restart presentation
+                            images = message['message']['text'].split(" ")
+                            for img in images:
+                                if img != "/deleteimg":
+                                    os.system(f"sudo rm /home/pi/python/smart-photo-frame/images/{img}")
+                                    module_log.log(f"{img} deleted.")
+                                    success = True
+
                     #elif 'document' in message['message']:
                         # If user sent photo as a document
                     #    module_log.log("Document: " + str(message['message']['document']))
