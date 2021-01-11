@@ -308,9 +308,13 @@ def main():
                                     stdout, stderr = reply.communicate()
                                     # os.system(f"sudo rm /home/pi/python/smart-photo-frame/images/{img}")
                                     if stderr is None:
-                                        module_log.log(f"{img} deleted.")
                                         send_Message(from_id, f"{img} erfolgreich gelöscht")
+                                        module_log.log(f"{img} deleted.")
                                         success = True
+                                    else:
+                                        send_Message(from_id, f"{stderr}")
+                                        module_log.log(f"No image file deleted.")
+
 
                     #elif 'document' in message['message']:
                         # If user sent photo as a document
