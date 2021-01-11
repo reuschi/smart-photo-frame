@@ -244,7 +244,6 @@ def get_Last_Update_Id(table):
 
 def main():
     global db_connection
-    global allowed_senders
     try:
         table = "telegram_bot"
         success = False
@@ -290,7 +289,6 @@ def main():
                             module_log.log(f"Adding new sender to allowed sender list: {add_id[1]}")
                             static_variables.add_Value_To_Config("telegram", "allowedsenders", add_id[1])
                             allowed_senders.append(int(add_id[1]))
-                            print(allowed_senders)
                             send_Message(from_id, "Neue ID ist aufgenommen.")
                             module_log.log("Done.")
                         elif message['message']['text'] == "/getident":
