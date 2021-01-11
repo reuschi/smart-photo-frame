@@ -29,6 +29,8 @@ token = config['telegram']['token']
 # Fetch allowed senders
 tg_elements = config.get('telegram', 'allowedsenders').split(',')
 tg_allowed_senders = [int(x) for x in tg_elements]
+tg_admin_elements = config.get('telegram', 'admins').split(',')
+tg_allowed_admins = [int(x) for x in tg_admin_elements]
 
 
 # LOGGING VARIABLES

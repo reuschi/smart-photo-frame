@@ -14,6 +14,7 @@ import subprocess
 
 token = static_variables.token
 allowed_senders = static_variables.tg_allowed_senders
+allowed_admins = static_variables.tg_allowed_admins
 weblink = f"https://api.telegram.org/bot{token}/"
 filelink = f"https://api.telegram.org/file/bot{token}/"
 http = urllib3.PoolManager()
@@ -280,7 +281,7 @@ def main():
                             # If download of the sent photo is successfully reply to it
                             send_Message(from_id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert und die Präsentation neu gestartet.")
                             success = True
-                    elif 'text' in message['message']:
+                    elif 'text' in message['message'] and from_id in allowed_admins:
                         # If user sent text
                         if message['message']['text'].startswith("/addsender"):
                             # Add new senders into the config file
