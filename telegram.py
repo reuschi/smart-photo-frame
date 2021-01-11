@@ -301,21 +301,19 @@ def main():
                         elif message['message']['text'].startswith("/deleteimg"):
                             # Delete images from frame and restart presentation
                             images = message['message']['text'].split(" ")
+                            images.remove("/deleteimg")
                             for img in images:
-                                if img != "/deleteimg":
-                                    bashCommand = f"sudo rm /home/pi/python/smart-photo-frame/images/{img}"
-                                    reply = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                                    stdout, stderr = reply.communicate()
-                                    # os.system(f"sudo rm /home/pi/python/smart-photo-frame/images/{img}")
-                                    encoding = 'utf-8'
-                                    if str(stderr, encoding) is "":
-                                        send_Message(from_id, f"{img} erfolgreich gelöscht")
-                                        module_log.log(f"{img} deleted.")
-                                        success = True
-                                    else:
-                                        send_Message(from_id, f"{stderr}")
-                                        module_log.log(f"No image file deleted.")
-
+                                bashCommand = f"sudo rm /home/pi/python/smart-photo-frame/images/{img}"
+                                reply = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                stdout, stderr = reply.communicate()
+                                encoding = 'utf-8'
+                                if str(stderr, encoding) is "":
+                                    send_Message(from_id, f"{img} erfolgreich gelöscht")
+                                    module_log.log(f"{img} deleted.")
+                                    success = True
+                                else:
+                                    send_Message(from_id, str(stderr, encoding))
+                                    module_log.log(f"No image file deleted.")
 
                     #elif 'document' in message['message']:
                         # If user sent photo as a document
