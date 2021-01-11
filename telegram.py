@@ -288,6 +288,7 @@ def main():
                             add_id = message['message']['text'].split(" ")
                             module_log.log(f"Adding new sender to allowed sender list: {add_id[1]}")
                             static_variables.add_Value_To_Config("telegram", "allowedsenders", add_id[1])
+                            allowed_senders.append(add_id[1])
                             send_Message(from_id, "Neue ID ist aufgenommen.")
                             module_log.log("Done.")
                         elif message['message']['text'] == "/getident":
