@@ -21,11 +21,11 @@ http = urllib3.PoolManager()
 db_connection = None
 
 
-def telegram_POST(link, data={}):
+def telegram_POST(link, data={}, file=None):
     # Requesting Telegram API via POST Method
     answer = requests.Response()
     try:
-        answer = requests.post(link, data=data)
+        answer = requests.post(link, data=data, files=file)
     except requests.exceptions.ConnectionError:
         status_code = "Connection refused"
         module_log.log(status_code)
@@ -177,6 +177,20 @@ def send_Photo(chat_id, photo):
     return telegram_POST(link, data)
 
 
+def send_File(chat_id, file):
+    link = weblink + "sendDocument"
+
+    data = {
+        "chat_id": chat_id
+    }
+
+    document = {
+        "document": (file, open(file, "rb"))
+    }
+
+    return telegram_POST(link, data, document)
+
+
 def set_Last_Update_Id(update_id, table):
     # To set last requested message id in the database
     try:
@@ -321,6 +335,13 @@ def main():
                                 else:
                                     send_Message(from_id, str(stderr, encoding))
                                     module_log.log(f"No image file deleted.")
+                        elif message['message']['text'] == "/getlog":
+                            file = "/home/pi/python/smart-photo-frame/message.log"
+                            if send_File(from_id, file):
+                                module_log.log(f"Log File sent.")
+                        elif message['message']['text'] == "/getconfig":
+                            pass
+
 
                     #elif 'document' in message['message']:
                         # If user sent photo as a document
