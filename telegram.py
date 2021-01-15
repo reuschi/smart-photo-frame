@@ -324,8 +324,8 @@ def main():
                             for ext in extension:
                                 ext = ext.replace(".", "")
                                 static_variables.add_Value_To_Config("gmail", "fileExtensions", ext)
-                                send_Message(from_id, "Neue Extension(s) aufgenommen.")
-                                module_log.log(f"New extension(s) added: {extension}")
+                            send_Message(from_id, "Neue Extension(s) aufgenommen.")
+                            module_log.log(f"New extension(s) added: {extension}")
                         elif message['message']['text'] == "/getident":
                             # Get current external ip address
                             ip = requests.get("https://api.ipify.org").text
