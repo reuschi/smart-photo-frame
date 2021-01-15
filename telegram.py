@@ -190,7 +190,7 @@ def send_File(chat_id, file):
     }
 
     return_value = telegram_POST(link, data, document)
-    print(return_value)
+    print(return_value['result']['document'])
     return return_value
 
 
