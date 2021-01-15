@@ -21,6 +21,7 @@ http = urllib3.PoolManager()
 db_connection = None
 
 
+
 def telegram_POST(link, data={}, file=None):
     # Requesting Telegram API via POST Method
     answer = requests.Response()
@@ -317,14 +318,16 @@ def main():
                             module_log.log(f"Request for Identity. Identity is: {ip}")
                         elif message['message']['text'] == "/listimg":
                             # List all images stored on frame
-                            files = os.listdir("/home/pi/python/smart-photo-frame/images/")
+                            path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images")
+                            files = os.listdir(path)
                             send_Message(from_id, str(files))
                         elif message['message']['text'].startswith("/deleteimg"):
                             # Delete images from frame and restart presentation
                             images = message['message']['text'].split(" ")
                             images.remove("/deleteimg")
                             for img in images:
-                                bashCommand = f"sudo rm /home/pi/python/smart-photo-frame/images/{img}"
+                                image_file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / img)
+                                bashCommand = f"sudo rm {image_file}"
                                 reply = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                                 stdout, stderr = reply.communicate()
                                 encoding = 'utf-8'
@@ -336,11 +339,13 @@ def main():
                                     send_Message(from_id, str(stderr, encoding))
                                     module_log.log(f"No image file deleted.")
                         elif message['message']['text'] == "/getlog":
-                            file = "/home/pi/python/smart-photo-frame/message.log"
+                            file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
                             if send_File(from_id, file):
                                 module_log.log(f"Log File sent.")
                         elif message['message']['text'] == "/getconfig":
-                            pass
+                            file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "config.ini")
+                            if send_File(from_id, file):
+                                module_log.log(f"Configuration File sent.")
 
 
                     #elif 'document' in message['message']:
