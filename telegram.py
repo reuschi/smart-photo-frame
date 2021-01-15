@@ -326,7 +326,7 @@ def main():
                             images = message['message']['text'].split(" ")
                             images.remove("/deleteimg")
                             for img in images:
-                                image_file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / img)
+                                image_file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / img)
                                 bashCommand = f"sudo rm {image_file}"
                                 reply = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                                 stdout, stderr = reply.communicate()
@@ -340,6 +340,8 @@ def main():
                                     module_log.log(f"No image file deleted.")
                         elif message['message']['text'] == "/getlog":
                             file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
+                            sent_file = send_File(from_id, file)
+                            print(sent_file)
                             if send_File(from_id, file):
                                 module_log.log(f"Log File sent.")
                         elif message['message']['text'] == "/getconfig":
