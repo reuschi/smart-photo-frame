@@ -1,5 +1,4 @@
 import requests
-import json
 import time
 import urllib3
 import shutil
@@ -179,6 +178,7 @@ def send_Photo(chat_id, photo):
 
 
 def send_File(chat_id, file):
+    # Send a byte file as a reply
     link = weblink + "sendDocument"
 
     data = {
@@ -280,6 +280,8 @@ def main():
         db_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "telegram_bot.db")
         db_connection = sqlite3.connect(db_path)
         offset = get_Last_Update_Id(table)
+
+        # Read the latest messages
         answer = read_Message(offset=offset)
 
         # answer must not be a str
@@ -315,6 +317,14 @@ def main():
                             allowed_senders.append(int(add_id[1]))
                             send_Message(from_id, "Neue ID ist aufgenommen.")
                             module_log.log("Done.")
+                        elif message['message']['text'].startswith("/addextension"):
+                            # Add new extension(s) to the allowed list and restart the frame afterwards
+                            extension = message['message']['text'].split(" ")
+                            extension.remove("/addextension")
+                            for ext in extension:
+                                static_variables.add_Value_To_Config("gmail", "fileExtensions", ext)
+                                send_Message(from_id, "Neue Extension(s) aufgenommen.")
+                                module_log.log(f"New extension(s) added: {extension}")
                         elif message['message']['text'] == "/getident":
                             # Get current external ip address
                             ip = requests.get("https://api.ipify.org").text
@@ -343,14 +353,15 @@ def main():
                                     send_Message(from_id, str(stderr, encoding))
                                     module_log.log(f"No image file deleted.")
                         elif message['message']['text'] == "/getlog":
+                            # Send log file as attachment
                             file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
                             if send_File(from_id, file):
                                 module_log.log(f"Log File sent.")
                         elif message['message']['text'] == "/getconfig":
+                            # Send configuration file as attachment
                             file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "config.ini")
                             if send_File(from_id, file):
                                 module_log.log(f"Configuration File sent.")
-
 
                     #elif 'document' in message['message']:
                         # If user sent photo as a document
