@@ -340,6 +340,7 @@ def main():
                                     module_log.log(f"No image file deleted.")
                         elif message['message']['text'] == "/getlog":
                             file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
+                            print(file)
                             sent_file = send_File(from_id, file)
                             print(sent_file)
                             if send_File(from_id, file):
