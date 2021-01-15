@@ -189,7 +189,9 @@ def send_File(chat_id, file):
         "document": (str(file), open(str(file), "rb"))
     }
 
-    return telegram_POST(link, data, document)
+    return_value = telegram_POST(link, data, document)
+    print(return_value)
+    return return_value
 
 
 def set_Last_Update_Id(update_id, table):
@@ -340,9 +342,7 @@ def main():
                                     module_log.log(f"No image file deleted.")
                         elif message['message']['text'] == "/getlog":
                             file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
-                            print(file)
                             sent_file = send_File(from_id, file)
-                            print(sent_file)
                             if send_File(from_id, file):
                                 module_log.log(f"Log File sent.")
                         elif message['message']['text'] == "/getconfig":
