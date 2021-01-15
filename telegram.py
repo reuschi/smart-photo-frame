@@ -322,6 +322,7 @@ def main():
                             extension = message['message']['text'].split(" ")
                             extension.remove("/addextension")
                             for ext in extension:
+                                ext = ext.replace(".", "")
                                 static_variables.add_Value_To_Config("gmail", "fileExtensions", ext)
                                 send_Message(from_id, "Neue Extension(s) aufgenommen.")
                                 module_log.log(f"New extension(s) added: {extension}")
