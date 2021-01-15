@@ -186,7 +186,7 @@ def send_File(chat_id, file):
     }
 
     document = {
-        "document": (file, open(file, "rb"))
+        "document": (str(file), open(str(file), "rb"))
     }
 
     return telegram_POST(link, data, document)
