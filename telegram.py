@@ -319,8 +319,8 @@ def main():
                             module_log.log("Done.")
                         elif message['message']['text'].startswith("/addextension"):
                             # Add new extension(s) to the allowed list and restart the frame afterwards
-                            extension = message['message']['text'].split(" ")
-                            extension.remove("/addextension")
+                            extension = message['message']['text'].split(" ")[1:]
+                            #extension.remove("/addextension")
                             for ext in extension:
                                 ext = ext.replace(".", "")
                                 static_variables.add_Value_To_Config("gmail", "fileExtensions", ext)
@@ -338,8 +338,8 @@ def main():
                             send_Message(from_id, str(files))
                         elif message['message']['text'].startswith("/deleteimg"):
                             # Delete images from frame and restart presentation
-                            images = message['message']['text'].split(" ")
-                            images.remove("/deleteimg")
+                            images = message['message']['text'].split(" ")[1:]
+                            #images.remove("/deleteimg")
                             for img in images:
                                 image_file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / img)
                                 bashCommand = f"sudo rm {image_file}"
