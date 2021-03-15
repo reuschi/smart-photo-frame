@@ -8,11 +8,11 @@ logToScreen = static_variables.logToScreen
 logging_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
 
 
-def log_To_Screen(logging, **kwargs):
+def log_to_screen(logging, **kwargs):
     print(f"{logging}", flush=True)
 
 
-def log_To_File(logging):
+def log_to_file(logging):
     # logging_path = "/home/pi/python/smart-photo-frame/" + "message.log"
     # logging_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
     logfile = open(logging_path, "a")
@@ -24,12 +24,12 @@ def log_To_File(logging):
 
 def log(logging):
     if logToFile == True:
-        log_To_File(logging)
+        log_to_file(logging)
     if logToScreen == True:
-        log_To_Screen(logging)
+        log_to_screen(logging)
 
 
-def flush_Log_File(max=100000):
+def flush_log_file(max=100000):
     # Delete lines of logging file that are over 'max' amount
     with open(logging_path) as f:
         for i, l in enumerate(f):
