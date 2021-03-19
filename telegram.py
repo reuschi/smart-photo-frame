@@ -9,6 +9,7 @@ import static_variables
 import sys
 import os
 import subprocess
+import texts
 
 
 #token = static_variables.token
@@ -189,11 +190,9 @@ class Telegram:
     def send_file(self, chat_id, file):
         # Send a byte file as a reply
         link = self.weblink + "sendDocument"
-
         data = {
             "chat_id": chat_id
         }
-
         document = {
             "document": (str(file), open(str(file), "rb"))
         }
@@ -208,7 +207,6 @@ class Telegram:
         # To set last requested message id in the database
         try:
             # Build up the database connection and set the cursor to the current database
-            #c = self.db_connection.cursor()
             module_log.log("Setting last update id in database...")
 
             if update_id is None:
@@ -243,14 +241,14 @@ class Telegram:
         return False
 
     def get_last_update_id(self, table):
-        # To only receive the newest message since the last request it's necessary to send an offset id.
+        # To only receive the newest message since the last request it's necessary to send an offset id in the request.
         # This information is stored in the database and will be gathered by this function.
         try:
-            c = self.db_connection.cursor()
             module_log.log("Getting last update id from database...")
+            id = None
 
             # Get last update id from database
-            for row in c.execute("SELECT last_update_id FROM telegram_bot WHERE id=1"):
+            for row in self.db_cursor.execute("SELECT last_update_id FROM telegram_bot WHERE id=1"):
                 id = row[0]
 
             if id is not None:
@@ -275,9 +273,7 @@ class Telegram:
 
         return text
 
-    def photo_handling(self, message: str):
-        #success = False
-        #from_id = message['message']['from']['id']
+    def process_photo_name(self, message):
         file = self.get_file_link(message['message']['photo'][-1]['file_id'])
         extension = file.split(".")[-1]
         if 'caption' in message['message']:
@@ -290,99 +286,130 @@ class Telegram:
 
         return file, filename
 
-    def process_admin_commands(self, message: str):
+    def _add_file_extension(self, message):
+        extension = message['message']['text'].split(" ")[1:]
         from_id = message['message']['from']['id']
+
+        for ext in extension:
+            ext = ext.replace(".", "")
+            static_variables.add_Value_To_Config("gmail", "file_extensions", ext)
+        self.send_message(from_id, "Neue Extension(s) aufgenommen.")
+        module_log.log(f"New extension(s) added: {extension}")
+
+    def _add_sender(self, message):
+        add_id = message['message']['text'].split(" ")
+        from_id = message['message']['from']['id']
+
+        module_log.log(f"Adding new sender to allowed sender list: {add_id[1]}")
+        static_variables.add_Value_To_Config("telegram", "allowedsenders", add_id[1])
+        self.allowed_senders.append(int(add_id[1]))
+        self.send_message(from_id, "Neue ID ist aufgenommen.")
+        module_log.log("Done.")
+
+    def _get_identity(self, message):
+        from_id = message['message']['from']['id']
+
+        ip = requests.get("https://api.ipify.org").text
+        self.send_message(from_id, ip)
+        module_log.log(f"Request for Identity. Identity is: {ip}")
+
+    def _list_images(self, message):
+        from_id = message['message']['from']['id']
+
+        path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images")
+        files = os.listdir(path)
+        self.send_message(from_id, str(files))
+
+    def _delete_images(self, message, success):
+        from_id = message['message']['from']['id']
+
+        images = message['message']['text'].split(" ")[1:]
+        # images.remove("/deleteimg")
+        for img in images:
+            image_file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / img)
+            bashCommand = f"sudo rm {image_file}"
+            reply = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, stderr = reply.communicate()
+            encoding = 'utf-8'
+            if str(stderr, encoding) is "":
+                self.send_message(from_id, f"{img} erfolgreich gelöscht")
+                module_log.log(f"{img} deleted.")
+                success = True
+            else:
+                self.send_message(from_id, str(stderr, encoding))
+                module_log.log(f"No image file deleted.")
+
+        return success
+
+    def _send_log(self, message):
+        from_id = message['message']['from']['id']
+
+        file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
+        if self.send_file(from_id, file):
+            module_log.log(f"Log File sent.")
+
+    def _send_config(self, message):
+        from_id = message['message']['from']['id']
+
+        file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "config.ini")
+        if self.send_file(from_id, file):
+            module_log.log(f"Configuration File sent.")
+
+    def process_admin_commands(self, message):
         success = False
 
         if message['message']['text'].startswith("/addsender"):
             # Add new senders into the config file
-            add_id = message['message']['text'].split(" ")
-            module_log.log(f"Adding new sender to allowed sender list: {add_id[1]}")
-            static_variables.add_Value_To_Config("telegram", "allowedsenders", add_id[1])
-            self.allowed_senders.append(int(add_id[1]))
-            self.send_message(from_id, "Neue ID ist aufgenommen.")
-            module_log.log("Done.")
+            self._add_sender(message)
         elif message['message']['text'].startswith("/addextension"):
             # Add new extension(s) to the allowed list and restart the frame afterwards
-            extension = message['message']['text'].split(" ")[1:]
-            # extension.remove("/addextension")
-            for ext in extension:
-                ext = ext.replace(".", "")
-                static_variables.add_Value_To_Config("gmail", "file_extensions", ext)
-            self.send_message(from_id, "Neue Extension(s) aufgenommen.")
-            module_log.log(f"New extension(s) added: {extension}")
+            self._add_file_extension(message)
         elif message['message']['text'] == "/getident":
             # Get current external ip address
-            ip = requests.get("https://api.ipify.org").text
-            self.send_message(from_id, ip)
-            module_log.log(f"Request for Identity. Identity is: {ip}")
+            self._get_identity(message)
         elif message['message']['text'] == "/listimg":
             # List all images stored on frame
-            path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images")
-            files = os.listdir(path)
-            self.send_message(from_id, str(files))
+            self._list_images(message)
         elif message['message']['text'].startswith("/deleteimg"):
             # Delete images from frame and restart presentation
-            images = message['message']['text'].split(" ")[1:]
-            # images.remove("/deleteimg")
-            for img in images:
-                image_file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / img)
-                bashCommand = f"sudo rm {image_file}"
-                reply = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                stdout, stderr = reply.communicate()
-                encoding = 'utf-8'
-                if str(stderr, encoding) is "":
-                    self.send_message(from_id, f"{img} erfolgreich gelöscht")
-                    module_log.log(f"{img} deleted.")
-                    success = True
-                else:
-                    self.send_message(from_id, str(stderr, encoding))
-                    module_log.log(f"No image file deleted.")
+            success = self._delete_images(message, success)
         elif message['message']['text'] == "/getlog":
             # Send log file as attachment
-            file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
-            if self.send_file(from_id, file):
-                module_log.log(f"Log File sent.")
+            self._send_log(message)
         elif message['message']['text'] == "/getconfig":
             # Send configuration file as attachment
-            file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "config.ini")
-            if self.send_file(from_id, file):
-                module_log.log(f"Configuration File sent.")
+            self._send_config(message)
 
         return success
 
 
 def main():
-    #global db_connection
     tg = Telegram(static_variables.token)
     try:
+        # Build up base parameters
         table = "telegram_bot"
         success = False
 
-        # Build up database connection, get the last requested id and receive the latest messages
-        #db_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "telegram_bot.db")
-        #db_connection = sqlite3.connect(db_path)
+        # Get the last requested id and read the latest messages the latest messages
         offset = tg.get_last_update_id(table)
-
-        # Read the latest messages
         answer = tg.read_message(offset=offset)
 
         # answer must not be a str
-        if type(answer) != 'str':
+        if type(answer) != "str":
             for message in answer['result']:
                 from_id = message['message']['from']['id']
                 if from_id in tg.allowed_senders:
                     # only allow specific senders to send a photo to the frame
                     module_log.log("Message: " + str(message['message']))
-                    if 'photo' in message['message']:
+                    if "photo" in message['message']:
                         # If user sent a photo
-                        file, filename = tg.photo_handling(message)
+                        file, filename = tg.process_photo_name(message)
 
                         if tg.download_file(file, filename):
                             # If download of the sent photo is successfully reply to it
-                            tg.send_message(from_id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert und die Präsentation neu gestartet.")
+                            tg.send_message(from_id, f"{texts.de_telegram['thanks_image_upload']}")
                             success = True
-                    elif 'text' in message['message'] and from_id in tg.allowed_admins:
+                    elif "text" in message['message'] and from_id in tg.allowed_admins:
                         # If user sent text
                         success = tg.process_admin_commands(message)
 
@@ -392,7 +419,7 @@ def main():
                 else:
                     # If no allowed sender was found in config
                     module_log.log(f"Sender not allowed to send photos. ID: {from_id}")
-                    tg.send_message(from_id, f"Not allowed! ID: {from_id}")
+                    tg.send_message(from_id, f"{texts.de_telegram['sender_not_allowed']} ID: {from_id}")
 
                 tg.set_last_update_id(message['update_id'] + 1, table)
                 tg.db_commit()
