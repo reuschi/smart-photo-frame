@@ -222,7 +222,7 @@ class Telegram:
                                     )""")
 
             # Write the last update id into the database. If the value already exists just update the value of the field
-            for row in c.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
+            for row in self.db_cursor.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
                 if row[0] == 1:
                     self.db_cursor.execute(f"UPDATE telegram_bot SET last_update_id='{update_id}' WHERE id=1")
                     module_log.log(f"DB Update successful! ID: {update_id}")
