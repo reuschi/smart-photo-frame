@@ -12,27 +12,19 @@ import subprocess
 import texts
 
 
-#token = static_variables.token
-#allowed_senders = static_variables.tg_allowed_senders
-#allowed_admins = static_variables.tg_allowed_admins
-#weblink = f"https://api.telegram.org/bot{token}/"
-#filelink = f"https://api.telegram.org/file/bot{token}/"
-#http = urllib3.PoolManager()
-#db_connection = None
-
-
 class Telegram:
 
-    def __init__(self, token):
+    def __init__(self, token: str, allowed_senders: list, allowed_admins: list):
         self.token = token
-        self.allowed_senders = static_variables.tg_allowed_senders
-        self.allowed_admins = static_variables.tg_allowed_admins
+        self.allowed_senders = allowed_senders
+        self.allowed_admins = allowed_admins
         self.weblink = f"https://api.telegram.org/bot{token}/"
         self.filelink = f"https://api.telegram.org/file/bot{token}/"
         self.http = urllib3.PoolManager()
         db_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "telegram_bot.db")
         self.db_connection = sqlite3.connect(db_path)
         self.db_cursor = self.db_connection.cursor()
+        self.table = "telegram_bot"
 
     def telegram_POST(self, link, data={}, file=None):
         # Requesting Telegram API via POST Method
@@ -382,63 +374,53 @@ class Telegram:
 
         return success
 
+    def process_new_message(self):
+        try:
+            success = False
 
-def main():
-    tg = Telegram(static_variables.token)
-    try:
-        # Build up base parameters
-        table = "telegram_bot"
-        success = False
+            # Get the last requested id and read the latest messages the latest messages
+            offset = self.get_last_update_id(self.table)
+            answer = self.read_message(offset=offset)
 
-        # Get the last requested id and read the latest messages the latest messages
-        offset = tg.get_last_update_id(table)
-        answer = tg.read_message(offset=offset)
+            # answer must not be a str
+            if type(answer) != "str":
+                for message in answer['result']:
+                    from_id = message['message']['from']['id']
+                    if from_id in self.allowed_senders:
+                        # only allow specific senders to send a photo to the frame
+                        module_log.log("Message: " + str(message['message']))
+                        if "photo" in message['message']:
+                            # If user sent a photo
+                            file, filename = self.process_photo_name(message)
 
-        # answer must not be a str
-        if type(answer) != "str":
-            for message in answer['result']:
-                from_id = message['message']['from']['id']
-                if from_id in tg.allowed_senders:
-                    # only allow specific senders to send a photo to the frame
-                    module_log.log("Message: " + str(message['message']))
-                    if "photo" in message['message']:
-                        # If user sent a photo
-                        file, filename = tg.process_photo_name(message)
+                            if self.download_file(file, filename):
+                                # If download of the sent photo is successfully reply to it
+                                self.send_message(from_id, f"{texts.de_telegram['thanks_image_upload']}")
+                                success = True
+                        elif "text" in message['message'] and from_id in self.allowed_admins:
+                            # If user sent text
+                            success = self.process_admin_commands(message)
 
-                        if tg.download_file(file, filename):
-                            # If download of the sent photo is successfully reply to it
-                            tg.send_message(from_id, f"{texts.de_telegram['thanks_image_upload']}")
-                            success = True
-                    elif "text" in message['message'] and from_id in tg.allowed_admins:
-                        # If user sent text
-                        success = tg.process_admin_commands(message)
+                        #elif 'document' in message['message']:
+                            # If user sent photo as a document
+                        #    module_log.log("Document: " + str(message['message']['document']))
+                    else:
+                        # If no allowed sender was found in config
+                        module_log.log(f"Sender not allowed to send photos. ID: {from_id}")
+                        self.send_message(from_id, f"{texts.de_telegram['sender_not_allowed']} ID: {from_id}")
 
-                    #elif 'document' in message['message']:
-                        # If user sent photo as a document
-                    #    module_log.log("Document: " + str(message['message']['document']))
-                else:
-                    # If no allowed sender was found in config
-                    module_log.log(f"Sender not allowed to send photos. ID: {from_id}")
-                    tg.send_message(from_id, f"{texts.de_telegram['sender_not_allowed']} ID: {from_id}")
+                    self.set_last_update_id(message['update_id'] + 1, self.table)
+                    self.db_commit()
 
-                tg.set_last_update_id(message['update_id'] + 1, table)
-                tg.db_commit()
+                return success
 
-            return success
+            else:
+                return False
 
-        else:
-            return False
-
-    except TypeError as e:
-        print("TypeError: ", e)
-    except KeyboardInterrupt:
-        # Terminate the script
-        print("Press Ctrl-C to terminate while statement")
-    finally:
-        #db_connection.commit()
-        #db_connection.close()
-        tg.db_close()
-
-
-if __name__ == "__main__":
-    main()
+        except TypeError as e:
+            print("TypeError: ", e)
+        except KeyboardInterrupt:
+            # Terminate the script
+            print("Press Ctrl-C to terminate while statement")
+        finally:
+            self.db_close()

@@ -5,23 +5,17 @@ import email.header
 import os.path
 import module_log
 import pathlib
-import static_variables
 
 
-# Initialize static variables
-EMAIL_ACCOUNT = static_variables.EMAIL_ACCOUNT
-EMAIL_PASS = static_variables.EMAIL_PASS
-allowedExtensions = static_variables.file_extensions
+class ImapMail:
 
+    def __init__(self, account, passwd, hostname="imap.gmail.com", ext=".jpg,.JPG"):
+        self.EMAIL_ACCOUNT = account
+        self.EMAIL_PASS = passwd
+        self.hostname = hostname
+        self.allowedExtensions = ext
 
-class Imap_Mail():
-
-    def __init__(self):
-        self.EMAIL_ACCOUNT = static_variables.EMAIL_ACCOUNT
-        self.EMAIL_PASS = static_variables.EMAIL_PASS
-        self.allowedExtensions = static_variables.file_extensions
-
-    def download_attachment(self, M, directory='images'):
+    def download_attachment(self, M, directory="images"):
         # Download attachments from mails sent to the mail account
         success = False
         rv, data = M.search(None, 'ALL')
@@ -55,22 +49,22 @@ class Imap_Mail():
                         continue
 
                     # Get filename and extension of the downloadable file
-                    fileName = "mail_" + part.get_filename()
-                    fileExtension = os.path.splitext(fileName)[1].lower()
+                    file_name = "mail_" + part.get_filename()
+                    file_extension = os.path.splitext(file_name)[1].lower()
 
                     # Only download file if its extension is on config file
-                    if bool(fileName) and (fileExtension in allowedExtensions):
+                    if bool(file_name) and (file_extension in self.allowedExtensions):
                         # Define path where to store the file locally
-                        filePath = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / fileName)
+                        file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / file_name)
 
-                        if not os.path.isfile(filePath):
+                        if not os.path.isfile(file_path):
                             # If file is not yet downloaded
-                            fp = open(filePath, 'wb')
+                            fp = open(file_path, 'wb')
                             fp.write(part.get_payload(decode=True))
                             fp.close()
-                            module_log.log(f"New file downloaded: {filePath}")
+                            module_log.log(f"New file downloaded: {file_path}")
                             success = True
-                        elif os.path.isfile(filePath):
+                        elif os.path.isfile(file_path):
                             # If file already exists, don't download it
                             module_log.log("Filename already exists!")
                         else:
@@ -78,7 +72,7 @@ class Imap_Mail():
                             module_log.log("No new file downloaded!")
                     else:
                         # If file extension is not allowed to download
-                        module_log.log(f"File Extension not allowed ('{fileExtension}')")
+                        module_log.log(f"File Extension not allowed ('{file_extension}')")
 
                 # After downloading the attachments move the mail into Trash folder
                 try:
@@ -96,8 +90,8 @@ class Imap_Mail():
         try:
             module_log.log("Trying to fetch new mails")
             # Initialize connection and login to mail account
-            Mail = IMAP4_SSL(host=hostname, port=993)
-            rv, data = Mail.login(username, password)
+            Mail = IMAP4_SSL(host=self.hostname, port=993)
+            rv, data = Mail.login(self.EMAIL_ACCOUNT, self.EMAIL_PASS)
 
             module_log.log(data)
 
@@ -133,8 +127,8 @@ class Imap_Mail():
 
 
 def main():
-    mail = Imap_Mail()
-    return mail.init_imap(EMAIL_ACCOUNT, EMAIL_PASS)
+    mail = ImapMail()
+    return mail.init_imap(mail.EMAIL_ACCOUNT, mail.EMAIL_PASS)
 
 
 if __name__ == "__main__":

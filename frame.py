@@ -1,40 +1,18 @@
 import os
 import subprocess
 import time
-import imap
-import telegram
 import module_log
 import glob
 import pathlib
-import static_variables
-import RPi.GPIO as GPIO
-
-
-# Initialize static variables
-#images = []
-#timer = static_variables.timer
-#blend = static_variables.blend    # in milliseconds
-#photocount = static_variables.photocount
-
-# Initialize GPIOs für Buttons
-#GPIO.setmode(GPIO.BCM)
-#GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-#GPIO.setup(9, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-#GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
 class Frame:
 
-    def __init__(self):
+    def __init__(self, timer, blend, max_photo):
         self.images = []
-        self.timer = static_variables.timer
-        self.blend = static_variables.blend  # in milliseconds
-        self.photocount = static_variables.photocount
-
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(9, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        self.timer = timer
+        self.blend = blend  # in milliseconds
+        self.max_photocount = max_photo
 
     def exit_slideshow(self):
         # Kill all running processes of the slideshow
@@ -47,7 +25,7 @@ class Frame:
     def delete_old_files(self, directory: str = "images", max: int = None):
         # Delete older image files in 'directory' that are over amount 'max'
         if max is None:
-            max = self.photocount
+            max = self.max_photocount
 
         module_log.log("Checking for old files to be deleted...")
         file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / "*.*")
@@ -105,42 +83,3 @@ class Frame:
         module_log.log("!!!! SYSTEM IS GOING TO SHUTDOWN !!!!")
         os.system("sudo poweroff")
         time.sleep(1)
-
-
-if __name__ == "__main__":
-    frame = Frame()
-
-    module_log.log("!!!! SYSTEM STARTED !!!!")
-    frame.restart_slideshow()
-
-    i = 0
-
-    # Rise presentation Timer
-    GPIO.add_event_detect(27, GPIO.FALLING, callback=frame.rise_timer, bouncetime=400)
-
-    # Lower presentation Timer
-    GPIO.add_event_detect(19, GPIO.FALLING, callback=frame.lower_timer, bouncetime=400)
-
-    # Shutdown the system
-    GPIO.add_event_detect(9, GPIO.FALLING, callback=frame.system_shutdown, bouncetime=400)
-
-    while True:
-        # Request for new mails every 2 minutes
-        if i >= 7:
-            mail = imap.main()
-            i = 0
-        else:
-            i += 1
-            mail = False
-
-        # Request for new Telegram message
-        tg = telegram.main()
-
-        # If new images received by mail or Telegram restart the slideshow with the new images
-        if tg or mail:
-            frame.restart_slideshow()
-
-        time.sleep(15)
-
-
-
