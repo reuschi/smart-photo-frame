@@ -422,5 +422,5 @@ class Telegram:
         except KeyboardInterrupt:
             # Terminate the script
             print("Press Ctrl-C to terminate while statement")
-        finally:
-            self.db_close()
+        #finally:
+        #    self.db_close()
