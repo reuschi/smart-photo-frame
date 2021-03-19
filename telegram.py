@@ -353,7 +353,7 @@ class Telegram:
 
 
 def main():
-    global db_connection
+    #global db_connection
     tg = Telegram(static_variables.token)
     try:
         table = "telegram_bot"
@@ -371,7 +371,7 @@ def main():
         if type(answer) != 'str':
             for message in answer['result']:
                 from_id = message['message']['from']['id']
-                if from_id in allowed_senders:
+                if from_id in tg.allowed_senders:
                     # only allow specific senders to send a photo to the frame
                     module_log.log("Message: " + str(message['message']))
                     if 'photo' in message['message']:
@@ -382,7 +382,7 @@ def main():
                             # If download of the sent photo is successfully reply to it
                             tg.send_message(from_id, "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert und die Präsentation neu gestartet.")
                             success = True
-                    elif 'text' in message['message'] and from_id in allowed_admins:
+                    elif 'text' in message['message'] and from_id in tg.allowed_admins:
                         # If user sent text
                         success = tg.process_admin_commands(message)
 

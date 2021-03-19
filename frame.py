@@ -11,16 +11,16 @@ import RPi.GPIO as GPIO
 
 
 # Initialize static variables
-images = []
-timer = static_variables.timer
-blend = static_variables.blend    # in milliseconds
-photocount = static_variables.photocount
+#images = []
+#timer = static_variables.timer
+#blend = static_variables.blend    # in milliseconds
+#photocount = static_variables.photocount
 
 # Initialize GPIOs für Buttons
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(9, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#GPIO.setmode(GPIO.BCM)
+#GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#GPIO.setup(9, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
 class Frame:
@@ -44,8 +44,11 @@ class Frame:
         except Exception as e:
             module_log.log(e)
 
-    def delete_old_files(self, directory="images", max=photocount):
+    def delete_old_files(self, directory: str = "images", max: int = None):
         # Delete older image files in 'directory' that are over amount 'max'
+        if max is None:
+            max = self.photocount
+
         module_log.log("Checking for old files to be deleted...")
         file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / "*.*")
         delete = False
@@ -65,11 +68,11 @@ class Frame:
         else:
             module_log.log("There were no files to be deleted.")
 
-    def run_slideshow(self, path='images'):
+    def run_slideshow(self, path: str = "images"):
         # Start the slideshow with all present files in subfolder defined in variable 'path'
         path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / path / "*.*")
-        bashCommand = f"sudo fbi --noverbose --random --blend {blend} -a -t {timer} -T 1 {path}"
-        process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        bash_command = f"sudo fbi --noverbose --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
+        process = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         time.sleep(0.5)
 
         module_log.log("Slideshow running")
@@ -84,22 +87,18 @@ class Frame:
 
     def rise_timer(self, channel):
         # Rise timer of presentation, to lower the showing frequency
-        global timer
-
-        timer += 2
-        module_log.log(f"Timer raised to: {timer}.")
+        self.timer += 2
+        module_log.log(f"Timer raised to: {self.timer}.")
         self.restart_slideshow()
 
     def lower_timer(self, channel):
         # Lower timer of presentation, to rise the showing frequency
-        global timer
-
-        if timer >= 4:
-            timer -= 2
-            module_log.log(f"Timer lowered to: {timer}.")
+        if self.timer >= 4:
+            self.timer -= 2
+            module_log.log(f"Timer lowered to: {self.timer}.")
             self.restart_slideshow()
         else:
-            module_log.log(f"Timer already at: {timer}. Lowering not possible!")
+            module_log.log(f"Timer already at: {self.timer}. Lowering not possible!")
 
     def system_shutdown(self, channel):
         # Shutdown the whole system
@@ -108,7 +107,7 @@ class Frame:
         time.sleep(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     frame = Frame()
 
     module_log.log("!!!! SYSTEM STARTED !!!!")
@@ -117,13 +116,13 @@ if __name__ == '__main__':
     i = 0
 
     # Rise presentation Timer
-    GPIO.add_event_detect(27, GPIO.FALLING, callback=rise_timer, bouncetime=400)
+    GPIO.add_event_detect(27, GPIO.FALLING, callback=frame.rise_timer, bouncetime=400)
 
     # Lower presentation Timer
-    GPIO.add_event_detect(19, GPIO.FALLING, callback=lower_timer, bouncetime=400)
+    GPIO.add_event_detect(19, GPIO.FALLING, callback=frame.lower_timer, bouncetime=400)
 
     # Shutdown the system
-    GPIO.add_event_detect(9, GPIO.FALLING, callback=system_shutdown, bouncetime=400)
+    GPIO.add_event_detect(9, GPIO.FALLING, callback=frame.system_shutdown, bouncetime=400)
 
     while True:
         # Request for new mails every 2 minutes
