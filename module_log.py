@@ -13,19 +13,17 @@ def log_to_screen(logging, **kwargs):
 
 
 def log_to_file(logging):
-    # logging_path = "/home/pi/python/smart-photo-frame/" + "message.log"
-    # logging_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
     logfile = open(logging_path, "a")
     datetime = time.strftime("%b %d %Y %H:%M:%S")
-    log = str(datetime) + " " + str(logging) + "\n"
-    logfile.write(log)
+    logger = str(datetime) + " " + str(logging) + "\n"
+    logfile.write(logger)
     logfile.close()
 
 
 def log(logging):
-    if logToFile == True:
+    if logToFile:
         log_to_file(logging)
-    if logToScreen == True:
+    if logToScreen:
         log_to_screen(logging)
 
 

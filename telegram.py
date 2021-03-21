@@ -114,18 +114,20 @@ class Telegram:
     def set_webhook(self, url, **kwargs):
         link = self.weblink + "setWebhook"
         data = {
-            'url': url
+            "url": url
         }
 
         for key, value in kwargs.items():
             data[key] = value
+
+        return self.telegram_POST(link, data)
 
     def get_file_link(self, file_id):
         # To download a file it's necessary to get the direct link to the file
         try:
             link = self.weblink + "getFile"
             data = {
-                'file_id': file_id
+                "file_id": file_id
             }
 
             file_json = self.telegram_POST(link, data)
@@ -143,7 +145,7 @@ class Telegram:
             url = self.filelink + source
 
             # Get the file downloaded
-            with self.http.request('GET', source, preload_content=False) as r, open(file, 'wb') as out_file:
+            with self.http.request("GET", source, preload_content=False) as r, open(file, "wb") as out_file:
                 shutil.copyfileobj(r, out_file)
 
             return True
@@ -268,7 +270,7 @@ class Telegram:
     def process_photo_name(self, message):
         file = self.get_file_link(message['message']['photo'][-1]['file_id'])
         extension = file.split(".")[-1]
-        if 'caption' in message['message']:
+        if "caption" in message['message']:
             # Reformat the caption of the image to use it as filename
             caption = self.replace_special_signs(message['message']['caption'])
             filename = caption + "_tg." + extension
@@ -284,7 +286,7 @@ class Telegram:
 
         for ext in extension:
             ext = ext.replace(".", "")
-            static_variables.add_Value_To_Config("gmail", "file_extensions", ext)
+            static_variables.add_value_to_config("gmail", "file_extensions", ext)
         self.send_message(from_id, "Neue Extension(s) aufgenommen.")
         module_log.log(f"New extension(s) added: {extension}")
 
@@ -293,7 +295,7 @@ class Telegram:
         from_id = message['message']['from']['id']
 
         module_log.log(f"Adding new sender to allowed sender list: {add_id[1]}")
-        static_variables.add_Value_To_Config("telegram", "allowedsenders", add_id[1])
+        static_variables.add_value_to_config("telegram", "allowedsenders", add_id[1])
         self.allowed_senders.append(int(add_id[1]))
         self.send_message(from_id, "Neue ID ist aufgenommen.")
         module_log.log("Done.")
@@ -383,39 +385,39 @@ class Telegram:
             answer = self.read_message(offset=offset)
 
             # answer must not be a str
-            if type(answer) != "str":
-                for message in answer['result']:
-                    from_id = message['message']['from']['id']
-                    if from_id in self.allowed_senders:
-                        # only allow specific senders to send a photo to the frame
-                        module_log.log("Message: " + str(message['message']))
-                        if "photo" in message['message']:
-                            # If user sent a photo
-                            file, filename = self.process_photo_name(message)
+            #if type(answer) != "str":
+            for message in answer['result']:
+                from_id = message['message']['from']['id']
+                if from_id in self.allowed_senders:
+                    # only allow specific senders to send a photo to the frame
+                    module_log.log("Message: " + str(message['message']))
+                    if "photo" in message['message']:
+                        # If user sent a photo
+                        file, filename = self.process_photo_name(message)
 
-                            if self.download_file(file, filename):
-                                # If download of the sent photo is successfully reply to it
-                                self.send_message(from_id, f"{texts.de_telegram['thanks_image_upload']}")
-                                success = True
-                        elif "text" in message['message'] and from_id in self.allowed_admins:
-                            # If user sent text
-                            success = self.process_admin_commands(message)
+                        if self.download_file(file, filename):
+                            # If download of the sent photo is successfully reply to it
+                            self.send_message(from_id, f"{texts.de_telegram['thanks_image_upload']}")
+                            success = True
+                    elif "text" in message['message'] and from_id in self.allowed_admins:
+                        # If user sent text
+                        success = self.process_admin_commands(message)
 
-                        #elif 'document' in message['message']:
-                            # If user sent photo as a document
-                        #    module_log.log("Document: " + str(message['message']['document']))
-                    else:
-                        # If no allowed sender was found in config
-                        module_log.log(f"Sender not allowed to send photos. ID: {from_id}")
-                        self.send_message(from_id, f"{texts.de_telegram['sender_not_allowed']} ID: {from_id}")
+                    #elif 'document' in message['message']:
+                        # If user sent photo as a document
+                    #    module_log.log("Document: " + str(message['message']['document']))
+                else:
+                    # If no allowed sender was found in config
+                    module_log.log(f"Sender not allowed to send photos. ID: {from_id}")
+                    self.send_message(from_id, f"{texts.de_telegram['sender_not_allowed']} ID: {from_id}")
 
-                    self.set_last_update_id(message['update_id'] + 1, self.table)
-                    self.db_commit()
+                self.set_last_update_id(message['update_id'] + 1, self.table)
+                self.db_commit()
 
-                return success
+            return success
 
-            else:
-                return False
+            #else:
+            #    return False
 
         except TypeError as e:
             print("TypeError: ", e)
