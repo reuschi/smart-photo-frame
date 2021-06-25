@@ -104,6 +104,8 @@ class Telegram:
 
         data = {}
 
+        print(static_variables.tg_bot_commands)
+
         for key, value in static_variables.tg_bot_commands:
             data[key] = value
 
