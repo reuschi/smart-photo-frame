@@ -20,7 +20,6 @@ http = urllib3.PoolManager()
 db_connection = None
 
 
-
 def telegram_POST(link, data={}, file=None):
     # Requesting Telegram API via POST Method
     answer = requests.Response()
