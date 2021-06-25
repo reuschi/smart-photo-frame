@@ -102,12 +102,12 @@ class Telegram:
         # Set all commands defined in the config as shown commands in the bot
         link = self.weblink + "setMyCommands"
 
-        data = {}
+        data = static_variables.tg_bot_commands
 
         print(type(static_variables.tg_bot_commands))
 
-        for key, value in static_variables.tg_bot_commands:
-            data[key] = value
+        #for key, value in static_variables.tg_bot_commands:
+        #    data[key] = value
 
         return self.telegram_POST(link, data)
 
