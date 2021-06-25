@@ -80,6 +80,7 @@ if __name__ == "__main__":
 
     module_log.log("!!!! SYSTEM STARTED !!!!")
     frame.restart_slideshow()
+    tg.set_commands()
 
     i = 0
 

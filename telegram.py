@@ -50,30 +50,6 @@ class Telegram:
         finally:
             return self.return_status_code(answer)
 
-    def telegram_GET(self, link, data):
-        # Requesting Telegram API via GET Method
-        answer = requests.Response()
-        try:
-            answer = requests.get(link, params=data)
-        except requests.exceptions.ConnectionError:
-            status_code = "Connection refused"
-            module_log.log(status_code)
-        except requests.exceptions.HTTPError:
-            status_code = "Maximum retries reached"
-            module_log.log(status_code)
-        except requests.exceptions.RetryError:
-            status_code = "No DNS available"
-            module_log.log(status_code)
-        except requests.exceptions as e:
-            status_code = "Any other Exception from Requests has been raised"
-            module_log.log(status_code)
-            module_log.log(e)
-        except Exception as e:
-            status_code = f"Unknown exception: {e}"
-            module_log.log(status_code)
-        finally:
-            return self.return_status_code(answer)
-
     def db_commit(self):
         self.db_connection.commit()
 
@@ -118,6 +94,17 @@ class Telegram:
         }
 
         for key, value in kwargs.items():
+            data[key] = value
+
+        return self.telegram_POST(link, data)
+
+    def set_commands(self):
+        # Set all commands defined in the config as shown commands in the bot
+        link = self.weblink + "setMyCommands"
+
+        data = {}
+
+        for key, value in static_variables.tg_bot_commands:
             data[key] = value
 
         return self.telegram_POST(link, data)
@@ -294,11 +281,10 @@ class Telegram:
         add_id = message['message']['text'].split(" ")
         from_id = message['message']['from']['id']
 
-        module_log.log(f"Adding new sender to allowed sender list: {add_id[1]}")
         static_variables.add_value_to_config("telegram", "allowedsenders", add_id[1])
         self.allowed_senders.append(int(add_id[1]))
         self.send_message(from_id, "Neue ID ist aufgenommen.")
-        module_log.log("Done.")
+        module_log.log(f"New sender added to allowed sender list: {add_id[1]}")
 
     def _get_identity(self, message):
         from_id = message['message']['from']['id']
@@ -313,6 +299,7 @@ class Telegram:
         path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images")
         files = os.listdir(path)
         self.send_message(from_id, str(files))
+        module_log.log(f"Image listing sent.")
 
     def _delete_images(self, message, success):
         from_id = message['message']['from']['id']
@@ -349,6 +336,12 @@ class Telegram:
         if self.send_file(from_id, file):
             module_log.log(f"Configuration File sent.")
 
+    def _system_reboot(self):
+        bash_command = f"sudo reboot"
+        reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = reply.communicate()
+        module_log.log(f"Reboot initiated")
+
     def process_admin_commands(self, message):
         success = False
 
@@ -373,6 +366,9 @@ class Telegram:
         elif message['message']['text'] == "/getconfig":
             # Send configuration file as attachment
             self._send_config(message)
+        elif message['message']['text'] == "/reboot":
+            # Reboot whole system
+            self._system_reboot()
 
         return success
 
