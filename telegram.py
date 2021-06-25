@@ -10,6 +10,7 @@ import sys
 import os
 import subprocess
 import texts
+import json
 
 
 class Telegram:
@@ -103,7 +104,7 @@ class Telegram:
         link = self.weblink + "setMyCommands"
 
         data = {
-            "commands": static_variables.tg_bot_commands
+            "commands": json.dumps(static_variables.tg_bot_commands)
         }
 
         return self.telegram_POST(link, data)
