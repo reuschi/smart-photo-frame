@@ -343,6 +343,7 @@ class Telegram:
         module_log.log(f"Reboot initiated")
 
     def _system_update(self, branch):
+        # Update system to current version from GitHub repository
         commands = f"cd /home/pi/python/smart-photo-frame; git checkout {branch}; git pull origin {branch}"
         reply = subprocess.Popen(commands, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = reply.communicate()
