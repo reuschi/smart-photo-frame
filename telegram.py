@@ -342,6 +342,13 @@ class Telegram:
         stdout, stderr = reply.communicate()
         module_log.log(f"Reboot initiated")
 
+    def _system_update(self, branch):
+        commands = f"cd /home/pi/python/smart-photo-frame; git checkout {branch}; git pull origin {branch}"
+        reply = subprocess.Popen(commands, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = reply.communicate()
+        module_log.log(stdout)
+        module_log.log(f"System update done")
+
     def process_admin_commands(self, message):
         success = False
 
@@ -369,6 +376,9 @@ class Telegram:
         elif message['message']['text'] == "/reboot":
             # Reboot whole system
             self._system_reboot()
+        elif message['message']['text'] == "/update":
+            # Update system with current repository
+            self._system_update("refactor")
 
         return success
 
