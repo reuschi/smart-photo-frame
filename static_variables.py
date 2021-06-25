@@ -1,5 +1,6 @@
 import configparser
 import pathlib
+from ast import literal_eval
 
 
 config = configparser.ConfigParser()
@@ -33,7 +34,7 @@ tg_allowed_senders = [int(x) for x in tg_elements]
 tg_admin_elements = config.get('telegram', 'admins').split(',')
 tg_allowed_admins = [int(x) for x in tg_admin_elements]
 # Fetch Bot commands
-tg_bot_commands = config.get('telegram', 'commands')
+tg_bot_commands = literal_eval(config['telegram']['commands'])
 #tg_bot_commands = [int(x) for x in tg_commands_elements]
 
 
