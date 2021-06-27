@@ -9,6 +9,7 @@ import glob
 import pathlib
 import static_variables
 import RPi.GPIO as GPIO
+import texts
 
 
 GPIO.setmode(GPIO.BCM)

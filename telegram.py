@@ -11,6 +11,7 @@ import os
 import subprocess
 import texts
 import json
+import git
 
 
 class Telegram:
