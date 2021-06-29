@@ -9,7 +9,7 @@ import pathlib
 
 class ImapMail:
 
-    def __init__(self, account, passwd, hostname="imap.gmail.com", ext=".jpg,.JPG"):
+    def __init__(self, account, passwd, hostname="imap.gmail.com", ext="jpg,JPG"):
         self.EMAIL_ACCOUNT = account
         self.EMAIL_PASS = passwd
         self.hostname = hostname
@@ -50,7 +50,7 @@ class ImapMail:
 
                     # Get filename and extension of the downloadable file
                     file_name = "mail_" + part.get_filename()
-                    file_extension = os.path.splitext(file_name)[1].lower()
+                    file_extension = os.path.splitext(file_name)[1].lower().replace('.','')
 
                     # Only download file if its extension is on config file
                     if bool(file_name) and (file_extension in self.allowedExtensions):
