@@ -77,7 +77,8 @@ class ImapMail:
                 # After downloading the attachments move the mail into Trash folder
                 try:
                     if rv == 'OK':
-                        M.store(num, '+X-GM-LABELS', '\\Trash')
+                        #M.store(num, '+X-GM-LABELS', '\\Trash')
+                        M.store(num, 'FLAGS', '\\Trash')
                         M.expunge()
                 except Exception as e:
                     module_log.log(e)
