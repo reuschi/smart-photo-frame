@@ -345,10 +345,12 @@ class Telegram:
 
     def _system_update(self, branch):
         # Update system to current version from GitHub repository
-        commands = f"cd /home/pi/python/smart-photo-frame; git checkout {branch}; git pull origin {branch}"
-        reply = subprocess.Popen(commands, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = reply.communicate()
-        module_log.log(stdout)
+        #commands = f"cd /home/pi/python/smart-photo-frame; git checkout {branch}; git pull origin {branch}"
+        #reply = subprocess.Popen(commands, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        #stdout, stderr = reply.communicate()
+        #module_log.log(stdout)
+        repo = git.Repo('/home/pi/python/smart-photo-frame')
+        print(repo.git.status())
         module_log.log(f"System update done")
 
     def process_admin_commands(self, message):
