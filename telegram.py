@@ -70,6 +70,7 @@ class Telegram:
         return self.telegram_POST(link, data)
 
     def return_status_code(self, answer):
+        # Return a readable status code
         if answer.status_code == 200:
             return answer.json()
         elif answer.status_code == 400:
@@ -103,7 +104,6 @@ class Telegram:
     def set_commands(self):
         # Set all commands defined in the config as shown commands in the bot
         link = self.weblink + "setMyCommands"
-
         data = {
             "commands": json.dumps(static_variables.tg_bot_commands)
         }
@@ -130,7 +130,7 @@ class Telegram:
             # Build the correct file path on the local file system
             file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / destination / filename)
 
-            url = self.filelink + source
+            #url = self.filelink + source
 
             # Get the file downloaded
             with self.http.request("GET", source, preload_content=False) as r, open(file, "wb") as out_file:
@@ -219,7 +219,7 @@ class Telegram:
         finally:
             self.db_connection.commit()
 
-        module_log.log("Setting last Update id was not possible.")
+        module_log.log("Setting last update id was not possible.")
         return False
 
     def get_last_update_id(self, table):
@@ -371,7 +371,7 @@ class Telegram:
             branch = "master"
 
         repo = git.Repo('/home/pi/python/smart-photo-frame')
-        print(repo.git.checkout(branch))
+        repo.git.checkout(branch)
         update = repo.git.pull('origin', branch)
         if "Updating" in update:
             self.send_message(from_id, f"System erfolgreich aktualisiert.")
@@ -415,8 +415,7 @@ class Telegram:
             self._system_reboot(message)
         elif message['message']['text'] == "/update":
             # Update system with current repository and restart with new code
-            self._system_update(message)
-            success = True
+            success = self._system_update(message)
 
         return success
 
