@@ -227,15 +227,15 @@ class Telegram:
         # This information is stored in the database and will be gathered by this function.
         try:
             module_log.log("Getting last update id from database...")
-            id = None
+            update_id = None
 
             # Get last update id from database
             for row in self.db_cursor.execute("SELECT last_update_id FROM telegram_bot WHERE id=1"):
-                id = row[0]
+                update_id = row[0]
 
-            if id is not None:
-                module_log.log(f"Done. Last Update ID is: {id}")
-                return id
+            if update_id is not None:
+                module_log.log(f"Done. Last Update ID is: {update_id}")
+                return update_id
 
         except sqlite3.Error as e:
             module_log.log(e)
