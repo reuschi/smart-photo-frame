@@ -17,7 +17,9 @@ class Frame:
     def exit_slideshow(self):
         # Kill all running processes of the slideshow
         try:
-            os.system("sudo killall -15 fbi")
+            #os.system("sudo killall -15 fbi")
+            bash_command = f"sudo killall -15 fbi"
+            subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             module_log.log("Slideshow killed")
         except Exception as e:
             module_log.log(e)
@@ -50,7 +52,7 @@ class Frame:
         # Start the slideshow with all present files in subfolder defined in variable 'path'
         path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / path / "*.*")
         bash_command = f"sudo fbi --noverbose --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
-        process = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         time.sleep(0.5)
 
         module_log.log("Slideshow running")
@@ -81,5 +83,6 @@ class Frame:
     def system_shutdown(self, channel):
         # Shutdown the whole system
         module_log.log("!!!! SYSTEM IS GOING TO SHUTDOWN !!!!")
-        os.system("sudo poweroff")
+        bash_command = f"sudo poweroff"
+        subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         time.sleep(1)

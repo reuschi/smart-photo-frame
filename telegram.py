@@ -359,8 +359,6 @@ class Telegram:
             self.send_message(from_id, "Reboot konnte nicht ausgeführt werden.")
             module_log.log(f"Error while rebooting")
 
-        module_log.log(f"Reboot initiated")
-
     def _system_update(self, message):
         # Update system to current version from GitHub repository
         from_id = message['message']['from']['id']
