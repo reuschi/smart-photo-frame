@@ -364,7 +364,7 @@ class Telegram:
         from_id = message['message']['from']['id']
         success = False
 
-        print(message['message']['text'].split(" "))
+        module_log.log(message['message']['text'])
 
         try:
             branch = message['message']['text'].split(" ")[1]
