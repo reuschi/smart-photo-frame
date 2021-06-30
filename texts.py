@@ -10,6 +10,7 @@ de_telegram = {
     "return_500": "500 - An internal server error occurred while a request was being processed.",
     "thanks_image_upload": "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert und die Präsentation neu gestartet.",
     "sender_not_allowed": "Sie sind nicht berechtigt!",
+    "extension_not_allowed": "Die Dateierweiterung ist nicht erlaubt!",
     "a": "b"
 }
 
