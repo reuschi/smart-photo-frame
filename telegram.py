@@ -364,14 +364,10 @@ class Telegram:
         from_id = message['message']['from']['id']
         success = False
 
-        module_log.log(message['message']['text'])
-
         try:
             branch = message['message']['text'].split(" ")[1]
-#            module_log.log(f"Updating branch {branch}")
         except IndexError:
             branch = "master"
- #           module_log.log(f"Updating branch {branch}")
 
         module_log.log(f"Updating branch {branch}")
         repo = git.Repo('/home/pi/python/smart-photo-frame')
