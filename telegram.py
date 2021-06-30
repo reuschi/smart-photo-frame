@@ -248,6 +248,7 @@ class Telegram:
             return False
 
     def replace_special_signs(self, input_text: str):
+        # Replace special signs in comment to store it as file name
         text = input_text.replace(" ", "_")
         text = text.replace("/", "_")
         text = text.replace("\\", "_")
@@ -256,6 +257,7 @@ class Telegram:
         return text
 
     def process_photo_name(self, message):
+        # Rename image file if there is a comment added to the photo
         file = self.get_file_link(message['message']['photo'][-1]['file_id'])
         extension = file.split(".")[-1]
         if "caption" in message['message']:
@@ -269,6 +271,7 @@ class Telegram:
         return file, filename
 
     def _add_file_extension(self, message):
+        # Add a new file extension to allowed extension list
         extension = message['message']['text'].split(" ")[1:]
         from_id = message['message']['from']['id']
 
@@ -279,6 +282,7 @@ class Telegram:
         module_log.log(f"New extension(s) added: {extension}")
 
     def _add_sender(self, message):
+        # Add a new id to allowed sender list
         add_id = message['message']['text'].split(" ")
         from_id = message['message']['from']['id']
 
@@ -288,6 +292,7 @@ class Telegram:
         module_log.log(f"New sender added to allowed sender list: {add_id[1]}")
 
     def _get_identity(self, message):
+        # Return public ip address to sender
         from_id = message['message']['from']['id']
 
         ip = requests.get("https://api.ipify.org").text
@@ -295,6 +300,7 @@ class Telegram:
         module_log.log(f"Request for Identity. Identity is: {ip}")
 
     def _list_images(self, message):
+        # List all images stored on the disk (in subfolder ./images)
         from_id = message['message']['from']['id']
 
         path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images")
@@ -303,6 +309,7 @@ class Telegram:
         module_log.log(f"Image listing sent.")
 
     def _delete_images(self, message, success):
+        # Delete images from disk
         from_id = message['message']['from']['id']
 
         images = message['message']['text'].split(" ")[1:]
@@ -324,6 +331,7 @@ class Telegram:
         return success
 
     def _send_log(self, message):
+        # Fetch log file and send it back to the user
         from_id = message['message']['from']['id']
 
         file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
@@ -331,28 +339,52 @@ class Telegram:
             module_log.log(f"Log File sent.")
 
     def _send_config(self, message):
+        # Fetch config file and send it back to the user
         from_id = message['message']['from']['id']
 
         file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "config.ini")
         if self.send_file(from_id, file):
             module_log.log(f"Configuration File sent.")
 
-    def _system_reboot(self):
+    def _system_reboot(self, message):
+        # Reboot system by shell command
+        from_id = message['message']['from']['id']
         bash_command = f"sudo reboot"
         reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = reply.communicate()
+        encoding = 'utf-8'
+        if str(stderr, encoding) is "":
+            module_log.log(f"Reboot initiated")
+        else:
+            self.send_message(from_id, "Reboot konnte nicht ausgeführt werden.")
+            module_log.log(f"Error while rebooting")
+
         module_log.log(f"Reboot initiated")
 
-    def _system_update(self, branch="master"):
+    def _system_update(self, message):
         # Update system to current version from GitHub repository
-        #commands = f"cd /home/pi/python/smart-photo-frame; git checkout {branch}; git pull origin {branch}"
-        #reply = subprocess.Popen(commands, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        #stdout, stderr = reply.communicate()
-        #module_log.log(stdout)
+        from_id = message['message']['from']['id']
+        success = False
+
+        branch = message['message']['text'].split(" ")[1]
+        if branch == "":
+            branch = "master"
+
         repo = git.Repo('/home/pi/python/smart-photo-frame')
         print(repo.git.checkout(branch))
-        print(repo.git.pull('origin', branch))
-        module_log.log(f"System update done")
+        update = repo.git.pull('origin', branch)
+        if "Updating" in update:
+            self.send_message(from_id, f"System erfolgreich aktualisiert.")
+            module_log.log(f"System update done")
+            success = True
+        elif "Already up to date" in update:
+            self.send_message(from_id, f"System ist bereits auf dem neuesten Stand")
+            module_log.log(f"System was up to date")
+        else:
+            self.send_message(from_id, f"Update fehlgeschlagen")
+            module_log.log(f"System update failed!")
+
+        return success
 
     def process_admin_commands(self, message):
         success = False
@@ -380,10 +412,10 @@ class Telegram:
             self._send_config(message)
         elif message['message']['text'] == "/reboot":
             # Reboot whole system
-            self._system_reboot()
+            self._system_reboot(message)
         elif message['message']['text'] == "/update":
-            # Update system with current repository
-            self._system_update("refactor")
+            # Update system with current repository and restart with new code
+            self._system_update(message)
             success = True
 
         return success
@@ -392,16 +424,16 @@ class Telegram:
         try:
             success = False
 
-            # Get the last requested id and read the latest messages the latest messages
+            # Get the last requested id and read the latest messages
             offset = self.get_last_update_id(self.table)
             answer = self.read_message(offset=offset)
 
-            # answer must not be a str
+            # Answer must not be a str
             #if type(answer) != "str":
             for message in answer['result']:
                 from_id = message['message']['from']['id']
                 if from_id in self.allowed_senders:
-                    # only allow specific senders to send a photo to the frame
+                    # Only allow specific senders to send a photo to the frame
                     module_log.log("Message: " + str(message['message']))
                     if "photo" in message['message']:
                         # If user sent a photo
@@ -432,9 +464,9 @@ class Telegram:
             #    return False
 
         except TypeError as e:
-            print("TypeError: ", e)
+            module_log.log("TypeError: ", e)
         except KeyboardInterrupt:
             # Terminate the script
-            print("Press Ctrl-C to terminate while statement")
+            module_log.log("Script interrupted by terminal input")
         #finally:
         #    self.db_close()
