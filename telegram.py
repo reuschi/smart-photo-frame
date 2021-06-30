@@ -384,6 +384,7 @@ class Telegram:
         elif message['message']['text'] == "/update":
             # Update system with current repository
             self._system_update("refactor")
+            success = True
 
         return success
 
