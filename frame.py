@@ -38,7 +38,8 @@ class Frame:
 
         for x in range(max, len(files)):
             try:
-                os.remove(files[x])
+                bashCommand = f"sudo rm {files[x]}"
+                subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 delete = True
             except Exception as e:
                 module_log.log(f"Removing the file {files[x]} was NOT successful: {e}")
