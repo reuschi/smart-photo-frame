@@ -364,10 +364,11 @@ class Telegram:
         from_id = message['message']['from']['id']
         success = False
 
-        branch = message['message']['text'].split(" ")[1]
-        if branch == "":
+        try:
+            branch = message['message']['text'].split(" ")[1]
+        except IndexError:
             branch = "master"
-
+            
         repo = git.Repo('/home/pi/python/smart-photo-frame')
         repo.git.checkout(branch)
         update = repo.git.pull('origin', branch)
