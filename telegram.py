@@ -366,6 +366,7 @@ class Telegram:
 
         try:
             branch = message['message']['text'].split(" ")[1]
+            print(message['message']['text'].split(" "))
 #            module_log.log(f"Updating branch {branch}")
         except IndexError:
             branch = "master"
