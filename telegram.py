@@ -366,10 +366,12 @@ class Telegram:
 
         try:
             branch = message['message']['text'].split(" ")[1]
-            module_log.log(f"Updating branch {branch}")
+#            module_log.log(f"Updating branch {branch}")
         except IndexError:
             branch = "master"
+ #           module_log.log(f"Updating branch {branch}")
 
+        module_log.log(f"Updating branch {branch}")
         repo = git.Repo('/home/pi/python/smart-photo-frame')
         repo.git.checkout(branch)
         update = repo.git.pull('origin', branch)
