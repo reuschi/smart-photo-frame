@@ -350,7 +350,7 @@ class Telegram:
         #stdout, stderr = reply.communicate()
         #module_log.log(stdout)
         repo = git.Repo('/home/pi/python/smart-photo-frame')
-        print(repo.git.status())
+        print(repo.git.pull('origin', 'refactor'))
         module_log.log(f"System update done")
 
     def process_admin_commands(self, message):
