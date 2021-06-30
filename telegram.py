@@ -417,7 +417,7 @@ class Telegram:
         elif message['message']['text'] == "/reboot":
             # Reboot whole system
             self._system_reboot(message)
-        elif message['message']['text'] == "/update":
+        elif message['message']['text'].startswith("/update"):
             # Update system with current repository and restart with new code
             success = self._system_update(message)
 
