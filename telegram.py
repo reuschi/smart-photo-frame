@@ -27,6 +27,7 @@ class Telegram:
         self.db_connection = sqlite3.connect(db_path)
         self.db_cursor = self.db_connection.cursor()
         self.table = "telegram_bot"
+        self.language = static_variables.language
 
     def telegram_POST(self, link, data={}, file=None):
         # Requesting Telegram API via POST Method
@@ -440,7 +441,7 @@ class Telegram:
 
                         if self.download_file(file, filename):
                             # If download of the sent photo is successfully reply to it
-                            self.send_message(from_id, f"{texts.de_telegram['thanks_image_upload']}")
+                            self.send_message(from_id, f"{texts[self.language]['telegram']['thanks_image_upload']}")
                             success = True
                     elif "text" in message['message'] and from_id in self.allowed_admins:
                         # If user sent text
@@ -452,7 +453,7 @@ class Telegram:
                 else:
                     # If no allowed sender was found in config
                     module_log.log(f"Sender not allowed to send photos. ID: {from_id}")
-                    self.send_message(from_id, f"{texts.de_telegram['sender_not_allowed']} ID: {from_id}")
+                    self.send_message(from_id, f"{texts[self.language]['telegram']['sender_not_allowed']} ID: {from_id}")
 
                 self.set_last_update_id(message['update_id'] + 1, self.table)
                 self.db_commit()

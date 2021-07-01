@@ -5,6 +5,7 @@ import email.header
 import os.path
 import module_log
 import pathlib
+import texts
 
 
 class ImapMail:

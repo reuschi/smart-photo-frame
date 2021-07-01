@@ -7,6 +7,10 @@ config = configparser.ConfigParser()
 config_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / 'config.ini')
 config.read(config_path)
 
+# GLOBAL
+# ------------------------------
+language = config['global']['language']
+
 
 # FRAME VARIABLES
 # ------------------------------
