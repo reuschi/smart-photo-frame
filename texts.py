@@ -43,10 +43,32 @@ texts = {
 
         },
         "imap": {
-            "mailbox_open_error": "FEHLER: Mailbox kann nicht geöffnet werden"
+            "mailbox_open_error": "FEHLER: Keine Mailbox zum Öffnen gefunden"
+        },
+        "frame": {
+
+        }
+    },
+    "EN": {
+        "telegram": {
+            "return_400": "400 - Bad Request!",
+            "return_401": "401 - You're not authorized!",
+            "return_403": "403 - Action is Forbidden!",
+            "return_404": "404 - Request not found",
+            "return_406": "406 - Request not acceptable",
+            "return_420": "420 - The maximum allowed number of attempts to invoke the given method with the given input parameters has been exceeded.",
+            "return_500": "500 - An internal server error occurred while a request was being processed.",
+            "thanks_image_upload": "Thank you for the image. I've stored it in the database and restarted the presentation.",
+            "sender_not_allowed": "You're not authorized!",
+            "extension_not_allowed": "The file extension is not allowed!",
+
+        },
+        "imap": {
+            "mailbox_open_error": "ERROR: No Mailbox to open"
         },
         "frame": {
 
         }
     }
+
 }
