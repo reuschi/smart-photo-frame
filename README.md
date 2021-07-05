@@ -23,6 +23,7 @@ Packages: GitPython, requests, RPi.GPIO, urllib3
 
 ## Config file
 
+The config file should look like the following:
 ```
 [telegram]
 token = <Telegram API Token>
