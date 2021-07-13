@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a Smart Photo Frame to show a slideshow of pictures that were sent via email or via a Telegram Bot. To run it completely, you need to create your own Bot token at @BotFather. Within your mailbox a folder named "Smart Photo Frame" should be present where all new photos for the frame will be automatically moved to.
+This is a Smart Photo Frame to show a slideshow of pictures that were sent via email or via a Telegram Bot. To run it completely, you need to create your own Bot token at *@BotFather*. Within your mailbox a folder named "Smart Photo Frame" should be present where all new photos for the frame will be automatically moved to.
 
 ## Recommended hard and software
 
@@ -70,3 +70,8 @@ language = EN ; available: EN & DE - other languages need to be added to texts.p
 ## Creating the automatic run of the script
 
 To run the frame automatically via bootup you additionally need to add the call of "main.py" to the "/etc/rc.local" file.
+
+## Still open tasks
+
+- [ ] Complete the replacement of all texts
+- [ ] Implement another interconnection between frame and sender (OwnCloud, Dropbox, etc.)
