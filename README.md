@@ -6,12 +6,12 @@ This is a Smart Photo Frame to show a slideshow of pictures that were sent via e
 
 ## Recommended hard and software
 
-Hardware: Every RaspberryPi with Wireless connection (successfully tested on Zero W)\
-Display: Each HDMI connectable display
+**Hardware:** Every RaspberryPi with Wireless connection (successfully tested on Zero W)\
+**Display:** Each HDMI connectable display
 
-System: RaspberryPi OS (installation without Desktop is enough)\
-Python version: 3.7\
-Packages: GitPython, requests, RPi.GPIO, urllib3
+**System:** RaspberryPi OS (installation without Desktop is enough)\
+**Python version:** 3.7\
+**Packages:** GitPython, requests, RPi.GPIO, urllib3
 
 ## Installation guide
 
@@ -21,9 +21,14 @@ Packages: GitPython, requests, RPi.GPIO, urllib3
 4. If you want to be able to update the frame via Telegram, you need to store your GitHub login data in store manager on RasPi and copy the ".gitconfig" and ".git-credentials" files to "/root".
 5. Connect an HDMI screen to the RasPi (TV, computer monitor, HDMI display, etc.)
 
+## Folder structure
+
+When repository is cloned, no folders are created. To store your images, during the first run, a subfolder images will be created. Within this folder you can delete or add new photos manually.\
+All other data is stored in the main folder of the repository.
+
 ## Config file
 
-The config file should be stored as config.ini in the same folder as the frame.py and should look like the following:
+The config file should be stored as **config.ini** in the same folder as the **main.py** and should look like the following:
 ```
 [telegram]
 token = <Telegram API Token>
@@ -71,16 +76,16 @@ You need to create your own Telegram Bot. For that just follow the tasks:
 5. Copy the token and store it in the config file as shown above
 6. Open the conversation with the Bot
 
-Now the Bot should be ready to receive messages. If you send messages to the Bot while the frame is not running, nothing is happening. To get a reply on your send photos, you must run the **"main.py"**.
+Now the Bot should be ready to receive messages. If you send messages to the Bot while the frame is not running, nothing is happening. To get a reply on your send photos, you must run the **main.py**.
 
 ## Preparing your mailbox
 
-To only get those mails downloaded that are intended for the photo frame, you should create a subfolder in your mailbox. By default the system awaits the folder name to be "Smart Photo Frame". You can change it in the source code as you want.\
+To only get those mails downloaded that are intended for the photo frame, you should create a subfolder in your mailbox. By default the system awaits the folder name to be **"Smart Photo Frame"**. You can change it in the source code as you want.\
 New mails should be moved automatically to this subfolder or sorted out by an inbox rule.
 
 ## Creating the automatic run of the script
 
-To run the frame automatically via bootup you additionally need to add the call of **"main.py"** to the "/etc/rc.local" file.
+To run the frame automatically via bootup you additionally need to add the call of **main.py** to the "/etc/rc.local" file.
 
 ## Hardware enhancements
 
