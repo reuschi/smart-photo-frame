@@ -10,11 +10,12 @@ import texts
 
 class ImapMail:
 
-    def __init__(self, account, passwd, hostname="imap.gmail.com", ext="jpg,JPG"):
+    def __init__(self, account, passwd, hostname="imap.gmail.com", ext="jpg,JPG", subfolder="Smart Photo Frame"):
         self.EMAIL_ACCOUNT = account
         self.EMAIL_PASS = passwd
         self.hostname = hostname
         self.allowedExtensions = ext
+        self.subfolder = subfolder
 
     def download_attachment(self, M, directory="images"):
         # Download attachments from mails sent to the mail account
@@ -108,7 +109,7 @@ class ImapMail:
                 return "ERROR: No Mailbox to open"
 
             # Select mailbox folder to download images from and download new images
-            rv, data = Mail.select('"Smart Photo Frame"')
+            rv, data = Mail.select(f'"{self.subfolder}"')
             if rv == 'OK':
                 module_log.log("Processing mailbox...")
 
