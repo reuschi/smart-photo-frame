@@ -75,19 +75,19 @@ class Telegram:
         if answer.status_code == 200:
             return answer.json()
         elif answer.status_code == 400:
-            return "400 - Bad Request!"
+            return texts.texts[self.language]['telegram']['return_400']
         elif answer.status_code == 401:
-            return "401 - You're not authorized!"
+            return texts.texts[self.language]['telegram']['return_401']
         elif answer.status_code == 403:
-            return "403 - Action is Forbidden!"
+            return texts.texts[self.language]['telegram']['return_403']
         elif answer.status_code == 404:
-            return "404 - Request not found"
+            return texts.texts[self.language]['telegram']['return_404']
         elif answer.status_code == 406:
-            return "406 - Request not acceptable"
+            return texts.texts[self.language]['telegram']['return_406']
         elif answer.status_code == 420:
-            return "420 - The maximum allowed number of attempts to invoke the given method with the given input parameters has been exceeded."
+            return texts.texts[self.language]['telegram']['return_420']
         elif answer.status_code == 500:
-            return "500 - An internal server error occurred while a request was being processed"
+            return texts.texts[self.language]['telegram']['return_500']
         else:
             return "Unknown Error! " + str(answer)
 
@@ -279,7 +279,7 @@ class Telegram:
         for ext in extension:
             ext = ext.replace(".", "")
             static_variables.add_value_to_config("gmail", "file_extensions", ext)
-        self.send_message(from_id, "Neue Extension(s) aufgenommen.")
+        self.send_message(from_id, texts.texts[self.language]['telegram']['new_file_extension'])
         module_log.log(f"New extension(s) added: {extension}")
 
     def _add_sender(self, message):
@@ -289,7 +289,7 @@ class Telegram:
 
         static_variables.add_value_to_config("telegram", "allowedsenders", add_id[1])
         self.allowed_senders.append(int(add_id[1]))
-        self.send_message(from_id, "Neue ID ist aufgenommen.")
+        self.send_message(from_id, texts.texts[self.language]['telegram']['new_sender_id'])
         module_log.log(f"New sender added to allowed sender list: {add_id[1]}")
 
     def _get_identity(self, message):
@@ -322,7 +322,7 @@ class Telegram:
             stdout, stderr = reply.communicate()
             encoding = 'utf-8'
             if str(stderr, encoding) is "":
-                self.send_message(from_id, f"{img} erfolgreich gelöscht")
+                self.send_message(from_id, f"{img} {texts.texts[self.language]['telegram']['id_delete_success']}")
                 module_log.log(f"{img} deleted.")
                 success = True
             else:
@@ -345,7 +345,7 @@ class Telegram:
 
         file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "config.ini")
         if self.send_file(from_id, file):
-            module_log.log(f"Configuration File sent.")
+            module_log.log(f"Configuration file sent.")
 
     def _system_reboot(self, message):
         # Reboot system by shell command
@@ -357,7 +357,7 @@ class Telegram:
         if str(stderr, encoding) is "":
             module_log.log(f"Reboot initiated")
         else:
-            self.send_message(from_id, "Reboot konnte nicht ausgeführt werden.")
+            self.send_message(from_id, texts.texts[self.language]['telegram']['no_reboot_possible'])
             module_log.log(f"Error while rebooting")
 
     def _system_update(self, message):
@@ -375,14 +375,14 @@ class Telegram:
         repo.git.checkout(branch)
         update = repo.git.pull('origin', branch)
         if "Updating" in update:
-            self.send_message(from_id, f"System erfolgreich aktualisiert.")
+            self.send_message(from_id, texts.texts[self.language]['telegram']['sys_upd_success'])
             module_log.log(f"System update done")
             success = True
         elif "Already up to date" in update:
-            self.send_message(from_id, f"System ist bereits auf dem neuesten Stand")
+            self.send_message(from_id, texts.texts[self.language]['telegram']['sys_upd_no_need'])
             module_log.log(f"System was up to date")
         else:
-            self.send_message(from_id, f"Update fehlgeschlagen")
+            self.send_message(from_id, texts.texts[self.language]['telegram']['sys_upd_failed'])
             module_log.log(f"System update failed!")
 
         return success

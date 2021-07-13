@@ -40,12 +40,23 @@ texts = {
             "thanks_image_upload": "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert und die Präsentation neu gestartet.",
             "sender_not_allowed": "Sie sind nicht berechtigt!",
             "extension_not_allowed": "Die Dateierweiterung ist nicht erlaubt!",
+            "new_file_extension": "Neue Extension(s) aufgenommen.",
+            "new_sender_id": "Neue ID ist aufgenommen.",
+            "id_delete_success": "erfolgreich gelöscht",
+            "no_reboot_possible": "Reboot konnte nicht ausgeführt werden.",
+            "sys_upd_success": "System erfolgreich aktualisiert.",
+            "sys_upd_no_need": "System ist bereits auf dem neuesten Stand",
+            "sys_upd_failed": "Update fehlgeschlagen",
 
         },
         "imap": {
+            "no_mailbox_found": "FEHLER: Keine Mailbox zum Öffnen gefunden",
             "mailbox_open_error": "FEHLER: Keine Mailbox zum Öffnen gefunden"
         },
         "frame": {
+
+        },
+        "log": {
 
         }
     },
@@ -61,12 +72,23 @@ texts = {
             "thanks_image_upload": "Thank you for the image. I've stored it in the database and restarted the presentation.",
             "sender_not_allowed": "You're not authorized!",
             "extension_not_allowed": "The file extension is not allowed!",
+            "new_file_extension": "Neue Extension(s) aufgenommen.",
+            "new_sender_id": "Neue ID ist aufgenommen.",
+            "id_delete_success": "Neue ID ist aufgenommen.",
+            "no_reboot_possible": "Reboot konnte nicht ausgeführt werden.",
+            "sys_upd_success": "System update done",
+            "sys_upd_no_need": "System was up to date",
+            "sys_upd_failed": "System update failed!",
 
         },
         "imap": {
-            "mailbox_open_error": "ERROR: No Mailbox to open"
+            "no_mailbox_found": "ERROR: No Mailbox to open",
+            "mailbox_open_error": "ERROR: Unable to open mailbox"
         },
         "frame": {
+
+        },
+        "log": {
 
         }
     }

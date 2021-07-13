@@ -96,10 +96,10 @@ Those thre buttons are are mentioned to be installed on the following ports:
 * Port 9: Shut down the system
 
 All ports are configured as Pull-Up ports and need to be connected to ground.\
-For my use case I soldered them directly on the RasPi and gave the buttons that raise and lower the timer a higher button.
+For my use case I soldered them directly on the RasPi and gave the buttons that raise and lower the timer a higher hardware button.
 
 ## Open tasks
 
-- [ ] Complete the replacement of all texts
+- [ ] Complete the replacement of all texts in english and german
 - [ ] Implement another interconnection between frame and sender (OwnCloud, Dropbox, etc.)
 - [ ] Find a different presenter application to also display videos

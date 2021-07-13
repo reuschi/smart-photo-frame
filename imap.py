@@ -5,6 +5,7 @@ import email.header
 import os.path
 import module_log
 import pathlib
+import static_variables
 import texts
 
 
@@ -16,6 +17,7 @@ class ImapMail:
         self.hostname = hostname
         self.allowedExtensions = ext
         self.subfolder = subfolder
+        self.language = static_variables.language
 
     def download_attachment(self, M, directory="images"):
         # Download attachments from mails sent to the mail account
@@ -106,7 +108,8 @@ class ImapMail:
                 module_log.log("Mailboxes found: " + str(mailboxes))
             else:
                 module_log.log("No Mailbox found")
-                return "ERROR: No Mailbox to open"
+                #return "ERROR: No Mailbox to open"
+                return texts.texts[self.language]['imap']['no_mailbox_found']
 
             # Select mailbox folder to download images from and download new images
             rv, data = Mail.select(f'"{self.subfolder}"')
@@ -115,7 +118,8 @@ class ImapMail:
 
                 success = self.download_attachment(Mail)
             else:
-                return f"ERROR: Unable to open mailbox {rv}"
+                #return f"ERROR: Unable to open mailbox {rv}"
+                return f"{texts.texts[self.language]['imap']['mailbox_open_error']} {rv}"
 
             # Close connection to mail server
             Mail.close()
