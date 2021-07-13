@@ -64,7 +64,7 @@ language = EN ; available: EN & DE - other languages need to be added to texts.p
 ## Creating a Telegram Bot
 
 You need to create your own Telegram Bot. For that just follow the tasks:
-1. Open Telegram on your smartphone or as webapp (https://web.telegram.org/)
+1. Open Telegram on your smartphone or in your browser (https://web.telegram.org/)
 2. Search for the global contact *@BotFather*
 3. Send the message "/newbot" and configure your Bot (name, settings, etc.)
 4. Create or view the API Token of that Bot
@@ -81,6 +81,17 @@ New mails should be moved automatically to this subfolder or sorted out by an in
 ## Creating the automatic run of the script
 
 To run the frame automatically via bootup you additionally need to add the call of **"main.py"** to the "/etc/rc.local" file.
+
+## Hardware enhancements
+
+By adding hardware buttons to the RasPi you can offer your Frame users the possibility to handle the Frame. There are already preparations done for three buttons in sum. One button can be used to rise the display time of each photo in steps of 2 seconds. Another button can be used to lower the display time of each photo - down to 2 seconds. The third button can be used to properly shut down the whole RasPi (e.g. for moving from one place to another or at night).\
+Those thre buttons are are mentioned to be installed on the following ports:
+* Port 27: Rise the timer
+* Port 19: Lower the timer
+* Port 9: Shut down the system
+
+All ports are configured as Pull-Up ports and need to be connected to ground.\
+For my use case I soldered them directly on the RasPi and gave the buttons that raise and lower the timer a higher button.
 
 ## Open tasks
 
