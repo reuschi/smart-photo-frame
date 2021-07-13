@@ -2,15 +2,15 @@
 
 ## Introduction
 
-This is a Smart Photo Frame to show a slideshow of pictures that were sent via email or via a Telegram Bot. To run it completely, you need to create your own Bot token at @BotFather. Within your mailbox a folder named "Smart Photo Frame" should be present where all new photos for the frame will be moved to.
+This is a Smart Photo Frame to show a slideshow of pictures that were sent via email or via a Telegram Bot. To run it completely, you need to create your own Bot token at @BotFather. Within your mailbox a folder named "Smart Photo Frame" should be present where all new photos for the frame will be automatically moved to.
 
 ## Recommended hard and software
 
-Hardware: Every RaspberryPi with Wireless connection (successfully tested on Zero W)
+Hardware: Every RaspberryPi with Wireless connection (successfully tested on Zero W)\
 Display: Each HDMI connectable display
 
-System: RaspberryPi OS (installation without Desktop is enough)
-Python version: 3.7
+System: RaspberryPi OS (installation without Desktop is enough)\
+Python version: 3.7\
 Packages: GitPython, requests, RPi.GPIO, urllib3
 
 ## Installation guide
@@ -23,7 +23,7 @@ Packages: GitPython, requests, RPi.GPIO, urllib3
 
 ## Config file
 
-The config file should look like the following:
+The config file should be stored as config.ini in the same folder as the frame.py and should look like the following:
 ```
 [telegram]
 token = <Telegram API Token>
