@@ -29,6 +29,9 @@ class Telegram:
         self.table = "telegram_bot"
         self.language = static_variables.language
 
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.db_close()
+
     def telegram_POST(self, link, data={}, file=None):
         # Requesting Telegram API via POST Method
         answer = requests.Response()
