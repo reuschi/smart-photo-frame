@@ -31,7 +31,7 @@ file_extensions = [str(ext) for ext in mail_elements]
 # TELEGRAM STATICS
 # ------------------------------
 token = config['telegram']['token']
-status_signal = config['telegram']['status_signal']
+status_signal = bool(config['telegram']['status_signal'])
 
 # Fetch allowed senders
 tg_elements = config.get('telegram', 'allowedsenders').split(',')
