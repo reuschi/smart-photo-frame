@@ -117,7 +117,7 @@ class Telegram:
         return self.telegram_POST(link, data)
 
     def send_signal(self):
-        print(type(self.status_signal))
+        print(self.status_signal)
         if self.status_signal:
             self.send_message("28068117", texts.texts[self.language]['telegram']['snd_signal'])
 
