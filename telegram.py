@@ -28,7 +28,7 @@ class Telegram:
         self.db_cursor = self.db_connection.cursor()
         self.table = "telegram_bot"
         self.language = static_variables.language
-        self.status_signaL = static_variables.status_signal
+        self.status_signal = static_variables.status_signal
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.db_connection:
@@ -117,7 +117,8 @@ class Telegram:
         return self.telegram_POST(link, data)
 
     def send_signal(self):
-        if self.status_signaL:
+        print(type(self.status_signal))
+        if self.status_signal:
             self.send_message("28068117", texts.texts[self.language]['telegram']['snd_signal'])
 
     def get_file_link(self, file_id):
