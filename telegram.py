@@ -405,7 +405,7 @@ class Telegram:
         else:
             static_variables.status_signal = True
             static_variables.change_config_value('telegram', 'status_signal', 'True')
-            self.send_message(from_id, texts.texts[self.language]['telegram']['sw_signaling_false'])
+            self.send_message(from_id, texts.texts[self.language]['telegram']['sw_signaling_true'])
 
     def process_admin_commands(self, message):
         success = False
@@ -437,7 +437,7 @@ class Telegram:
         elif message['message']['text'].startswith("/update"):
             # Update system with current repository and restart with new code
             success = self._system_update(message)
-        elif message['message']['text'].startswith("/switch_signaling"):
+        elif message['message']['text'] == "/swsignaling":
             # Switch the signaling return via Telegram when system boots up
             self._switch_signaling(message)
 
