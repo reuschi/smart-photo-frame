@@ -28,6 +28,7 @@ class Telegram:
         self.db_cursor = self.db_connection.cursor()
         self.table = "telegram_bot"
         self.language = static_variables.language
+        self.status_signaL = static_variables.status_signal
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.db_connection:
@@ -114,6 +115,10 @@ class Telegram:
         }
 
         return self.telegram_POST(link, data)
+
+    def send_signal(self):
+        if self.status_signaL:
+            self.send_message("28068117", texts.texts[self.language]['telegram']['snd_signal'])
 
     def get_file_link(self, file_id):
         # To download a file it's necessary to get the direct link to the file
@@ -391,6 +396,17 @@ class Telegram:
 
         return success
 
+    def _switch_signaling(self, message):
+        from_id = message['message']['from']['id']
+        if static_variables.status_signal:
+            static_variables.status_signal = False
+            static_variables.change_config_value('telegram', 'status_signal', 'False')
+            self.send_message(from_id, texts.texts[self.language]['telegram']['sw_signaling_false'])
+        else:
+            static_variables.status_signal = True
+            static_variables.change_config_value('telegram', 'status_signal', 'True')
+            self.send_message(from_id, texts.texts[self.language]['telegram']['sw_signaling_false'])
+
     def process_admin_commands(self, message):
         success = False
 
@@ -421,6 +437,9 @@ class Telegram:
         elif message['message']['text'].startswith("/update"):
             # Update system with current repository and restart with new code
             success = self._system_update(message)
+        elif message['message']['text'].startswith("/switch_signaling"):
+            # Switch the signaling return via Telegram when system boots up
+            self._switch_signaling(message)
 
         return success
 

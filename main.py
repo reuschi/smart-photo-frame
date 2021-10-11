@@ -19,6 +19,7 @@ if __name__ == "__main__":
     imap = ImapMail(static_variables.EMAIL_ACCOUNT, static_variables.EMAIL_PASS, hostname=static_variables.EMAIL_HOST, ext=static_variables.file_extensions)
     tg = Telegram(static_variables.token, static_variables.tg_allowed_senders, static_variables.tg_allowed_admins)
     tg.set_commands()
+    tg.send_signal()
 
     module_log.log("!!!! SYSTEM STARTED !!!!")
     frame.restart_slideshow()

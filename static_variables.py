@@ -31,6 +31,7 @@ file_extensions = [str(ext) for ext in mail_elements]
 # TELEGRAM STATICS
 # ------------------------------
 token = config['telegram']['token']
+status_signal = config['telegram']['status_signal']
 
 # Fetch allowed senders
 tg_elements = config.get('telegram', 'allowedsenders').split(',')
@@ -52,6 +53,13 @@ logToScreen = bool(config['logging']['logToScreen'])
 def add_value_to_config(section: str, parameter: str, value: str):
     # Add a new 'value' to a 'parameter' in 'section' in the config file
     config[section][parameter] += "," + str(value)
+    with open(config_path, 'w') as conf:
+        config.write(conf)
+
+
+def change_config_value(section: str, parameter: str, value: str):
+    # Change 'value' of a configured 'parameter' in 'section'
+    config[section][parameter] = str(value)
     with open(config_path, 'w') as conf:
         config.write(conf)
 

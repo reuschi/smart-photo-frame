@@ -47,6 +47,9 @@ texts = {
             "sys_upd_success": "System erfolgreich aktualisiert.",
             "sys_upd_no_need": "System ist bereits auf dem neuesten Stand",
             "sys_upd_failed": "Update fehlgeschlagen",
+            "sw_signaling_false": "Telegram signaling deaktiviert",
+            "sw_signaling_true": "Telegram signaling aktiviert",
+            "snd_signal": "System hochgefahren",
 
         },
         "imap": {
@@ -79,6 +82,9 @@ texts = {
             "sys_upd_success": "System update done",
             "sys_upd_no_need": "System was up to date",
             "sys_upd_failed": "System update failed!",
+            "sw_signaling_false": "Telegram signaling deactivated",
+            "sw_signaling_true": "Telegram signaling activated",
+            "snd_signal": "System is booted up",
 
         },
         "imap": {
