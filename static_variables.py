@@ -46,8 +46,8 @@ tg_bot_commands = literal_eval(config['telegram']['commands'])
 
 # LOGGING VARIABLES
 # ------------------------------
-logToFile = bool(config['logging']['logToFile'])
-logToScreen = bool(config['logging']['logToScreen'])
+logToFile = config.getboolean('logging', 'logToFile')
+logToScreen = config.getboolean('logging', 'logToScreen')
 
 
 def add_value_to_config(section: str, parameter: str, value: str):
