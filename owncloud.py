@@ -13,3 +13,6 @@ class Owncloud:
 
     def create_dir(self, dirname):
         print(self.owncloud.mkdirs(dirname))
+
+    def list(self):
+        print(self.owncloud.ls('/'))
