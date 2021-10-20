@@ -12,7 +12,7 @@ class Owncloud:
         self.owncloud = easywebdav2.connect(self.host, username=self.username, password=self.password)
 
     def create_dir(self, dirname):
-        print(self.owncloud.mkdirs("/remote.php/webdav" + dirname))
+        print(self.owncloud.mkdir("/remote.php/webdav" + dirname))
 
     def list(self):
         print(self.owncloud.ls("/remote.php/webdav"))
