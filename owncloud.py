@@ -26,7 +26,7 @@ class Owncloud:
         #list = namedtuple(listing['name', 'size', 'mtime', 'ctime', 'contenttype'])
 
         #print(type(listing))
-        for file in listing._fields:
+        for file in listing:
             #file = dict(file)
-            print(file)
+            print(file._fields)
         # self.owncloud.download()
