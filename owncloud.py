@@ -10,9 +10,14 @@ class Owncloud:
 
     def connect(self):
         self.owncloud = easywebdav2.connect(self.host, username=self.username, password=self.password)
+        self.owncloud.cd("/remote.php/webdav/smart-photo-frame")
 
     def create_dir(self, dirname):
         print(self.owncloud.mkdir("/remote.php/webdav/" + dirname))
 
     def list(self):
-        print(self.owncloud.ls("/remote.php/webdav"))
+        print(self.owncloud.ls())
+
+    def download_file(self):
+        print(self.list())
+        # self.owncloud.download()

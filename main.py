@@ -23,8 +23,9 @@ if __name__ == "__main__":
     tg.set_commands()
     tg.send_signal()
     oc.connect()
-    oc.create_dir("smart-photo-frame")
-    oc.list()
+    # oc.create_dir("smart-photo-frame")
+    # oc.list()
+    oc.download_file()
 
     module_log.log("!!!! SYSTEM STARTED !!!!")
     frame.restart_slideshow()
