@@ -15,4 +15,4 @@ class Owncloud:
         print(self.owncloud.mkdirs(dirname))
 
     def list(self):
-        print(self.owncloud.ls(path="/"))
+        print(self.owncloud.ls("/remote.php/webdav"))
