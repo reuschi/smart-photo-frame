@@ -22,6 +22,7 @@ if __name__ == "__main__":
     oc = Owncloud()
     tg.set_commands()
     tg.send_signal()
+    oc.connect()
     oc.create_dir("smart-photo-frame")
 
     module_log.log("!!!! SYSTEM STARTED !!!!")
