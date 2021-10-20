@@ -24,6 +24,6 @@ class Owncloud:
 
         #print(type(listing))
         for file in listing:
-            file = dict(file)
-            print(file)
+            #file = dict(file)
+            print(type(file))
         # self.owncloud.download()
