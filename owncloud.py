@@ -19,7 +19,7 @@ class Owncloud:
         print(self.owncloud.ls())
 
     def download_file(self):
-        list = print(type(self.list()))
+        list = print(dict(self.list()))
 
         #for file in list:
         #    print(file[File])
