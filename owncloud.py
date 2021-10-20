@@ -7,6 +7,7 @@ class Owncloud:
         self.host = "oc.reuschi.de"
         self.username = "reuschi"
         self.password = "OUO_usr42"
+        self.owncloud = None
 
     def connect(self):
         self.owncloud = easywebdav2.connect(self.host, username=self.username, password=self.password)
