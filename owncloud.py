@@ -12,4 +12,4 @@ class Owncloud:
         self.owncloud = easywebdav2.connect(self.host, username=self.username, password=self.password)
 
     def create_dir(self, dirname):
-        self.owncloud.mkdirs(dirname)
+        self.owncloud.mkdir(dirname, safe=False)
