@@ -1,4 +1,5 @@
 import easywebdav2
+from collections import namedtuple
 
 
 class Owncloud:
@@ -22,8 +23,10 @@ class Owncloud:
     def download_file(self):
         listing = self.ls()
 
+        list = namedtuple(listing)
+
         #print(type(listing))
-        for file in listing:
+        for file in list:
             #file = dict(file)
-            print(type(file))
+            print(file)
         # self.owncloud.download()
