@@ -22,7 +22,7 @@ class Owncloud:
     def download_file(self):
         listing = self.ls()
 
-        print(type(listing))
-        #for file in listing:
-        #    print(file)
+        #print(type(listing))
+        for file in listing:
+            print(file)
         # self.owncloud.download()
