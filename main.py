@@ -23,7 +23,7 @@ if __name__ == "__main__":
     tg.set_commands()
     tg.send_signal()
     oc.connect()
-    oc.create_dir("smart-photo-frame")
+    # oc.create_dir("smart-photo-frame")
     oc.list()
 
     module_log.log("!!!! SYSTEM STARTED !!!!")
