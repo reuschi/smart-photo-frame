@@ -13,7 +13,8 @@ class Owncloud:
         self.owncloud.cd("/remote.php/webdav/smart-photo-frame")
 
     def create_dir(self, dirname):
-        print(self.owncloud.mkdir("/remote.php/webdav/" + dirname))
+        if not self.owncloud.exists("/remote.php/webdav/" + dirname):
+            self.owncloud.mkdir("/remote.php/webdav/" + dirname)
 
     def ls(self):
         print(self.owncloud.ls())
@@ -21,6 +22,7 @@ class Owncloud:
     def download_file(self):
         listing = list(self.ls())
 
-        for file in listing:
-            print(file[0])
+        print(type(listing))
+        #for file in listing:
+        #    print(file)
         # self.owncloud.download()
