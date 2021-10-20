@@ -15,12 +15,12 @@ class Owncloud:
     def create_dir(self, dirname):
         print(self.owncloud.mkdir("/remote.php/webdav/" + dirname))
 
-    def list(self):
+    def ls(self):
         print(self.owncloud.ls())
 
     def download_file(self):
-        list = dict(self.list())
+        listing = list(self.ls())
 
-        #for file in list:
-        #    print(file[File])
+        for file in listing:
+            print(file[0])
         # self.owncloud.download()
