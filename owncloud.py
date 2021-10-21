@@ -22,7 +22,7 @@ class Owncloud:
 
     def _get_filename(self, path: str):
         filename = path.split("/")
-        print(filename[-1])
+        return str(filename[-1])
 
     def download_file(self):
         listing = self.ls()
@@ -30,8 +30,7 @@ class Owncloud:
         for file in listing:
             if getattr(file, "contenttype") == "image/jpeg":
                 path = getattr(file, "name")
-                self._get_filename(path)
-                #self.owncloud.download(path, "/home/pi/python/smart-photo-frame/images")
+                self.owncloud.download(path, "/home/pi/python/smart-photo-frame/images" + self._get_filename(path))
 
                 # print(field)
                 # print(getattr(file, field))
