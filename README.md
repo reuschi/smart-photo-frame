@@ -11,7 +11,7 @@ This is a Smart Photo Frame to show a slideshow of pictures that were sent via e
 
 **System:** RaspberryPi OS (installation without Desktop is enough)\
 **Python version:** 3.7\
-**Packages:** GitPython, requests, RPi.GPIO, urllib3
+**Packages:** GitPython, requests, RPi.GPIO, urllib3, easywebdav2
 
 ## Installation guide
 
@@ -40,7 +40,8 @@ commands = [{"command": "getident", "description": "Get current external ip addr
             {"command": "getlog", "description": "Send log file as attachment"},
             {"command": "getconfig", "description": "Send configuration file as attachment"},
             {"command": "reboot", "description": "Reboot whole system"},
-            {"command": "update", "description": "Update system with current repository"}]
+            {"command": "update", "description": "Update system with current repository"},
+            {"command": "swsignaling", "description": "Switch the Telegram signaling"}]
 
 [gmail]
 account = <mail address>
@@ -52,6 +53,12 @@ account = <mail address>
 password = <mail account password>
 hostname = <hostname of mail server>
 fileExtensions = jpg,JPG,png,PNG,<comma seperated list of allowed file extensions>
+
+[owncloud]
+host = <hostname>
+username = <username>
+password = <password>
+subfolder = <foldername>
 
 [frame]
 timer = 10 ; single photo display time in seconds 
