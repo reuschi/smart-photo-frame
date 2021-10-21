@@ -44,6 +44,13 @@ tg_bot_commands = literal_eval(config['telegram']['commands'])
 #tg_bot_commands = [int(x) for x in tg_commands_elements]
 
 
+# OWNCLOUD STATICS
+# ------------------------------
+oc_host = config['owncloud']['host']
+oc_username = config['owncloud']['username']
+oc_password = config['owncloud']['password']
+
+
 # LOGGING VARIABLES
 # ------------------------------
 logToFile = config.getboolean('logging', 'logToFile')

@@ -1,13 +1,14 @@
 import easywebdav2
+import static_variables
 from collections import namedtuple
 
 
 class Owncloud:
 
     def __init__(self):
-        self.host = "oc.reuschi.de"
-        self.username = "reuschi"
-        self.password = "OOU_usr42"
+        self.host = static_variables.oc_host
+        self.username = static_variables.oc_username
+        self.password = static_variables.oc_password
 
     def connect(self):
         self.owncloud = easywebdav2.connect(self.host, username=self.username, password=self.password)
