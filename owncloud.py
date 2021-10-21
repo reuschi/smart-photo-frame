@@ -22,7 +22,7 @@ class Owncloud:
 
     def _get_filename(self, path: str):
         filename = path.split("/")
-        print(filename)
+        print(filename[-1])
 
     def download_file(self):
         listing = self.ls()
