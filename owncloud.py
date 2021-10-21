@@ -1,8 +1,6 @@
 import easywebdav2
-
 import module_log
 import static_variables
-import
 from collections import namedtuple
 
 
