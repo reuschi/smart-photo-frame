@@ -2,29 +2,29 @@
 
 ## Introduction
 
-This is a Smart Photo Frame to show a slideshow of pictures that were sent via email or via a Telegram Bot. To run it completely, you need to create your own Bot token at *@BotFather*. Within your mailbox a folder named "Smart Photo Frame" should be present where all new photos for the frame will be automatically moved to.
+This is a Smart Photo Frame to show a slideshow of pictures that were sent via email or via a Telegram Bot with the possibility to add more sources. Originally this was developed for my family, as we don't see each other so often and give a possibility to share images right from vacation or from far way. To run it completely, you need to create your own Telegram Bot token at *@BotFather*. Within your mailbox a folder named "Smart Photo Frame" should be present where all new photos for the frame will be automatically moved to.
 
-## Recommended hard and software
+## Recommended hardware and software
 
-**Hardware:** Every RaspberryPi with Wireless connection (successfully tested on Zero W)\
+**Hardware:** Every RaspberryPi with Wireless connection (successfully running on Zero W)\
 **Display:** Each HDMI connectable display
 
 **System:** RaspberryPi OS (installation without Desktop is enough)\
-**Python version:** 3.7\
+**Python version:** 3.7+\
 **Packages:** GitPython, requests, RPi.GPIO, urllib3, easywebdav2
 
 ## Installation guide
 
 1. Install the package by cloning the repository
-2. Create a new subfolder "images" (here will all images be loaded into)
-3. Create your own config.ini file (se the following chapter)
+2. Create a new subfolder "images" (in this folder all images will be loaded)
+3. Create your own config.ini file (see chapter for config)
 4. If you want to be able to update the frame via Telegram, you need to store your GitHub login data in store manager on RasPi and copy the ".gitconfig" and ".git-credentials" files to "/root".
 5. Connect an HDMI screen to the RasPi (TV, computer monitor, HDMI display, etc.)
 
 ## Folder structure
 
-When repository is cloned, no folders are created. To store your images, during the first run, a subfolder images will be created. Within this folder you can delete or add new photos manually.\
-All other data is stored in the main folder of the repository.
+When repository is cloned, no subfolders are created. To store your images, during the first run, a subfolder named "images" will be created. Within this folder you can delete or add new photos manually.\
+All other data is stored in the main folder of the cloned repository.
 
 ## Config file
 
@@ -33,7 +33,7 @@ The config file should be stored as **config.ini** in the same folder as the **m
 [telegram]
 token = <Telegram API Token>
 allowedsenders = 123456789,<comma seperated Telegram user id's>
-admins = <comma seperated Telegram user id's>
+admins = <comma seperated Telegram user id's> ; will be allowed to send admin commands
 auth_password = <admin password>
 status_signal = True/False ; frame gives feedback via Telegram when it's started and shutdown
 commands = [{"command": "getident", "description": "Get current external ip address"},
@@ -85,7 +85,7 @@ You need to create your own Telegram Bot. For that just follow the tasks:
 5. Copy the token and store it in the config file as shown above
 6. Open the conversation with the Bot
 
-Now the Bot should be ready to receive messages. If you send messages to the Bot while the frame is not running, nothing is happening. To get a reply on your send photos, you must run the **main.py**.
+Now the Bot should be ready to receive messages. If you send messages to the Bot while the frame is not running, nothing is happening. To get a reply on your sent photos, you must run the **main.py**. In most cases the script must run with *sudo*.
 
 ## Preparing your mailbox
 
