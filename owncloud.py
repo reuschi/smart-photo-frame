@@ -25,7 +25,7 @@ class Owncloud:
 
         for file in listing:
             for field in file._fields:
-                if field == "contenttype":
+                if getattr(file, "contenttype") == "image/jpeg":
                     print(getattr(file, "name"))
 
                 # print(field)
