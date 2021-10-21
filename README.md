@@ -35,6 +35,7 @@ token = <Telegram API Token>
 allowedsenders = 123456789,<comma seperated Telegram user id's>
 admins = <comma seperated Telegram user id's>
 auth_password = <admin password>
+status_signal = True/False ; frame gives feedback via Telegram when it's started and shutdown
 commands = [{"command": "getident", "description": "Get current external ip address"},
             {"command": "listimg", "description": "List all images stored on frame"},
             {"command": "getlog", "description": "Send log file as attachment"},
@@ -58,7 +59,8 @@ fileExtensions = jpg,JPG,png,PNG,<comma seperated list of allowed file extension
 host = <hostname>
 username = <username>
 password = <password>
-subfolder = <foldername>
+delete_after_download = True/False ; remote files on owncloud will be deleted 
+subfolder = <foldername> ; subfolder on owncloud
 
 [frame]
 timer = 10 ; single photo display time in seconds 
@@ -108,5 +110,5 @@ For my use case I soldered them directly on the RasPi and gave the buttons that 
 ## Open tasks
 
 - [ ] Complete the replacement of all texts in english and german
-- [ ] Implement another interconnection between frame and sender (OwnCloud, Dropbox, etc.)
+- [x] Implement another interconnection between frame and sender (OwnCloud, Dropbox, etc.)
 - [ ] Find a different presenter application to also display videos
