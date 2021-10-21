@@ -27,6 +27,10 @@ class Owncloud:
 
         #print(type(listing))
         for file in listing:
+            for field in file._fields:
+                print(field)
+                print(getattr(field, file))
             #file = dict(file)
-            print(file._fields)
+            #print(file._fields)
+            #print(getattr())
         # self.owncloud.download()
