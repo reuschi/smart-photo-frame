@@ -23,14 +23,10 @@ class Owncloud:
     def download_file(self):
         listing = self.ls()
 
-        #list = namedtuple(listing['name', 'size', 'mtime', 'ctime', 'contenttype'])
-
-        #print(type(listing))
         for file in listing:
             for field in file._fields:
-                print(field)
-                print(getattr(file, field))
-            #file = dict(file)
-            #print(file._fields)
-            #print(getattr())
-        # self.owncloud.download()
+                if field == "contenttype":
+                    print(getattr(file, "name"))
+
+                # print(field)
+                # print(getattr(file, field))
