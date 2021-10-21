@@ -1,5 +1,8 @@
 import easywebdav2
+
+import module_log
 import static_variables
+import
 from collections import namedtuple
 
 
@@ -18,6 +21,7 @@ class Owncloud:
     def create_dir(self, dirname):
         if not self.owncloud.exists("/remote.php/webdav/" + dirname):
             self.owncloud.mkdir("/remote.php/webdav/" + dirname)
+            module_log.log(f"Directory {dirname} created.")
 
     def ls(self):
         return self.owncloud.ls()
@@ -28,16 +32,25 @@ class Owncloud:
 
     def delete_file(self, path):
         self.owncloud.delete(path)
+        module_log.log(f"File {path} deleted.")
 
     def download_file(self):
         listing = self.ls()
 
-        for file in listing:
-            if getattr(file, "contenttype") == "image/jpeg":
-                path = getattr(file, "name")
-                self.owncloud.download(path, "/home/pi/python/smart-photo-frame/images/" + self._get_filename(path))
-                if static_variables.oc_delete:
-                    self.delete_file(path)
+        try:
+            for file in listing:
+                if getattr(file, "contenttype") == "image/jpeg":
+                    module_log.log("New files found. Start downloading")
+                    path = getattr(file, "name")
+                    filename = str(self._get_filename(path))
+                    self.owncloud.download(path, "/home/pi/python/smart-photo-frame/images/" + filename)
+                    module_log.log(f"File {filename} downloaded successfully.")
+                    if static_variables.oc_delete:
+                        self.delete_file(path)
 
-                # print(field)
-                # print(getattr(file, field))
+
+                    # print(field)
+                    # print(getattr(file, field))
+        except easywebdav2.WebdavException as e:
+            module_log.log("Error while downloading")
+            module_log.log(e)
