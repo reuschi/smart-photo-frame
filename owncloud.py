@@ -29,7 +29,7 @@ class Owncloud:
         for file in listing:
             for field in file._fields:
                 print(field)
-                print(getattr(field, file))
+                print(getattr(file, field))
             #file = dict(file)
             #print(file._fields)
             #print(getattr())
