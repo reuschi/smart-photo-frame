@@ -22,7 +22,6 @@ if __name__ == "__main__":
     oc = Owncloud(static_variables.oc_host, static_variables.oc_username, static_variables.oc_password)
     tg.set_commands()
     tg.send_signal()
-    oc.download_file()
 
     module_log.log("!!!! SYSTEM STARTED !!!!")
     frame.restart_slideshow()
@@ -50,8 +49,11 @@ if __name__ == "__main__":
         # Request for new Telegram message
         telegram = tg.process_new_message()
 
+        # Request for new images on Owncloud
+        owncloud = oc.download_file()
+
         # If new images received by mail or Telegram restart the slideshow with the new images
-        if telegram or mail:
+        if telegram or mail or owncloud:
             frame.restart_slideshow()
 
         time.sleep(15)
