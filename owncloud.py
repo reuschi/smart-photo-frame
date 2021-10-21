@@ -30,7 +30,7 @@ class Owncloud:
         for file in listing:
             if getattr(file, "contenttype") == "image/jpeg":
                 path = getattr(file, "name")
-                self.owncloud.download(path, "/home/pi/python/smart-photo-frame/images/" + self._get_filename(path))
+                print(self.owncloud.download(path, "/home/pi/python/smart-photo-frame/images/" + self._get_filename(path)))
 
                 # print(field)
                 # print(getattr(file, field))
