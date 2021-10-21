@@ -20,13 +20,18 @@ class Owncloud:
     def ls(self):
         return self.owncloud.ls()
 
+    def _get_filename(self, path: str):
+        filename = path.split("/")
+        print(filename)
+
     def download_file(self):
         listing = self.ls()
 
         for file in listing:
-            #for field in file._fields:
             if getattr(file, "contenttype") == "image/jpeg":
-                print(getattr(file, "name"))
+                path = getattr(file, "name")
+                self._get_filename(path)
+                #self.owncloud.download(path, "/home/pi/python/smart-photo-frame/images")
 
                 # print(field)
                 # print(getattr(file, field))
