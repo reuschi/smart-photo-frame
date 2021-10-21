@@ -30,7 +30,7 @@ class Owncloud:
 
     def delete_file(self, path):
         self.owncloud.delete(path)
-        module_log.log(f"File {path} deleted.")
+        module_log.log(f"File {path} deleted from Owncloud.")
 
     def download_file(self):
         listing = self.ls()
@@ -39,18 +39,14 @@ class Owncloud:
         try:
             for file in listing:
                 if getattr(file, "contenttype") == "image/jpeg":
-                    module_log.log("New file found. Start downloading")
+                    module_log.log("New file found on Owncloud. Start downloading")
                     path = getattr(file, "name")
                     filename = str(self._get_filename(path))
                     self.owncloud.download(path, "/home/pi/python/smart-photo-frame/images/" + filename)
                     success = True
-                    module_log.log(f"File {filename} downloaded successfully.")
+                    module_log.log(f"File {filename} downloaded successfully from Owncloud.")
                     if static_variables.oc_delete:
                         self.delete_file(path)
-
-
-                    # print(field)
-                    # print(getattr(file, field))
             return success
         except easywebdav2.WebdavException as e:
             module_log.log("Error while downloading")
