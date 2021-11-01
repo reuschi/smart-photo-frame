@@ -85,7 +85,7 @@ You need to create your own Telegram Bot. For that just follow the tasks:
 5. Copy the token and store it in the config file as shown above
 6. Open the conversation with the Bot
 
-Now the Bot should be ready to receive messages. If you send messages to the Bot while the frame is not running, nothing is happening. To get a reply on your sent photos, you must run the **main.py**. In most cases the script must run with *sudo*.
+Now the Bot should be ready to receive messages. If you send messages to the Bot while the frame is not running, nothing is happening. To get a reply on your sent photos, you must run the **main.py**. In most cases the script must run as *sudo*.
 
 ## Preparing your mailbox
 
