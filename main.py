@@ -37,7 +37,7 @@ if __name__ == "__main__":
     # Shutdown the system
     GPIO.add_event_detect(9, GPIO.FALLING, callback=frame.system_shutdown, bouncetime=400)
 
-    curr_time = int(time.time())
+    curr_time = int(time.time()) + 120
 
     while True:
 

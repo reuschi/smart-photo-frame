@@ -32,6 +32,7 @@ file_extensions = [str(ext) for ext in mail_elements]
 # ------------------------------
 token = config['telegram']['token']
 status_signal = config.getboolean('telegram', 'status_signal')
+poll_timeout = int(config['telegram']['poll_timeout'])
 
 # Fetch allowed senders
 tg_elements = config.get('telegram', 'allowedsenders').split(',')

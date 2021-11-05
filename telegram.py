@@ -29,7 +29,7 @@ class Telegram:
         self.table = "telegram_bot"
         self.language = static_variables.language
         self.status_signal = static_variables.status_signal
-        self.timeout = 30
+        self.timeout = static_variables.poll_timeout
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.db_connection:
