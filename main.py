@@ -38,16 +38,20 @@ if __name__ == "__main__":
     GPIO.add_event_detect(9, GPIO.FALLING, callback=frame.system_shutdown, bouncetime=400)
 
     while True:
-        # Request for new mails every 2 minutes
-        #if i >= 7:
-        mail = imap.init_imap(static_variables.EMAIL_ACCOUNT, static_variables.EMAIL_PASS)
-        #    i = 0
-        #else:
-        #    i += 1
-        #    mail = False
+        # Request for new mails every 8 runs as Telegram
+        if i >= 7:
+            mail = imap.init_imap(static_variables.EMAIL_ACCOUNT, static_variables.EMAIL_PASS)
+            i = 0
+        else:
+            i += 1
+            mail = False
 
         # Request for new images on Owncloud
         owncloud = oc.download_file()
+
+        print(time.time())
+        time.sleep(1)
+        print(time.time())
 
         # Request for new Telegram message
         telegram = tg.process_new_message()
@@ -56,6 +60,6 @@ if __name__ == "__main__":
         if telegram or mail or owncloud:
             frame.restart_slideshow()
 
-        #print("sleep")
+
         #time.sleep(1)
 
