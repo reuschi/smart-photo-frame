@@ -51,11 +51,15 @@ if __name__ == "__main__":
         # Request for new images on Owncloud
         owncloud = oc.download_file()
 
+        # If new images received by mail or Owncloud restart the slideshow with the new images
+        if mail or owncloud:
+            frame.restart_slideshow()
+
         # Request for new Telegram message
         telegram = tg.process_new_message()
 
-        # If new images received by mail or Telegram restart the slideshow with the new images
-        if telegram or mail or owncloud:
+        # If new images received by Telegram restart the slideshow with the new images
+        if telegram:
             frame.restart_slideshow()
 
 
