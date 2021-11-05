@@ -49,9 +49,9 @@ if __name__ == "__main__":
         # Request for new images on Owncloud
         owncloud = oc.download_file()
 
-        print(time.time())
+        print(int(time.time()))
         time.sleep(1)
-        print(time.time())
+        print(int(time.time()))
 
         # Request for new Telegram message
         telegram = tg.process_new_message()
