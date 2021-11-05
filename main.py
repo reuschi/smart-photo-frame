@@ -37,21 +37,19 @@ if __name__ == "__main__":
     # Shutdown the system
     GPIO.add_event_detect(9, GPIO.FALLING, callback=frame.system_shutdown, bouncetime=400)
 
+    curr_time = int(time.time())
+
     while True:
-        # Request for new mails every 8 runs as Telegram
-        if i >= 7:
+
+        # Request for new mails every 120 seconds
+        if int(time.time()) >= curr_time + 120:
             mail = imap.init_imap(static_variables.EMAIL_ACCOUNT, static_variables.EMAIL_PASS)
-            i = 0
+            curr_time = int(time.time())
         else:
-            i += 1
             mail = False
 
         # Request for new images on Owncloud
         owncloud = oc.download_file()
-
-        print(int(time.time()))
-        time.sleep(1)
-        print(int(time.time()))
 
         # Request for new Telegram message
         telegram = tg.process_new_message()
@@ -60,6 +58,4 @@ if __name__ == "__main__":
         if telegram or mail or owncloud:
             frame.restart_slideshow()
 
-
-        #time.sleep(1)
 
