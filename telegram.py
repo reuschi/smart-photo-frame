@@ -69,7 +69,7 @@ class Telegram:
         # Get new arrived messages since last Update receive
         link = self.weblink + "getUpdates"
         data = {
-            "timeout": 10
+            "timeout": 15
         }
 
         for key, value in kwargs.items():

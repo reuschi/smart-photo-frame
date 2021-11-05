@@ -56,5 +56,6 @@ if __name__ == "__main__":
         if telegram or mail or owncloud:
             frame.restart_slideshow()
 
-        time.sleep(15)
+        print("sleep")
+        time.sleep(1)
 
