@@ -401,15 +401,15 @@ class Telegram:
     def _switch_signaling(self, message):
         from_id = message['message']['from']['id']
         if static_variables.status_signal:
-            print("status_signal = False")
             static_variables.status_signal = False
             static_variables.change_config_value('telegram', 'status_signal', 'False')
             self.send_message(from_id, texts.texts[self.language]['telegram']['sw_signaling_false'])
+            module_log.log("Status signaling set to Off")
         else:
-            print("status_signal = True")
             static_variables.status_signal = True
             static_variables.change_config_value('telegram', 'status_signal', 'True')
             self.send_message(from_id, texts.texts[self.language]['telegram']['sw_signaling_true'])
+            module_log.log("Status signaling set to On")
 
     def process_admin_commands(self, message):
         success = False
@@ -443,7 +443,6 @@ class Telegram:
             success = self._system_update(message)
         elif message['message']['text'] == "/swsignaling":
             # Switch the signaling return via Telegram when system boots up
-            print("Switching called")
             self._switch_signaling(message)
 
         return success
