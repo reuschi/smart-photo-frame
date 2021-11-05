@@ -59,6 +59,9 @@ texts = {
         "frame": {
 
         },
+        "owncloud": {
+
+        },
         "log": {
 
         }
@@ -92,6 +95,9 @@ texts = {
             "mailbox_open_error": "ERROR: Unable to open mailbox"
         },
         "frame": {
+
+        },
+        "owncloud": {
 
         },
         "log": {
