@@ -35,6 +35,7 @@ class Owncloud:
     def download_file(self):
         listing = self.ls()
         success = False
+        module_log.log("Requesting new files from OwnCloud...")
 
         try:
             for file in listing:
@@ -47,6 +48,8 @@ class Owncloud:
                     module_log.log(f"File {filename} downloaded successfully from Owncloud.")
                     if static_variables.oc_delete:
                         self.delete_file(path)
+            if not success:
+                module_log.log("No new files found on OwnCloud.")
             return success
         except easywebdav2.WebdavException as e:
             module_log.log("Error while downloading")
