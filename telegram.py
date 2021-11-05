@@ -29,6 +29,7 @@ class Telegram:
         self.table = "telegram_bot"
         self.language = static_variables.language
         self.status_signal = static_variables.status_signal
+        self.timeout = 120
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.db_connection:
@@ -68,9 +69,7 @@ class Telegram:
     def read_message(self, **kwargs):
         # Get new arrived messages since last Update receive
         link = self.weblink + "getUpdates"
-        data = {
-            "timeout": 15
-        }
+        data = {}
 
         for key, value in kwargs.items():
             data[key] = value
@@ -455,7 +454,7 @@ class Telegram:
 
             # Get the last requested id and read the latest messages
             offset = self.get_last_update_id(self.table)
-            answer = self.read_message(offset=offset)
+            answer = self.read_message(offset=offset, timeout=self.timeout)
 
             # Answer must not be a str
             #if type(answer) != "str":
