@@ -303,18 +303,14 @@ class Telegram:
         self.send_message(from_id, texts.texts[self.language]['telegram']['new_sender_id'])
         module_log.log(f"New sender added to allowed sender list: {add_id[1]}")
 
-    def _get_identity(self, message):
+    def _get_identity(self, from_id):
         # Return public ip address to sender
-        from_id = message['message']['from']['id']
-
         ip = requests.get("https://api.ipify.org").text
         self.send_message(from_id, ip)
         module_log.log(f"Request for Identity. Identity is: {ip}")
 
-    def _list_images(self, message):
+    def _list_images(self, from_id):
         # List all images stored on the disk (in subfolder ./images)
-        from_id = message['message']['from']['id']
-
         path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images")
         files = os.listdir(path)
         self.send_message(from_id, str(files))
@@ -342,25 +338,20 @@ class Telegram:
 
         return success
 
-    def _send_log(self, message):
+    def _send_log(self, from_id):
         # Fetch log file and send it back to the user
-        from_id = message['message']['from']['id']
-
         file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
         if self.send_file(from_id, file):
             module_log.log(f"Log File sent.")
 
-    def _send_config(self, message):
+    def _send_config(self, from_id):
         # Fetch config file and send it back to the user
-        from_id = message['message']['from']['id']
-
         file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "config.ini")
         if self.send_file(from_id, file):
             module_log.log(f"Configuration file sent.")
 
-    def _system_reboot(self, message):
+    def _system_reboot(self, from_id):
         # Reboot system by shell command
-        from_id = message['message']['from']['id']
         bash_command = f"sudo reboot"
         reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = reply.communicate()
@@ -398,8 +389,8 @@ class Telegram:
 
         return success
 
-    def _switch_signaling(self, message):
-        from_id = message['message']['from']['id']
+    def _switch_signaling(self, from_id):
+        # Switch status signaling
         if static_variables.status_signal:
             static_variables.status_signal = False
             static_variables.change_config_value('telegram', 'status_signal', 'False')
@@ -413,6 +404,7 @@ class Telegram:
 
     def process_admin_commands(self, message):
         success = False
+        from_id = message['message']['from']['id']
 
         if message['message']['text'].startswith("/addsender"):
             # Add new senders into the config file
@@ -422,28 +414,28 @@ class Telegram:
             self._add_file_extension(message)
         elif message['message']['text'] == "/getident":
             # Get current external ip address
-            self._get_identity(message)
+            self._get_identity(from_id)
         elif message['message']['text'] == "/listimg":
             # List all images stored on frame
-            self._list_images(message)
+            self._list_images(from_id)
         elif message['message']['text'].startswith("/deleteimg"):
             # Delete images from frame and restart presentation
             success = self._delete_images(message, success)
         elif message['message']['text'] == "/getlog":
             # Send log file as attachment
-            self._send_log(message)
+            self._send_log(from_id)
         elif message['message']['text'] == "/getconfig":
             # Send configuration file as attachment
-            self._send_config(message)
+            self._send_config(from_id)
         elif message['message']['text'] == "/reboot":
             # Reboot whole system
-            self._system_reboot(message)
+            self._system_reboot(from_id)
         elif message['message']['text'].startswith("/update"):
             # Update system with current repository and restart with new code
             success = self._system_update(message)
         elif message['message']['text'] == "/swsignaling":
             # Switch the signaling return via Telegram when system boots up
-            self._switch_signaling(message)
+            self._switch_signaling(from_id)
 
         return success
 
