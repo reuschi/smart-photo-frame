@@ -26,8 +26,6 @@ if __name__ == "__main__":
     module_log.log("!!!! SYSTEM STARTED !!!!")
     frame.restart_slideshow()
 
-    i = 0
-
     # Rise presentation Timer
     GPIO.add_event_detect(27, GPIO.FALLING, callback=frame.rise_timer, bouncetime=400)
 
@@ -37,14 +35,15 @@ if __name__ == "__main__":
     # Shutdown the system
     GPIO.add_event_detect(9, GPIO.FALLING, callback=frame.system_shutdown, bouncetime=400)
 
-    curr_time = int(time.time()) - 120
+    # Set current time to 120 seconds in the past
+    reference_time = int(time.time()) - 120
 
     while True:
 
         # Request for new mails every 120 seconds
-        if int(time.time()) >= curr_time + 120:
+        if int(time.time()) >= reference_time + 120:
             mail = imap.init_imap(static_variables.EMAIL_ACCOUNT, static_variables.EMAIL_PASS)
-            curr_time = int(time.time())
+            reference_time = int(time.time())
         else:
             mail = False
 
@@ -61,5 +60,3 @@ if __name__ == "__main__":
         # If new images received by Telegram restart the slideshow with the new images
         if telegram:
             frame.restart_slideshow()
-
-
