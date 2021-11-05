@@ -29,7 +29,7 @@ en_telegram = {
 
 texts = {
     "DE": {
-        "telegram": {
+        "tg": {
             "return_400": "400 - Fehlerhafte Anfrage!",
             "return_401": "401 - Nicht authorisiert!",
             "return_403": "403 - Ausführung verboten!",
@@ -67,7 +67,7 @@ texts = {
         }
     },
     "EN": {
-        "telegram": {
+        "tg": {
             "return_400": "400 - Bad Request!",
             "return_401": "401 - You're not authorized!",
             "return_403": "403 - Action is Forbidden!",

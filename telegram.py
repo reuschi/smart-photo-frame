@@ -81,19 +81,19 @@ class Telegram:
         if answer.status_code == 200:
             return answer.json()
         elif answer.status_code == 400:
-            return texts.texts[self.language]['telegram']['return_400']
+            return texts.texts[self.language]['tg']['return_400']
         elif answer.status_code == 401:
-            return texts.texts[self.language]['telegram']['return_401']
+            return texts.texts[self.language]['tg']['return_401']
         elif answer.status_code == 403:
-            return texts.texts[self.language]['telegram']['return_403']
+            return texts.texts[self.language]['tg']['return_403']
         elif answer.status_code == 404:
-            return texts.texts[self.language]['telegram']['return_404']
+            return texts.texts[self.language]['tg']['return_404']
         elif answer.status_code == 406:
-            return texts.texts[self.language]['telegram']['return_406']
+            return texts.texts[self.language]['tg']['return_406']
         elif answer.status_code == 420:
-            return texts.texts[self.language]['telegram']['return_420']
+            return texts.texts[self.language]['tg']['return_420']
         elif answer.status_code == 500:
-            return texts.texts[self.language]['telegram']['return_500']
+            return texts.texts[self.language]['tg']['return_500']
         else:
             return "Unknown Error! " + str(answer)
 
@@ -120,7 +120,7 @@ class Telegram:
     def send_signal(self):
         print(self.status_signal)
         if self.status_signal:
-            self.send_message("28068117", texts.texts[self.language]['telegram']['snd_signal'])
+            self.send_message("28068117", texts.texts[self.language]['tg']['snd_signal'])
 
     def get_file_link(self, file_id):
         # To download a file it's necessary to get the direct link to the file
@@ -290,7 +290,7 @@ class Telegram:
         for ext in extension:
             ext = ext.replace(".", "")
             static_variables.add_value_to_config("gmail", "file_extensions", ext)
-        self.send_message(from_id, texts.texts[self.language]['telegram']['new_file_extension'])
+        self.send_message(from_id, texts.texts[self.language]['tg']['new_file_extension'])
         module_log.log(f"New extension(s) added: {extension}")
 
     def _add_sender(self, message):
@@ -300,7 +300,7 @@ class Telegram:
 
         static_variables.add_value_to_config("telegram", "allowedsenders", add_id[1])
         self.allowed_senders.append(int(add_id[1]))
-        self.send_message(from_id, texts.texts[self.language]['telegram']['new_sender_id'])
+        self.send_message(from_id, texts.texts[self.language]['tg']['new_sender_id'])
         module_log.log(f"New sender added to allowed sender list: {add_id[1]}")
 
     def _get_identity(self, from_id):
@@ -329,7 +329,7 @@ class Telegram:
             stdout, stderr = reply.communicate()
             encoding = 'utf-8'
             if str(stderr, encoding) is "":
-                self.send_message(from_id, f"{img} {texts.texts[self.language]['telegram']['id_delete_success']}")
+                self.send_message(from_id, f"{img} {texts.texts[self.language]['tg']['id_delete_success']}")
                 module_log.log(f"{img} deleted.")
                 success = True
             else:
@@ -359,7 +359,7 @@ class Telegram:
         if str(stderr, encoding) is "":
             module_log.log(f"Reboot initiated")
         else:
-            self.send_message(from_id, texts.texts[self.language]['telegram']['no_reboot_possible'])
+            self.send_message(from_id, texts.texts[self.language]['tg']['no_reboot_possible'])
             module_log.log(f"Error while rebooting")
 
     def _system_update(self, message):
@@ -377,14 +377,14 @@ class Telegram:
         repo.git.checkout(branch)
         update = repo.git.pull('origin', branch)
         if "Updating" in update:
-            self.send_message(from_id, texts.texts[self.language]['telegram']['sys_upd_success'])
+            self.send_message(from_id, texts.texts[self.language]['tg']['sys_upd_success'])
             module_log.log(f"System update done")
             success = True
         elif "Already up to date" in update:
-            self.send_message(from_id, texts.texts[self.language]['telegram']['sys_upd_no_need'])
+            self.send_message(from_id, texts.texts[self.language]['tg']['sys_upd_no_need'])
             module_log.log(f"System was up to date")
         else:
-            self.send_message(from_id, texts.texts[self.language]['telegram']['sys_upd_failed'])
+            self.send_message(from_id, texts.texts[self.language]['tg']['sys_upd_failed'])
             module_log.log(f"System update failed!")
 
         return success
@@ -394,12 +394,12 @@ class Telegram:
         if static_variables.status_signal:
             static_variables.status_signal = False
             static_variables.change_config_value('telegram', 'status_signal', 'False')
-            self.send_message(from_id, texts.texts[self.language]['telegram']['sw_signaling_false'])
+            self.send_message(from_id, texts.texts[self.language]['tg']['sw_signaling_false'])
             module_log.log("Status signaling set to Off")
         else:
             static_variables.status_signal = True
             static_variables.change_config_value('telegram', 'status_signal', 'True')
-            self.send_message(from_id, texts.texts[self.language]['telegram']['sw_signaling_true'])
+            self.send_message(from_id, texts.texts[self.language]['tg']['sw_signaling_true'])
             module_log.log("Status signaling set to On")
 
     def process_admin_commands(self, message):
@@ -460,7 +460,7 @@ class Telegram:
 
                         if self.download_file(file, filename):
                             # If download of the sent photo is successfully reply to it
-                            self.send_message(from_id, f"{texts.texts[self.language]['telegram']['thanks_image_upload']}")
+                            self.send_message(from_id, f"{texts.texts[self.language]['tg']['thanks_image_upload']}")
                             success = True
                     elif "text" in message['message'] and from_id in self.allowed_admins:
                         # If user sent text
@@ -472,7 +472,7 @@ class Telegram:
                 else:
                     # If no allowed sender was found in config
                     module_log.log(f"Sender not allowed to send photos. ID: {from_id}")
-                    self.send_message(from_id, f"{texts.texts[self.language]['telegram']['sender_not_allowed']} ID: {from_id}")
+                    self.send_message(from_id, f"{texts.texts[self.language]['tg']['sender_not_allowed']} ID: {from_id}")
 
                 self.set_last_update_id(message['update_id'] + 1, self.table)
                 self.db_commit()
