@@ -68,7 +68,9 @@ class Telegram:
     def read_message(self, **kwargs):
         # Get new arrived messages since last Update receive
         link = self.weblink + "getUpdates"
-        data = {}
+        data = {
+            "timeout": 10
+        }
 
         for key, value in kwargs.items():
             data[key] = value
