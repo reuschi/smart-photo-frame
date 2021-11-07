@@ -30,3 +30,7 @@ class DBHelper:
     def commit(self):
         self.db_connection.commit()
 
+    def close_connection(self):
+        if self.db_connection:
+            self.close_connection()
+

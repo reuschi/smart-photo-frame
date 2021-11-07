@@ -34,8 +34,7 @@ class Telegram:
         self.db = DBHelper()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if self.db_connection:
-            self.db_close()
+        self.db.close_connection()
 
     def telegram_POST(self, link, data={}, file=None):
         # Requesting Telegram API via POST Method
@@ -228,7 +227,6 @@ class Telegram:
         except Exception as e:
             module_log.log(sys.exc_info()[0] + ": " + sys.exc_info()[1])
         finally:
-            # self.db_connection.commit()
             self.db.commit()
 
         module_log.log("Setting last update id was not possible.")
@@ -475,7 +473,7 @@ class Telegram:
                     self.send_message(from_id, f"{texts.texts[self.language]['tg']['sender_not_allowed']} ID: {from_id}")
 
                 self.set_last_update_id(message['update_id'] + 1, self.table)
-                self.db_commit()
+                self.db.commit()
 
             return success
 
