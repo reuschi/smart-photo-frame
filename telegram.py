@@ -1,3 +1,4 @@
+from dbhelper import DBHelper
 import requests
 import time
 import urllib3
@@ -30,6 +31,7 @@ class Telegram:
         self.language = static_variables.language
         self.status_signal = static_variables.status_signal
         self.timeout = static_variables.poll_timeout
+        self.db = DBHelper()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.db_connection:
@@ -208,18 +210,21 @@ class Telegram:
                 update_id = 0
 
             # If there is no table in the database then create it first
-            self.db_cursor.execute(f"""CREATE TABLE IF NOT EXISTS {table} (
-                                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                        last_update_id
-                                    )""")
+            # self.db_cursor.execute(f"""CREATE TABLE IF NOT EXISTS {table} (
+            #                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            #                            last_update_id
+            #                        )""")
+            self.db.create_table(table)
 
             # Write the last update id into the database. If the value already exists just update the value of the field
             for row in self.db_cursor.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
                 if row[0] == 1:
-                    self.db_cursor.execute(f"UPDATE telegram_bot SET last_update_id='{update_id}' WHERE id=1")
+                    # self.db_cursor.execute(f"UPDATE telegram_bot SET last_update_id='{update_id}' WHERE id=1")
+                    self.db.update_last_id(update_id)
                     module_log.log(f"DB Update successful! ID: {update_id}")
                 else:
-                    self.db_cursor.execute(f"INSERT INTO {table} (last_update_id) VALUES ({update_id})")
+                    # self.db_cursor.execute(f"INSERT INTO {table} (last_update_id) VALUES ({update_id})")
+                    self.db.insert_last_id(update_id)
                     module_log.log(f"DB Insert successful! ID: {update_id}")
 
             return True
