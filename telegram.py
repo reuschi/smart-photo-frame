@@ -210,20 +210,14 @@ class Telegram:
                 update_id = 0
 
             # If there is no table in the database then create it first
-            # self.db_cursor.execute(f"""CREATE TABLE IF NOT EXISTS {table} (
-            #                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            #                            last_update_id
-            #                        )""")
             self.db.create_table(table)
 
             # Write the last update id into the database. If the value already exists just update the value of the field
-            for row in self.db_cursor.execute("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
+            for row in self.db.select("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
                 if row[0] == 1:
-                    # self.db_cursor.execute(f"UPDATE telegram_bot SET last_update_id='{update_id}' WHERE id=1")
                     self.db.update_last_id(update_id)
                     module_log.log(f"DB Update successful! ID: {update_id}")
                 else:
-                    # self.db_cursor.execute(f"INSERT INTO {table} (last_update_id) VALUES ({update_id})")
                     self.db.insert_last_id(update_id)
                     module_log.log(f"DB Insert successful! ID: {update_id}")
 
@@ -248,7 +242,7 @@ class Telegram:
             update_id = None
 
             # Get last update id from database
-            for row in self.db_cursor.execute("SELECT last_update_id FROM telegram_bot WHERE id=1"):
+            for row in self.db.select("SELECT last_update_id FROM telegram_bot WHERE id=1"):
                 update_id = row[0]
 
             if update_id is not None:

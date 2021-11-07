@@ -9,8 +9,8 @@ class DBHelper:
         self.db_cursor = self.db_connection.cursor()
         self.table = "telegram_bot"
 
-    def select(self):
-        pass
+    def select(self, command):
+        self.db_cursor.execute(command)
 
     def create_table(self, tbl_name):
         self.db_cursor.execute(f"""CREATE TABLE IF NOT EXISTS {tbl_name} (
