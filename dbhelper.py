@@ -27,5 +27,6 @@ class DBHelper:
     def insert_last_id(self, id):
         self.db_cursor.execute(f"INSERT INTO {self.table} (last_update_id) VALUES ({id})")
 
-
+    def commit(self):
+        self.db_connection.commit()
 

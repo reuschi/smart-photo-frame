@@ -234,7 +234,8 @@ class Telegram:
         except Exception as e:
             module_log.log(sys.exc_info()[0] + ": " + sys.exc_info()[1])
         finally:
-            self.db_connection.commit()
+            # self.db_connection.commit()
+            self.db.commit()
 
         module_log.log("Setting last update id was not possible.")
         return False
