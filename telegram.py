@@ -142,6 +142,7 @@ class Telegram:
         try:
             # Build the correct file path on the local file system
             file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / destination / filename)
+            file.parent.mkdir(exist_ok=True, parents=True)
 
             #url = self.filelink + source
 
@@ -310,9 +311,13 @@ class Telegram:
     def _list_images(self, from_id):
         # List all images stored on the disk (in subfolder ./images)
         path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images")
-        files = os.listdir(path)
-        self.send_message(from_id, str(files))
-        module_log.log(f"Image listing sent.")
+        try:
+            files = os.listdir(path)
+            self.send_message(from_id, str(files))
+            module_log.log(f"Image listing sent.")
+        except FileNotFoundError:
+            self.send_message(from_id, "No image uploaded yet")
+            module_log.log(f"Image folder not yet created")
 
     def _delete_images(self, message, success):
         # Delete images from disk
