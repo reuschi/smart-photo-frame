@@ -312,7 +312,8 @@ class Telegram:
         # List all images stored on the disk (in subfolder ./images)
         path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images")
         try:
-            files = os.listdir(path)
+            #files = os.listdir(path)
+            files = [x for x in p if x.is_file()]
             self.send_message(from_id, str(files))
             module_log.log(f"Image listing sent.")
         except FileNotFoundError:
