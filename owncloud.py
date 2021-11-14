@@ -1,5 +1,6 @@
 import easywebdav2
 import module_log
+import pathlib
 import static_variables
 from collections import namedtuple
 
@@ -10,13 +11,14 @@ class Owncloud:
         self.host = host
         self.username = username
         self.password = password
+        self.owncloud = None
         self.connect()
 
     def connect(self):
         self.owncloud = easywebdav2.connect(self.host, username=self.username, password=self.password)
         self.owncloud.cd("/remote.php/webdav/images")
 
-    def create_dir(self, dirname):
+    def create_dir(self, dirname: str):
         if not self.owncloud.exists("/remote.php/webdav/" + dirname):
             self.owncloud.mkdir("/remote.php/webdav/" + dirname)
             module_log.log(f"Directory {dirname} created.")
@@ -28,7 +30,7 @@ class Owncloud:
         filename = path.split("/")
         return str(filename[-1])
 
-    def delete_file(self, path):
+    def delete_file(self, path: str):
         self.owncloud.delete(path)
         module_log.log(f"File {path} deleted from Owncloud.")
 
@@ -43,7 +45,8 @@ class Owncloud:
                     module_log.log("New file found on Owncloud. Start downloading")
                     path = getattr(file, "name")
                     filename = str(self._get_filename(path))
-                    self.owncloud.download(path, "/home/pi/python/smart-photo-frame/images/" + filename)
+                    upload_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / filename)
+                    self.owncloud.download(path, upload_path)
                     success = True
                     module_log.log(f"File {filename} downloaded successfully from Owncloud.")
                     if static_variables.oc_delete:
