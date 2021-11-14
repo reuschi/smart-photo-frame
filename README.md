@@ -24,9 +24,10 @@ This is a Smart Photo Frame to show a slideshow of pictures that were sent via e
 
 When repository is cloned, no subfolders are created. To store your images, a subfolder named "images" will be created while importing the first image. Within this folder you can delete or add new photos manually or by Telegram command.\
 All other data is stored in the main folder of the cloned repository.\
-Automatic gernerated files by the frame are:\
+Automatic gernerated files by the frame are:
 * telegram_bot.db
 * messages.log
+
 If you delete these files manually after creation, maybe some errors can arise.
 
 ## Config file
@@ -97,7 +98,7 @@ New mails should be moved automatically to this subfolder or sorted out by an in
 
 ## Preparing your Owncloud account
 
-For the possibility to let the frame download imaes from your owncloud account, a subfolder should be added to the root directory. All files added to this folder will be downloaded by the frame and automatically deleted from the owncloud account unlsess you deactivate the deletion by the config file.
+For the possibility to let the frame download imaes from your owncloud account, a subfolder named **"images"** should be added to the root directory. All files added to this folder will be downloaded by the frame and automatically deleted from the owncloud account unlsess you deactivate the deletion by the config file.
 
 ## Creating the automatic run of the script
 
