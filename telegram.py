@@ -3,12 +3,9 @@ import requests
 import time
 import urllib3
 import shutil
-import sqlite3
 import module_log
 import pathlib
 import static_variables
-import sys
-import os
 import subprocess
 import texts
 import json
@@ -24,10 +21,6 @@ class Telegram:
         self.weblink = f"https://api.telegram.org/bot{token}/"
         self.filelink = f"https://api.telegram.org/file/bot{token}/"
         self.http = urllib3.PoolManager()
-        #db_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "telegram_bot.db")
-        #self.db_connection = sqlite3.connect(db_path)
-        #self.db_cursor = self.db_connection.cursor()
-        #self.table = "telegram_bot"
         self.language = static_variables.language
         self.status_signal = static_variables.status_signal
         self.timeout = static_variables.poll_timeout
@@ -59,13 +52,6 @@ class Telegram:
             module_log.log(status_code)
         finally:
             return self.return_status_code(answer)
-
-    #def db_commit(self):
-    #    self.db_connection.commit()
-
-    #def db_close(self):
-    #    self.db_connection.commit()
-    #    self.db_connection.close()
 
     def read_message(self, **kwargs):
         # Get new arrived messages since last Update receive
@@ -144,8 +130,6 @@ class Telegram:
             file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / destination / filename)
             file.parent.mkdir(exist_ok=True, parents=True)
 
-            #url = self.filelink + source
-
             # Get the file downloaded
             with self.http.request("GET", source, preload_content=False) as r, open(file, "wb") as out_file:
                 shutil.copyfileobj(r, out_file)
@@ -198,65 +182,6 @@ class Telegram:
             return True
         else:
             return False
-
-    #def set_last_update_id(self, update_id, table):
-        # To set last requested message id in the database
-    #    try:
-            # Build up the database connection and set the cursor to the current database
-    #        module_log.log("Setting last update id in database...")
-
-    #        if update_id is None:
-    #            module_log.log("ID is None")
-    #            update_id = 0
-
-            # If there is no table in the database then create it first
-    #        self.db.create_table(table)
-
-            # Write the last update id into the database. If the value already exists just update the value of the field
-    #        for row in self.db.select("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
-    #            if row[0] == 1:
-    #                self.db.update_last_id(update_id)
-    #                module_log.log(f"DB Update successful! ID: {update_id}")
-    #            else:
-    #                self.db.insert_last_id(update_id)
-    #                module_log.log(f"DB Insert successful! ID: {update_id}")
-
-    #        return True
-
-    #    except sqlite3.Error as e:
-    #        module_log.log(e)
-    #    except Exception as e:
-    #        module_log.log(sys.exc_info()[0] + ": " + sys.exc_info()[1])
-    #    finally:
-    #        self.db.commit()
-
-    #    module_log.log("Setting last update id was not possible.")
-    #    return False
-
-    #def get_last_update_id(self, table):
-        # To only receive the newest message since the last request it's necessary to send an offset id in the request.
-        # This information is stored in the database and will be gathered by this function.
-    #    try:
-    #        module_log.log("Getting last update id from database...")
-    #        update_id = None
-
-            # Get last update id from database
-    #        for row in self.db.select("SELECT last_update_id FROM telegram_bot WHERE id=1"):
-    #            update_id = row[0]
-
-    #        if update_id is not None:
-    #            module_log.log(f"Done. Last Update ID is: {update_id}")
-    #            return update_id
-
-    #    except sqlite3.Error as e:
-    #        module_log.log(e)
-    #        if "no such table" in str(e):
-    #            self.set_last_update_id(0, table)
-    #    except sqlite3.OperationalError as e:
-    #        module_log.log(e)
-    #    else:
-    #        module_log.log("Failed!")
-    #        return False
 
     def replace_special_signs(self, input_text: str):
         # Replace special signs in comment to store it as file name
@@ -312,7 +237,6 @@ class Telegram:
         # List all images stored on the disk (in subfolder ./images)
         path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images")
         try:
-            #files = os.listdir(path)
             files = [x.name for x in path.glob('**/*') if x.is_file()]
             self.send_message(from_id, str(files))
             module_log.log(f"Image listing sent.")
@@ -325,7 +249,6 @@ class Telegram:
         from_id = message['message']['from']['id']
 
         images = message['message']['text'].split(" ")[1:]
-        # images.remove("/deleteimg")
         for img in images:
             image_file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / img)
             bashCommand = f"sudo rm {image_file}"
@@ -452,7 +375,6 @@ class Telegram:
             answer = self.read_message(offset=offset, timeout=self.timeout)
 
             # Answer must not be a str
-            #if type(answer) != "str":
             for message in answer['result']:
                 from_id = message['message']['from']['id']
                 if from_id in self.allowed_senders:
@@ -483,13 +405,8 @@ class Telegram:
 
             return success
 
-            #else:
-            #    return False
-
         except TypeError as e:
             module_log.log("TypeError: " + str(e))
         except KeyboardInterrupt:
             # Terminate the script
             module_log.log("Script interrupted by terminal input")
-        #finally:
-        #    self.db_close()
