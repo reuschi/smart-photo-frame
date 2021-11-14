@@ -24,14 +24,14 @@ class Telegram:
         self.weblink = f"https://api.telegram.org/bot{token}/"
         self.filelink = f"https://api.telegram.org/file/bot{token}/"
         self.http = urllib3.PoolManager()
-        db_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "telegram_bot.db")
-        self.db_connection = sqlite3.connect(db_path)
-        self.db_cursor = self.db_connection.cursor()
-        self.table = "telegram_bot"
+        #db_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "telegram_bot.db")
+        #self.db_connection = sqlite3.connect(db_path)
+        #self.db_cursor = self.db_connection.cursor()
+        #self.table = "telegram_bot"
         self.language = static_variables.language
         self.status_signal = static_variables.status_signal
         self.timeout = static_variables.poll_timeout
-        self.db = DBHelper()
+        self.db = DBHelper("telegram_bot")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.db.close_connection()
@@ -60,12 +60,12 @@ class Telegram:
         finally:
             return self.return_status_code(answer)
 
-    def db_commit(self):
-        self.db_connection.commit()
+    #def db_commit(self):
+    #    self.db_connection.commit()
 
-    def db_close(self):
-        self.db_connection.commit()
-        self.db_connection.close()
+    #def db_close(self):
+    #    self.db_connection.commit()
+    #    self.db_connection.close()
 
     def read_message(self, **kwargs):
         # Get new arrived messages since last Update receive
@@ -198,64 +198,64 @@ class Telegram:
         else:
             return False
 
-    def set_last_update_id(self, update_id, table):
+    #def set_last_update_id(self, update_id, table):
         # To set last requested message id in the database
-        try:
+    #    try:
             # Build up the database connection and set the cursor to the current database
-            module_log.log("Setting last update id in database...")
+    #        module_log.log("Setting last update id in database...")
 
-            if update_id is None:
-                module_log.log("ID is None")
-                update_id = 0
+    #        if update_id is None:
+    #            module_log.log("ID is None")
+    #            update_id = 0
 
             # If there is no table in the database then create it first
-            self.db.create_table(table)
+    #        self.db.create_table(table)
 
             # Write the last update id into the database. If the value already exists just update the value of the field
-            for row in self.db.select("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
-                if row[0] == 1:
-                    self.db.update_last_id(update_id)
-                    module_log.log(f"DB Update successful! ID: {update_id}")
-                else:
-                    self.db.insert_last_id(update_id)
-                    module_log.log(f"DB Insert successful! ID: {update_id}")
+    #        for row in self.db.select("SELECT EXISTS (SELECT last_update_id FROM telegram_bot WHERE id=1)"):
+    #            if row[0] == 1:
+    #                self.db.update_last_id(update_id)
+    #                module_log.log(f"DB Update successful! ID: {update_id}")
+    #            else:
+    #                self.db.insert_last_id(update_id)
+    #                module_log.log(f"DB Insert successful! ID: {update_id}")
 
-            return True
+    #        return True
 
-        except sqlite3.Error as e:
-            module_log.log(e)
-        except Exception as e:
-            module_log.log(sys.exc_info()[0] + ": " + sys.exc_info()[1])
-        finally:
-            self.db.commit()
+    #    except sqlite3.Error as e:
+    #        module_log.log(e)
+    #    except Exception as e:
+    #        module_log.log(sys.exc_info()[0] + ": " + sys.exc_info()[1])
+    #    finally:
+    #        self.db.commit()
 
-        module_log.log("Setting last update id was not possible.")
-        return False
+    #    module_log.log("Setting last update id was not possible.")
+    #    return False
 
-    def get_last_update_id(self, table):
+    #def get_last_update_id(self, table):
         # To only receive the newest message since the last request it's necessary to send an offset id in the request.
         # This information is stored in the database and will be gathered by this function.
-        try:
-            module_log.log("Getting last update id from database...")
-            update_id = None
+    #    try:
+    #        module_log.log("Getting last update id from database...")
+    #        update_id = None
 
             # Get last update id from database
-            for row in self.db.select("SELECT last_update_id FROM telegram_bot WHERE id=1"):
-                update_id = row[0]
+    #        for row in self.db.select("SELECT last_update_id FROM telegram_bot WHERE id=1"):
+    #            update_id = row[0]
 
-            if update_id is not None:
-                module_log.log(f"Done. Last Update ID is: {update_id}")
-                return update_id
+    #        if update_id is not None:
+    #            module_log.log(f"Done. Last Update ID is: {update_id}")
+    #            return update_id
 
-        except sqlite3.Error as e:
-            module_log.log(e)
-            if "no such table" in str(e):
-                self.set_last_update_id(0, table)
-        except sqlite3.OperationalError as e:
-            module_log.log(e)
-        else:
-            module_log.log("Failed!")
-            return False
+    #    except sqlite3.Error as e:
+    #        module_log.log(e)
+    #        if "no such table" in str(e):
+    #            self.set_last_update_id(0, table)
+    #    except sqlite3.OperationalError as e:
+    #        module_log.log(e)
+    #    else:
+    #        module_log.log("Failed!")
+    #        return False
 
     def replace_special_signs(self, input_text: str):
         # Replace special signs in comment to store it as file name
@@ -442,7 +442,7 @@ class Telegram:
             success = False
 
             # Get the last requested id and read the latest messages
-            offset = self.get_last_update_id(self.table)
+            offset = self.db.get_last_update_id()
             answer = self.read_message(offset=offset, timeout=self.timeout)
 
             # Answer must not be a str
@@ -472,7 +472,7 @@ class Telegram:
                     module_log.log(f"Sender not allowed to send photos. ID: {from_id}")
                     self.send_message(from_id, f"{texts.texts[self.language]['tg']['sender_not_allowed']} ID: {from_id}")
 
-                self.set_last_update_id(message['update_id'] + 1, self.table)
+                self.db.set_last_update_id(message['update_id'] + 1)
                 self.db.commit()
 
             return success
