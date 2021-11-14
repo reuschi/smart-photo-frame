@@ -313,7 +313,7 @@ class Telegram:
         path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images")
         try:
             #files = os.listdir(path)
-            files = [x for x in path.glob('**/*') if x.is_file()]
+            files = [x.name for x in path.glob('**/*') if x.is_file()]
             self.send_message(from_id, str(files))
             module_log.log(f"Image listing sent.")
         except FileNotFoundError:
