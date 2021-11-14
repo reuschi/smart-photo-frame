@@ -2,16 +2,16 @@
 
 ## Introduction
 
-This is a Smart Photo Frame to show a slideshow of pictures that were sent via emailm, via a Telegram Bot, or by dropping the files to an owncloud account with the possibility to add more sources. Originally this was developed for my family, as we don't see each other so often and give a possibility to share images right from vacation or from far way. To run it completely, you need to create your own Telegram Bot token at *@BotFather*. Within your mailbox a folder named "Smart Photo Frame" should be present where all new photos for the frame will be automatically moved to. In your Owncloud account all images should be uploaded to a subfolder named "images". 
+This is a Smart Photo Frame to show a slideshow of pictures that were sent via email, via a Telegram Bot, or by dropping the files to an Owncloud share with the possibility to add more sources. Originally this was developed for my family, as we don't see each other so often and give a possibility to share images right from vacation or from far away. To run it completely, you need to create your own Telegram Bot token at *@BotFather*. Within your mailbox a folder named "Smart Photo Frame" should be present where all new photos for the frame will be automatically moved to. In your Owncloud share all images should be uploaded to a subfolder named "images". 
 
 ## Recommended hardware and software
 
-**Hardware:** Every RaspberryPi with Wireless connection (successfully running on Zero W)\
+**Computing Hardware:** Every RaspberryPi with Wireless connection (successfully running on Zero W)\
 **Display:** Each HDMI connectable display
 
-**System:** RaspberryPi OS (Lite installation is enough)\
+**Operating System:** RaspberryPi OS (Lite installation is enough)\
 **Python version:** 3.7+\
-**Packages:** GitPython, requests, RPi.GPIO, urllib3, easywebdav2
+**Required Packages:** GitPython, requests, RPi.GPIO, urllib3, easywebdav2
 
 ## Installation guide
 
@@ -98,7 +98,7 @@ New mails should be moved automatically to this subfolder or sorted out by an in
 
 ## Preparing your Owncloud account
 
-For the possibility to let the frame download imaes from your owncloud account, a subfolder named **"images"** should be added to the root directory. All files added to this folder will be downloaded by the frame and automatically deleted from the owncloud account unlsess you deactivate the deletion by the config file.
+For the possibility to let the frame download imaes from your owncloud account, a subfolder named **"images"** should be added to the root directory. All files added to this folder will be downloaded by the frame and automatically deleted from the owncloud account unless you deactivate the deletion by the config file.
 
 ## Creating the automatic run of the script
 
