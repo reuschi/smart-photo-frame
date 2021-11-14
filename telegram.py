@@ -332,7 +332,7 @@ class Telegram:
             reply = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = reply.communicate()
             encoding = 'utf-8'
-            if str(stderr, encoding) is "":
+            if str(stderr, encoding) == "":
                 self.send_message(from_id, f"{img} {texts.texts[self.language]['tg']['id_delete_success']}")
                 module_log.log(f"{img} deleted.")
                 success = True
@@ -360,7 +360,7 @@ class Telegram:
         reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = reply.communicate()
         encoding = 'utf-8'
-        if str(stderr, encoding) is "":
+        if str(stderr, encoding) == "":
             module_log.log(f"Reboot initiated")
         else:
             self.send_message(from_id, texts.texts[self.language]['tg']['no_reboot_possible'])
