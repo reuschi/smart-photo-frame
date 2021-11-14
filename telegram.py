@@ -487,7 +487,7 @@ class Telegram:
             #    return False
 
         except TypeError as e:
-            module_log.log("TypeError: ", e)
+            module_log.log("TypeError: " + str(e))
         except KeyboardInterrupt:
             # Terminate the script
             module_log.log("Script interrupted by terminal input")
