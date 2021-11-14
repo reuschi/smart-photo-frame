@@ -6,7 +6,7 @@ import sys
 
 class DBHelper:
     def __init__(self, table):
-        db_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / table & ".db")
+        db_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / table + ".db")
         self.db_connection = sqlite3.connect(db_path)
         self.db_cursor = self.db_connection.cursor()
         self.table = table
