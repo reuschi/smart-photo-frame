@@ -2,29 +2,32 @@
 
 ## Introduction
 
-This is a Smart Photo Frame to show a slideshow of pictures that were sent via email or via a Telegram Bot with the possibility to add more sources. Originally this was developed for my family, as we don't see each other so often and give a possibility to share images right from vacation or from far way. To run it completely, you need to create your own Telegram Bot token at *@BotFather*. Within your mailbox a folder named "Smart Photo Frame" should be present where all new photos for the frame will be automatically moved to.
+This is a Smart Photo Frame to show a slideshow of pictures that were sent via emailm, via a Telegram Bot, or by dropping the files to an owncloud account with the possibility to add more sources. Originally this was developed for my family, as we don't see each other so often and give a possibility to share images right from vacation or from far way. To run it completely, you need to create your own Telegram Bot token at *@BotFather*. Within your mailbox a folder named "Smart Photo Frame" should be present where all new photos for the frame will be automatically moved to. In your Owncloud account all images should be uploaded to a subfolder named "images". 
 
 ## Recommended hardware and software
 
 **Hardware:** Every RaspberryPi with Wireless connection (successfully running on Zero W)\
 **Display:** Each HDMI connectable display
 
-**System:** RaspberryPi OS (installation without Desktop is enough)\
+**System:** RaspberryPi OS (Lite installation is enough)\
 **Python version:** 3.7+\
 **Packages:** GitPython, requests, RPi.GPIO, urllib3, easywebdav2
 
 ## Installation guide
 
 1. Install the package by cloning the repository
-2. Create a new subfolder "images" (in this folder all images will be loaded)
-3. Create your own config.ini file (see chapter for config)
-4. If you want to be able to update the frame via Telegram, you need to store your GitHub login data in store manager on RasPi and copy the ".gitconfig" and ".git-credentials" files to "/root".
-5. Connect an HDMI screen to the RasPi (TV, computer monitor, HDMI display, etc.)
+2. Create your own config.ini file (see chapter for config)
+3. If you want to be able to update the frame via Telegram, you need to store your GitHub login data in store manager on RasPi and copy the ".gitconfig" and ".git-credentials" files to "/root".
+4. Connect an HDMI screen to the RasPi (TV, computer monitor, HDMI display, etc.)
 
 ## Folder structure
 
-When repository is cloned, no subfolders are created. To store your images, during the first run, a subfolder named "images" will be created. Within this folder you can delete or add new photos manually.\
-All other data is stored in the main folder of the cloned repository.
+When repository is cloned, no subfolders are created. To store your images, a subfolder named "images" will be created while importing the first image. Within this folder you can delete or add new photos manually or by Telegram command.\
+All other data is stored in the main folder of the cloned repository.\
+Automatic gernerated files by the frame are:\
+* telegram_bot.db
+* messages.log
+If you delete these files manually after creation, maybe some errors can arise.
 
 ## Config file
 
@@ -41,7 +44,7 @@ commands = [{"command": "getident", "description": "Get current external ip addr
             {"command": "getlog", "description": "Send log file as attachment"},
             {"command": "getconfig", "description": "Send configuration file as attachment"},
             {"command": "reboot", "description": "Reboot whole system"},
-            {"command": "update", "description": "Update system with current repository"},
+            {"command": "update", "description": "Update system with current master repository"},
             {"command": "swsignaling", "description": "Switch the Telegram signaling"}]
 
 [gmail]
@@ -92,6 +95,10 @@ Now the Bot should be ready to receive messages. If you send messages to the Bot
 To only get those mails downloaded that are intended for the photo frame, you should create a subfolder in your mailbox. By default the system awaits the folder name to be **"Smart Photo Frame"**. You can change it in the source code as you want.\
 New mails should be moved automatically to this subfolder or sorted out by an inbox rule.
 
+## Preparing your Owncloud account
+
+For the possibility to let the frame download imaes from your owncloud account, a subfolder should be added to the root directory. All files added to this folder will be downloaded by the frame and automatically deleted from the owncloud account unlsess you deactivate the deletion by the config file.
+
 ## Creating the automatic run of the script
 
 To run the frame automatically via bootup you additionally need to add the call of **main.py** to the "/etc/rc.local" file.
@@ -100,9 +107,9 @@ To run the frame automatically via bootup you additionally need to add the call 
 
 By adding hardware buttons to the RasPi you can offer your Frame users the possibility to handle the Frame. There are already preparations done for three buttons in sum. One button can be used to rise the display time of each photo in steps of 2 seconds. Another button can be used to lower the display time of each photo - down to 2 seconds. The third button can be used to properly shut down the whole RasPi (e.g. for moving from one place to another or at night).\
 Those thre buttons are are mentioned to be installed on the following ports:
-* Port 27: Rise the timer
-* Port 19: Lower the timer
-* Port 9: Shut down the system
+* Pin 27: Rise the timer
+* Pin 19: Lower the timer
+* Pin 9: Shut down the system
 
 All ports are configured as Pull-Up ports and need to be connected to ground.\
 For my use case I soldered them directly on the RasPi and gave the buttons that raise and lower the timer a higher hardware button.
