@@ -95,7 +95,8 @@ Now the Bot should be ready to receive messages. If you send messages to the Bot
 ## Preparing your mailbox
 
 To only get those mails downloaded that are intended for the photo frame, you should create a subfolder in your mailbox. By default the system awaits the folder name to be **"Smart Photo Frame"**. You can change it in the source code as you want.\
-New mails should be moved automatically to this subfolder or sorted out by an inbox rule.
+New mails should be moved automatically to this subfolder or sorted out by an inbox rule.\
+If you want to use a mailbox at Gmail, as I did, you need to adjust the mailbox settings. Either you activate the login for unsecure third party apps or you activate the 2FA and register another third party app where you create a new password which you can enter in the configuration of the Picture Frame.
 
 ## Preparing your Owncloud account
 
