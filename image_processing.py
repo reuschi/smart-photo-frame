@@ -1,4 +1,4 @@
-from PIL import Image
+import PIL
 
 
 
