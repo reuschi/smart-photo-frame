@@ -50,7 +50,7 @@ texts = {
             "sw_signaling_false": "Telegram signaling deaktiviert",
             "sw_signaling_true": "Telegram signaling aktiviert",
             "snd_signal": "System hochgefahren",
-            "rotate_image_success": "Das Bild wurde erfolgreich gedreht",
+            "rotate_image_success": "Das Bild {} wurde erfolgreich gedreht",
 
         },
         "imap": {
@@ -89,7 +89,7 @@ texts = {
             "sw_signaling_false": "Telegram signaling deactivated",
             "sw_signaling_true": "Telegram signaling activated",
             "snd_signal": "System is booted up",
-            "rotate_image_success": "The image has been rotated successfully",
+            "rotate_image_success": "The image {} has been rotated successfully",
 
         },
         "imap": {
