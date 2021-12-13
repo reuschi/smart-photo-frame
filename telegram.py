@@ -338,13 +338,13 @@ class Telegram:
             file = message['message']['text'].split()
 
             for i in range(1, len(file)):
-                filename = file[i].split(",")[0]
-                rotation = file[i].split(",")[1]
+                filename = str(file[i].split(",")[0])
+                rotation = str(file[i].split(",")[1])
 
                 if rotation == "r":
                     pass
                 elif rotation == "l":
-                    IProc.rotate_left("/images/" + str(filename))
+                    IProc.rotate_left(filename)
 
                 module_log.log(filename)
                 module_log.log(rotation)

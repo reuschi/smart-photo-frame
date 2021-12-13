@@ -1,6 +1,6 @@
 from PIL import Image
-
 import module_log
+import pathlib
 
 
 class IProc:
@@ -8,7 +8,8 @@ class IProc:
     @staticmethod
     def rotate_left(image):
         try:
-            file = Image.open(image)
+            path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / image)
+            file = Image.open(path)
             rotated = file.rotate(Image.ROTATE_90)
             rotated.save(image)
             return True
