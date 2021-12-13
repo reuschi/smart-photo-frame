@@ -419,7 +419,7 @@ class Telegram:
 
                         if self.download_file(file, filename):
                             # If download of the sent photo is successfully reply to it
-                            self.send_message(from_id, {texts.texts[self.language]['tg']['thanks_image_upload']})
+                            self.send_message(from_id, texts.texts[self.language]['tg']['thanks_image_upload'])
                             success = True
                     elif "text" in message['message'] and from_id in self.allowed_admins:
                         # If user sent text
