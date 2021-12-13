@@ -1,4 +1,5 @@
 from dbhelper import DBHelper
+from image_processing import IProc
 import requests
 import time
 import urllib3
@@ -10,6 +11,7 @@ import subprocess
 import texts
 import json
 import git
+
 
 
 class Telegram:
@@ -329,6 +331,25 @@ class Telegram:
             self.send_message(from_id, texts.texts[self.language]['tg']['sw_signaling_true'])
             module_log.log("Status signaling set to On")
 
+    def _rotate(self, message):
+        success = False
+
+        try:
+            file = message['message']['text'].split()
+
+            for i in range(1, file):
+                filename = file[i].split(",")[0]
+                rotation = file[i].split(",")[1]
+                module_log.log(filename)
+                module_log.log(rotation)
+
+            success = True
+
+        except Exception as e:
+            module_log.log(e)
+        finally:
+            return success
+
     def process_admin_commands(self, message):
         success = False
         from_id = message['message']['from']['id']
@@ -363,6 +384,9 @@ class Telegram:
         elif message['message']['text'] == "/swsignaling":
             # Switch the signaling return via Telegram when system boots up
             self._switch_signaling(from_id)
+        elif message['message']['text'].startswith("/rotate"):
+            # Rotate image 90 degrees left
+            self._rotate(message)
 
         return success
 
