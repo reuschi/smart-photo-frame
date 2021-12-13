@@ -337,7 +337,7 @@ class Telegram:
         try:
             file = message['message']['text'].split()
 
-            for i in range(1, file):
+            for i in range(1, len(file)):
                 filename = file[i].split(",")[0]
                 rotation = file[i].split(",")[1]
                 module_log.log(filename)
