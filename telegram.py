@@ -344,7 +344,7 @@ class Telegram:
                 if rotation == "r":
                     pass
                 elif rotation == "l":
-                    pass
+                    IProc.rotate_left("/images/" + str(filename))
 
                 module_log.log(filename)
                 module_log.log(rotation)
