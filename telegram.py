@@ -333,6 +333,7 @@ class Telegram:
 
     def _rotate(self, message):
         success = False
+        from_id = message['message']['from']['id']
 
         try:
             file = message['message']['text'].split()
@@ -343,12 +344,12 @@ class Telegram:
 
                 if rotation == "r":
                     IProc.rotate_right(filename)
+                    module_log.log(f"Image {filename} rotated left.")
                 elif rotation == "l":
                     IProc.rotate_left(filename)
+                    module_log.log(f"Image {filename} rotated right.")
 
-                #module_log.log(filename)
-                #module_log.log(rotation)
-                module_log.log(f"Image {filename} rotated left.")
+                self.send_message(from_id, texts.texts[self.language]['tg']['rotate_image_success'])
 
             success = True
 
