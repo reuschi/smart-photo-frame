@@ -119,7 +119,7 @@ class ImapMail:
                 success = self.download_attachment(Mail)
             else:
                 #return f"ERROR: Unable to open mailbox {rv}"
-                return f"{texts.texts[self.language]['imap']['mailbox_open_error']} {rv}"
+                return texts.texts[self.language]['imap']['mailbox_open_error'].format(rv)
 
             # Close connection to mail server
             Mail.close()

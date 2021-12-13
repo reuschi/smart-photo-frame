@@ -216,7 +216,8 @@ class Telegram:
         for ext in extension:
             ext = ext.replace(".", "")
             static_variables.add_value_to_config("gmail", "file_extensions", ext)
-        self.send_message(from_id, texts.texts[self.language]['tg']['new_file_extension'])
+
+        self.send_message(from_id, texts.texts[self.language]['tg']['new_file_extension'].format(extension))
         module_log.log(f"New extension(s) added: {extension}")
 
     def _add_sender(self, message):
@@ -226,7 +227,7 @@ class Telegram:
 
         static_variables.add_value_to_config("telegram", "allowedsenders", add_id[1])
         self.allowed_senders.append(int(add_id[1]))
-        self.send_message(from_id, texts.texts[self.language]['tg']['new_sender_id'])
+        self.send_message(from_id, texts.texts[self.language]['tg']['new_sender_id'].format(add_id[1]))
         module_log.log(f"New sender added to allowed sender list: {add_id[1]}")
 
     def _get_identity(self, from_id):
@@ -258,7 +259,7 @@ class Telegram:
             stdout, stderr = reply.communicate()
             encoding = 'utf-8'
             if str(stderr, encoding) == "":
-                self.send_message(from_id, f"{img} {texts.texts[self.language]['tg']['id_delete_success']}")
+                self.send_message(from_id, texts.texts[self.language]['tg']['id_delete_success'].format(img))
                 module_log.log(f"{img} deleted.")
                 success = True
             else:
@@ -323,12 +324,12 @@ class Telegram:
         if static_variables.status_signal:
             static_variables.status_signal = False
             static_variables.change_config_value('telegram', 'status_signal', 'False')
-            self.send_message(from_id, texts.texts[self.language]['tg']['sw_signaling_false'])
+            self.send_message(from_id, texts.texts[self.language]['tg']['sw_signaling'].format("Off"))
             module_log.log("Status signaling set to Off")
         else:
             static_variables.status_signal = True
             static_variables.change_config_value('telegram', 'status_signal', 'True')
-            self.send_message(from_id, texts.texts[self.language]['tg']['sw_signaling_true'])
+            self.send_message(from_id, texts.texts[self.language]['tg']['sw_signaling'].format("On"))
             module_log.log("Status signaling set to On")
 
     def _rotate(self, message, success):
@@ -418,7 +419,7 @@ class Telegram:
 
                         if self.download_file(file, filename):
                             # If download of the sent photo is successfully reply to it
-                            self.send_message(from_id, f"{texts.texts[self.language]['tg']['thanks_image_upload']}")
+                            self.send_message(from_id, {texts.texts[self.language]['tg']['thanks_image_upload']})
                             success = True
                     elif "text" in message['message'] and from_id in self.allowed_admins:
                         # If user sent text
@@ -430,7 +431,7 @@ class Telegram:
                 else:
                     # If no allowed sender was found in config
                     module_log.log(f"Sender not allowed to send photos. ID: {from_id}")
-                    self.send_message(from_id, f"{texts.texts[self.language]['tg']['sender_not_allowed']} ID: {from_id}")
+                    self.send_message(from_id, texts.texts[self.language]['tg']['sender_not_allowed'].format(from_id))
 
                 self.db.set_last_update_id(message['update_id'] + 1)
                 self.db.commit()
