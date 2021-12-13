@@ -41,13 +41,15 @@ admins = <comma seperated Telegram user id's> ; will be allowed to send admin co
 auth_password = <admin password>
 status_signal = True/False ; frame gives feedback via Telegram when it's started and shutdown
 poll_timeout = 60 ; Timeout for long poll configuration
-commands = [{"command": "getident", "description": "Get current external ip address"},
-            {"command": "listimg", "description": "List all images stored on frame"},
-            {"command": "getlog", "description": "Send log file as attachment"},
+commands = [{"command": "deleteimg", "description": "Delete an image from frame"},
             {"command": "getconfig", "description": "Send configuration file as attachment"},
+            {"command": "getident", "description": "Get current external ip address"},
+            {"command": "getlog", "description": "Send log file as attachment"},
+            {"command": "listimg", "description": "List all images stored on frame"},
             {"command": "reboot", "description": "Reboot whole system"},
-            {"command": "update", "description": "Update system with current master repository"},
-            {"command": "swsignaling", "description": "Switch the Telegram signaling"}]
+            {"command": "rotate", "description": "Rotate image left or right"},
+            {"command": "swsignaling", "description": "Switch the Telegram signaling"},
+            {"command": "update", "description": "Update system with current master repository"}]
 
 [gmail]
 account = <mail address>
