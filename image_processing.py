@@ -11,7 +11,7 @@ class IProc:
             path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / image)
             file = Image.open(path)
             rotated = file.rotate(Image.ROTATE_90)
-            rotated.save(image)
+            rotated.save(path)
             return True
         except Exception as e:
             module_log.log(e)

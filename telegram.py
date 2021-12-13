@@ -342,12 +342,13 @@ class Telegram:
                 rotation = str(file[i].split(",")[1])
 
                 if rotation == "r":
-                    pass
+                    IProc.rotate_right(filename)
                 elif rotation == "l":
                     IProc.rotate_left(filename)
 
-                module_log.log(filename)
-                module_log.log(rotation)
+                #module_log.log(filename)
+                #module_log.log(rotation)
+                module_log.log(f"Image {filename} rotated left.")
 
             success = True
 
