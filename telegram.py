@@ -331,8 +331,8 @@ class Telegram:
             self.send_message(from_id, texts.texts[self.language]['tg']['sw_signaling_true'])
             module_log.log("Status signaling set to On")
 
-    def _rotate(self, message):
-        success = False
+    def _rotate(self, message, success):
+        #success = False
         from_id = message['message']['from']['id']
 
         try:
@@ -394,7 +394,7 @@ class Telegram:
             self._switch_signaling(from_id)
         elif message['message']['text'].startswith("/rotate"):
             # Rotate image 90 degrees left
-            success = self._rotate(message)
+            success = self._rotate(message, success)
 
         return success
 
