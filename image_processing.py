@@ -10,7 +10,7 @@ class IProc:
         try:
             path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / image)
             file = Image.open(path)
-            rotated = file.rotate(90)
+            rotated = file.rotate(90, expand=True)
             rotated.save(path)
             return True
         except Exception as e:
