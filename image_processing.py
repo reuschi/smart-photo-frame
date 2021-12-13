@@ -19,7 +19,15 @@ class IProc:
 
     @staticmethod
     def rotate_right(image):
-        pass
+        try:
+            path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / image)
+            file = Image.open(path)
+            rotated = file.rotate(270, expand=True)
+            rotated.save(path)
+            return True
+        except Exception as e:
+            module_log.log(e)
+            return False
 
     @staticmethod
     def transverse(image):
