@@ -394,7 +394,7 @@ class Telegram:
             self._switch_signaling(from_id)
         elif message['message']['text'].startswith("/rotate"):
             # Rotate image 90 degrees left
-            self._rotate(message)
+            success = self._rotate(message)
 
         return success
 
