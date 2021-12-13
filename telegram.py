@@ -344,10 +344,10 @@ class Telegram:
 
                 if rotation == "r":
                     IProc.rotate_right(filename)
-                    module_log.log(f"Image {filename} rotated left.")
+                    module_log.log(f"Image {filename} rotated right.")
                 elif rotation == "l":
                     IProc.rotate_left(filename)
-                    module_log.log(f"Image {filename} rotated right.")
+                    module_log.log(f"Image {filename} rotated left.")
 
                 self.send_message(from_id, texts.texts[self.language]['tg']['rotate_image_success'])
 
