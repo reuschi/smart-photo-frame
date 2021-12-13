@@ -6,7 +6,7 @@ import module_log
 class IProc:
 
     @staticmethod
-    def rotate_left(self, image):
+    def rotate_left(image):
         try:
             file = Image.open(image)
             rotated = file.rotate(Image.ROTATE_90)
@@ -17,13 +17,13 @@ class IProc:
             return False
 
     @staticmethod
-    def rotate_right(self):
+    def rotate_right(image):
         pass
 
     @staticmethod
-    def transverse(self):
+    def transverse(image):
         pass
 
     @staticmethod
-    def transpose(self):
+    def transpose(image):
         pass
