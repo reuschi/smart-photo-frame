@@ -149,13 +149,16 @@ class Telegram:
         content = answer.json()
         module_log.log(content['result'].keys())
 
-    def send_message(self, chat_id, message):
+    def send_message(self, chat_id, message, reply_to_message_id=None):
         # Send a message back to a chat_id
         link = self.weblink + "sendMessage"
         data = {
             "chat_id": chat_id,
             "text": message
         }
+
+        if reply_to_message_id:
+            data['reply_to_message_id'] = reply_to_message_id
 
         return self.telegram_POST(link, data)
 
@@ -247,9 +250,10 @@ class Telegram:
             self.send_message(from_id, "No image uploaded yet")
             module_log.log(f"Image folder not yet created")
 
-    def _delete_images(self, message, success):
+    def _delete_images(self, message):
         # Delete images from disk
         from_id = message['message']['from']['id']
+        success = False
 
         images = message['message']['text'].split(" ")[1:]
         for img in images:
@@ -332,8 +336,8 @@ class Telegram:
             self.send_message(from_id, texts.texts[self.language]['tg']['sw_signaling'].format("On"))
             module_log.log("Status signaling set to On")
 
-    def _rotate(self, message, success):
-        #success = False
+    def _rotate(self, message):
+        success = False
         from_id = message['message']['from']['id']
 
         try:
@@ -362,6 +366,7 @@ class Telegram:
     def process_admin_commands(self, message):
         success = False
         from_id = message['message']['from']['id']
+        message_text = message['message']['text']
 
         if message['message']['text'].startswith("/addsender"):
             # Add new senders into the config file
@@ -377,7 +382,7 @@ class Telegram:
             self._list_images(from_id)
         elif message['message']['text'].startswith("/deleteimg"):
             # Delete images from frame and restart presentation
-            success = self._delete_images(message, success)
+            success = self._delete_images(message)
         elif message['message']['text'] == "/getlog":
             # Send log file as attachment
             self._send_log(from_id)
@@ -395,7 +400,7 @@ class Telegram:
             self._switch_signaling(from_id)
         elif message['message']['text'].startswith("/rotate"):
             # Rotate image 90 degrees left
-            success = self._rotate(message, success)
+            success = self._rotate(message)
 
         return success
 
@@ -419,7 +424,7 @@ class Telegram:
 
                         if self.download_file(file, filename):
                             # If download of the sent photo is successfully reply to it
-                            self.send_message(from_id, texts.texts[self.language]['tg']['thanks_image_upload'])
+                            self.send_message(from_id, texts.texts[self.language]['tg']['thanks_image_upload'], message['message_id'])
                             success = True
                     elif "text" in message['message'] and from_id in self.allowed_admins:
                         # If user sent text
