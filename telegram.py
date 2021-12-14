@@ -13,7 +13,6 @@ import json
 import git
 
 
-
 class Telegram:
 
     def __init__(self, token: str, allowed_senders: list, allowed_admins: list):
@@ -194,6 +193,7 @@ class Telegram:
         text = text.replace("/", "_")
         text = text.replace("\\", "_")
         text = text.replace("*", "-")
+        text = text.replace("ß", "ss")
 
         return text
 
@@ -211,10 +211,9 @@ class Telegram:
 
         return file, filename
 
-    def _add_file_extension(self, message):
+    def _add_file_extension(self, from_id, message_text):
         # Add a new file extension to allowed extension list
-        extension = message['message']['text'].split(" ")[1:]
-        from_id = message['message']['from']['id']
+        extension = message_text.split(" ")[1:]
 
         for ext in extension:
             ext = ext.replace(".", "")
@@ -223,10 +222,9 @@ class Telegram:
         self.send_message(from_id, texts.texts[self.language]['tg']['new_file_extension'].format(extension))
         module_log.log(f"New extension(s) added: {extension}")
 
-    def _add_sender(self, message):
+    def _add_sender(self, from_id, message_text):
         # Add a new id to allowed sender list
-        add_id = message['message']['text'].split(" ")
-        from_id = message['message']['from']['id']
+        add_id = message_text.split(" ")
 
         static_variables.add_value_to_config("telegram", "allowedsenders", add_id[1])
         self.allowed_senders.append(int(add_id[1]))
@@ -250,16 +248,15 @@ class Telegram:
             self.send_message(from_id, "No image uploaded yet")
             module_log.log(f"Image folder not yet created")
 
-    def _delete_images(self, message):
+    def _delete_images(self, from_id, message_text):
         # Delete images from disk
-        from_id = message['message']['from']['id']
         success = False
 
-        images = message['message']['text'].split(" ")[1:]
+        images = message_text.split(" ")[1:]
         for img in images:
             image_file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / img)
-            bashCommand = f"sudo rm {image_file}"
-            reply = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            bash_command = f"sudo rm {image_file}"
+            reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = reply.communicate()
             encoding = 'utf-8'
             if str(stderr, encoding) == "":
@@ -296,13 +293,12 @@ class Telegram:
             self.send_message(from_id, texts.texts[self.language]['tg']['no_reboot_possible'])
             module_log.log(f"Error while rebooting")
 
-    def _system_update(self, message):
+    def _system_update(self, from_id, message_text):
         # Update system to current version from GitHub repository
-        from_id = message['message']['from']['id']
         success = False
 
         try:
-            branch = message['message']['text'].split(" ")[1]
+            branch = message_text.split(" ")[1]
         except IndexError:
             branch = "master"
 
@@ -336,12 +332,11 @@ class Telegram:
             self.send_message(from_id, texts.texts[self.language]['tg']['sw_signaling'].format("On"))
             module_log.log("Status signaling set to On")
 
-    def _rotate(self, message):
+    def _rotate(self, from_id, message_text):
         success = False
-        from_id = message['message']['from']['id']
 
         try:
-            file = message['message']['text'].split()
+            file = message_text.split()
 
             for i in range(1, len(file)):
                 filename = str(file[i].split(",")[0])
@@ -368,39 +363,39 @@ class Telegram:
         from_id = message['message']['from']['id']
         message_text = message['message']['text']
 
-        if message['message']['text'].startswith("/addsender"):
+        if message_text.startswith("/addsender"):
             # Add new senders into the config file
-            self._add_sender(message)
-        elif message['message']['text'].startswith("/addextension"):
+            self._add_sender(from_id, message_text)
+        elif message_text.startswith("/addextension"):
             # Add new extension(s) to the allowed list and restart the frame afterwards
-            self._add_file_extension(message)
-        elif message['message']['text'] == "/getident":
+            self._add_file_extension(from_id, message_text)
+        elif message_text == "/getident":
             # Get current external ip address
             self._get_identity(from_id)
-        elif message['message']['text'] == "/listimg":
+        elif message_text == "/listimg":
             # List all images stored on frame
             self._list_images(from_id)
-        elif message['message']['text'].startswith("/deleteimg"):
+        elif message_text.startswith("/deleteimg"):
             # Delete images from frame and restart presentation
-            success = self._delete_images(message)
-        elif message['message']['text'] == "/getlog":
+            success = self._delete_images(from_id, message_text)
+        elif message_text == "/getlog":
             # Send log file as attachment
             self._send_log(from_id)
-        elif message['message']['text'] == "/getconfig":
+        elif message_text == "/getconfig":
             # Send configuration file as attachment
             self._send_config(from_id)
-        elif message['message']['text'] == "/reboot":
+        elif message_text == "/reboot":
             # Reboot whole system
             self._system_reboot(from_id)
-        elif message['message']['text'].startswith("/update"):
+        elif message_text.startswith("/update"):
             # Update system with current repository and restart with new code
-            success = self._system_update(message)
-        elif message['message']['text'] == "/swsignaling":
+            success = self._system_update(from_id, message_text)
+        elif message_text == "/swsignaling":
             # Switch the signaling return via Telegram when system boots up
             self._switch_signaling(from_id)
-        elif message['message']['text'].startswith("/rotate"):
-            # Rotate image 90 degrees left
-            success = self._rotate(message)
+        elif message_text.startswith("/rotate"):
+            # Rotate image 90 degrees left or right
+            success = self._rotate(from_id, message_text)
 
         return success
 
