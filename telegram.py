@@ -52,7 +52,7 @@ class Telegram:
             status_code = f"Unknown exception: {e}"
             module_log.log(status_code)
         finally:
-            return self.return_status_code(answer).json()
+            return self.return_status_code(answer)
 
     def read_message(self, **kwargs):
         # Get new arrived messages since last Update receive
