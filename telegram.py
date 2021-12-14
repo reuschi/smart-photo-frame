@@ -86,6 +86,7 @@ class Telegram:
             return "Unknown Error! " + str(answer)
 
     def set_webhook(self, url, **kwargs):
+        # Set Telegram webhook
         link = self.weblink + "setWebhook"
         data = {
             "url": url
@@ -194,6 +195,7 @@ class Telegram:
         text = text.replace("/", "_")
         text = text.replace("\\", "_")
         text = text.replace("*", "-")
+        text = text.replace(".", "_")
         text = text.replace("ß", "ss")
 
         return text
@@ -341,7 +343,9 @@ class Telegram:
             module_log.log("Status signaling set to On")
 
     def _rotate(self, from_id, message_text):
+        # Rotate images 90 degrees left or right
         success = False
+        rotate = False
 
         try:
             file = message_text.split()
@@ -351,15 +355,16 @@ class Telegram:
                 rotation = str(file[i].split(",")[1])
 
                 if rotation == "r":
-                    IProc.rotate_right(filename)
+                    rotate = IProc.rotate_right(filename)
                     module_log.log(f"Image {filename} rotated right.")
                 elif rotation == "l":
-                    IProc.rotate_left(filename)
+                    rotate = IProc.rotate_left(filename)
                     module_log.log(f"Image {filename} rotated left.")
 
-                self.send_message(from_id, texts.texts[self.language]['tg']['rotate_image_success'].format(filename))
-
-            success = True
+                if rotate:
+                    self.send_message(from_id, texts.texts[self.language]['tg']['rotate_image_success'].format(filename))
+                    success = True
+                    rotate = False
 
         except Exception as e:
             module_log.log(e)

@@ -6,7 +6,6 @@ from owncloud import Owncloud
 import module_log
 import static_variables
 import RPi.GPIO as GPIO
-import texts
 
 
 GPIO.setmode(GPIO.BCM)
@@ -39,24 +38,29 @@ if __name__ == "__main__":
     reference_time = int(time.time()) - 120
 
     while True:
+        try:
+            # Request for new mails every 120 seconds
+            if int(time.time()) >= reference_time + 120:
+                mail = imap.init_imap(static_variables.EMAIL_ACCOUNT, static_variables.EMAIL_PASS)
+                reference_time = int(time.time())
+            else:
+                mail = False
 
-        # Request for new mails every 120 seconds
-        if int(time.time()) >= reference_time + 120:
-            mail = imap.init_imap(static_variables.EMAIL_ACCOUNT, static_variables.EMAIL_PASS)
-            reference_time = int(time.time())
-        else:
-            mail = False
+            # Request for new images on Owncloud
+            owncloud = oc.download_file()
 
-        # Request for new images on Owncloud
-        owncloud = oc.download_file()
+            # If new images received by mail or Owncloud restart the slideshow with the new images
+            if mail or owncloud:
+                frame.restart_slideshow()
 
-        # If new images received by mail or Owncloud restart the slideshow with the new images
-        if mail or owncloud:
-            frame.restart_slideshow()
+            # Request for new Telegram message
+            telegram = tg.process_new_message()
 
-        # Request for new Telegram message
-        telegram = tg.process_new_message()
+            # If new images received by Telegram restart the slideshow with the new images
+            if telegram:
+                frame.restart_slideshow()
 
-        # If new images received by Telegram restart the slideshow with the new images
-        if telegram:
-            frame.restart_slideshow()
+        except KeyboardInterrupt:
+            # Terminate the script
+            module_log.log("Script interrupted by terminal input")
+
