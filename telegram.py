@@ -106,9 +106,10 @@ class Telegram:
         return self.telegram_POST(link, data)
 
     def send_signal(self):
-        print(self.status_signal)
+        # If signaling is activated, send signal
         if self.status_signal:
             self.send_message("28068117", texts.texts[self.language]['tg']['snd_signal'])
+            module_log.log("Signaling sent")
 
     def get_file_link(self, file_id):
         # To download a file it's necessary to get the direct link to the file
@@ -282,19 +283,23 @@ class Telegram:
             module_log.log(f"Configuration file sent.")
 
     def _system_reboot(self, from_id, update_id):
-        self.db.set_last_update_id(update_id + 1)
-        self.db.commit()
-
         # Reboot system by shell command
-        bash_command = f"sudo reboot"
-        reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = reply.communicate()
-        encoding = 'utf-8'
-        if str(stderr, encoding) == "":
-            module_log.log(f"Reboot initiated")
-        else:
-            self.send_message(from_id, texts.texts[self.language]['tg']['no_reboot_possible'])
-            module_log.log(f"Error while rebooting")
+
+        try:
+            self.db.set_last_update_id(update_id + 1)
+            self.db.commit()
+
+            bash_command = f"sudo reboot"
+            reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, stderr = reply.communicate()
+            encoding = 'utf-8'
+            if str(stderr, encoding) == "":
+                module_log.log(f"Reboot initiated")
+            else:
+                self.send_message(from_id, texts.texts[self.language]['tg']['no_reboot_possible'])
+                module_log.log(f"Error while rebooting")
+        except Exception as e:
+            module_log.log(e)
 
     def _system_update(self, from_id, message_text):
         # Update system to current version from GitHub repository
