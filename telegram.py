@@ -11,6 +11,7 @@ import subprocess
 import texts
 import json
 import git
+import sys
 
 
 class Telegram:
@@ -457,3 +458,5 @@ class Telegram:
         except KeyboardInterrupt:
             # Terminate the script
             module_log.log("Script interrupted by terminal input")
+            sys.exit(1)
+
