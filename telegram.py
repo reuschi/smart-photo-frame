@@ -30,7 +30,7 @@ class Telegram:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.db.close_connection()
 
-    def telegram_POST(self, link, data={}, file=None):
+    def telegram_POST(self, link, data={}, file=None) -> dict:
         # Requesting Telegram API via POST Method
         answer = requests.Response()
         try:
@@ -281,7 +281,10 @@ class Telegram:
         if self.send_file(from_id, file):
             module_log.log(f"Configuration file sent.")
 
-    def _system_reboot(self, from_id):
+    def _system_reboot(self, from_id, update_id):
+        self.db.set_last_update_id(update_id + 1)
+        self.db.commit()
+
         # Reboot system by shell command
         bash_command = f"sudo reboot"
         reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -362,6 +365,7 @@ class Telegram:
         success = False
         from_id = message['message']['from']['id']
         message_text = message['message']['text']
+        update_id = message['update_id']
 
         if message_text.startswith("/addsender"):
             # Add new senders into the config file
@@ -386,7 +390,7 @@ class Telegram:
             self._send_config(from_id)
         elif message_text == "/reboot":
             # Reboot whole system
-            self._system_reboot(from_id)
+            self._system_reboot(from_id, update_id)
         elif message_text.startswith("/update"):
             # Update system with current repository and restart with new code
             success = self._system_update(from_id, message_text)
