@@ -6,6 +6,7 @@ from owncloud import Owncloud
 import module_log
 import static_variables
 import RPi.GPIO as GPIO
+import sys
 
 
 GPIO.setmode(GPIO.BCM)
@@ -63,4 +64,5 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             # Terminate the script
             module_log.log("Script interrupted by terminal input")
+            sys.exit(1)
 
