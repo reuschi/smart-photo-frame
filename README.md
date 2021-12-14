@@ -11,7 +11,8 @@ This is a Smart Photo Frame to show a slideshow of pictures that were sent via e
 
 **Operating System:** RaspberryPi OS (Lite installation is enough)\
 **Python version:** 3.7+\
-**Required Packages:** GitPython, requests, RPi.GPIO, urllib3, easywebdav2, Pillow, libopenjp2-7
+**Required Python Packages:** GitPython, requests, RPi.GPIO, urllib3, easywebdav2, Pillow\
+**Required Linux Packages:** fbi, libopenjp2-7
 
 ## Installation guide
 
