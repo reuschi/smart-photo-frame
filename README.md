@@ -6,7 +6,7 @@ This is a Smart Photo Frame to show a slideshow of pictures that were sent via e
 
 ## Recommended hardware and software
 
-**Computing Hardware:** Every RaspberryPi with Wireless connection (successfully running on Zero W)\
+**Computing Hardware:** Every RaspberryPi with Wireless connection (successfully running on ZeroW)\
 **Display:** Each HDMI connectable display
 
 **Operating System:** RaspberryPi OS (Lite installation is enough)\
