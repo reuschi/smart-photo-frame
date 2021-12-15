@@ -113,7 +113,7 @@ class Telegram:
             self.send_message("28068117", texts.texts[self.language]['tg']['snd_signal'])
             module_log.log("Signaling sent")
 
-    def get_file_link(self, file_id):
+    def get_file_link(self, file_id) -> str:
         # To download a file it's necessary to get the direct link to the file
         try:
             link = self.weblink + "getFile"
