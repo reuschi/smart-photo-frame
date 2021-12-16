@@ -373,12 +373,15 @@ class Telegram:
             return success
 
     def _toggle_verbose(self, from_id):
+        # Toggle verbose view of image show
         if not static_variables.verbose:
             static_variables.verbose = True
             self.send_message(from_id, texts.texts[self.language]['tg']['toggle_verbose'].format("On"))
+            module_log.log(texts.texts['EN']['tg']['toggle_verbose'].format("On"))
         else:
             static_variables.verbose = False
             self.send_message(from_id, texts.texts[self.language]['tg']['toggle_verbose'].format("Off"))
+            module_log.log(texts.texts['EN']['tg']['toggle_verbose'].format("Off"))
         return True
 
     def process_admin_commands(self, message):

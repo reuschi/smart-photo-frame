@@ -49,7 +49,8 @@ commands = [{"command": "deleteimg", "description": "Delete an image from frame"
             {"command": "listimg", "description": "List all images stored on frame"},
             {"command": "reboot", "description": "Reboot whole system"},
             {"command": "rotate", "description": "Rotate image left or right"},
-            {"command": "swsignaling", "description": "Switch the Telegram signaling"},
+            {"command": "toggle_signaling", "description": "Switch the Telegram signaling"},
+            {"command": "toggle_verbose", "description": "Toggle between showing or hiding image description"},
             {"command": "update", "description": "Update system with current master repository"}]
 
 [gmail]
@@ -74,6 +75,7 @@ subfolder = <foldername> ; subfolder on owncloud
 timer = 10 ; single photo display time in seconds 
 blend = 750 ; blend time between two photos in ms
 photocount = 200 ; amount of maximum photos to circle
+verbose = False
 
 [logging]
 logToFile = True
