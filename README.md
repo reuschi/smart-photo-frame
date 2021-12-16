@@ -75,11 +75,11 @@ subfolder = <foldername> ; subfolder on owncloud
 timer = 10 ; single photo display time in seconds 
 blend = 750 ; blend time between two photos in ms
 photocount = 200 ; amount of maximum photos to circle
-verbose = False
+verbose = TrueFalse ; verbose file information during slideshow
 
 [logging]
-logToFile = True
-logToScreen = True
+logToFile = True/False ; set logging to file
+logToScreen = True/False ; set logging to screen 
 
 [global]
 language = EN ; available: EN & DE - other languages need to be added to texts.py
