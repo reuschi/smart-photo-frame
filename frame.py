@@ -49,22 +49,26 @@ class Frame:
         else:
             module_log.log("There were no files to be deleted.")
 
-    def run_slideshow(self, path: str = "images"):
+    def run_slideshow(self, path: str = "images", verbose: bool = False):
         # Start the slideshow with all present files in subfolder defined in variable 'path'
         path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / path / "*.*")
-        bash_command = f"sudo fbi --noverbose --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
+        if not verbose:
+            bash_command = f"sudo fbi --noverbose --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
+        else:
+            bash_command = f"sudo fbi --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
+
         subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         time.sleep(0.5)
 
         module_log.log("Slideshow running")
 
-    def restart_slideshow(self):
+    def restart_slideshow(self, verbose: bool = False):
         # Stop slideshow and restart the slideshow with the new added image files
         module_log.flush_log_file()
         module_log.log("Slideshow restarting")
         self.exit_slideshow()
         self.delete_old_files()
-        self.run_slideshow()
+        self.run_slideshow(verbose=verbose)
 
     def rise_timer(self, channel):
         # Rise timer of presentation, to lower the showing frequency

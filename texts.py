@@ -25,6 +25,7 @@ texts = {
             "sw_signaling": "Status signaling auf {} gesetzt",
             "snd_signal": "System hochgefahren",
             "rotate_image_success": "Das Bild {} wurde erfolgreich gedreht",
+            "toggle_verbose": "Anzeige von Bilddetails auf {} gesetzt",
 
         },
         "imap": {
@@ -65,6 +66,7 @@ texts = {
             "sw_signaling": "Status signaling set to {}",
             "snd_signal": "System is booted up",
             "rotate_image_success": "The image {} has been rotated successfully",
+            "toggle_verbose": "Verbose of details set to {}",
 
         },
         "imap": {

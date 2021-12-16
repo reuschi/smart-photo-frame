@@ -17,6 +17,7 @@ language = config['global']['language']
 timer = int(config['frame']['timer'])
 blend = int(config['frame']['blend'])    # in milliseconds
 photocount = int(config['frame']['photocount'])
+verbose = config.getboolean('frame', 'verbose')
 
 
 # IMAP STATICS

@@ -372,6 +372,15 @@ class Telegram:
         finally:
             return success
 
+    def _toggle_verbose(self, from_id):
+        if not static_variables.verbose:
+            static_variables.verbose = True
+            self.send_message(from_id, texts.texts[self.language]['tg']['toggle_verbose'].format("On"))
+        else:
+            static_variables.verbose = False
+            self.send_message(from_id, texts.texts[self.language]['tg']['toggle_verbose'].format("Off"))
+        return True
+
     def process_admin_commands(self, message):
         success = False
         from_id = message['message']['from']['id']
@@ -411,6 +420,9 @@ class Telegram:
         elif message_text.startswith("/rotate"):
             # Rotate image 90 degrees left or right
             success = self._rotate(from_id, message_text)
+        elif message_text == "/toggle_verbose":
+            # Toggle between "verbose" and "non verbose" in frame view
+            success = self._toggle_verbose(from_id)
 
         return success
 
