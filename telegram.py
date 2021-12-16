@@ -330,7 +330,7 @@ class Telegram:
 
         return success
 
-    def _switch_signaling(self, from_id):
+    def _toggle_signaling(self, from_id):
         # Switch status signaling
         if static_variables.status_signal:
             static_variables.status_signal = False
@@ -414,9 +414,9 @@ class Telegram:
         elif message_text.startswith("/update"):
             # Update system with current repository and restart with new code
             success = self._system_update(from_id, message_text)
-        elif message_text == "/swsignaling":
+        elif message_text == "/toggle_signaling":
             # Switch the signaling return via Telegram when system boots up
-            self._switch_signaling(from_id)
+            self._toggle_signaling(from_id)
         elif message_text.startswith("/rotate"):
             # Rotate image 90 degrees left or right
             success = self._rotate(from_id, message_text)
