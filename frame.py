@@ -51,16 +51,21 @@ class Frame:
 
     def run_slideshow(self, path: str = "images", verbose: bool = False):
         # Start the slideshow with all present files in subfolder defined in variable 'path'
-        path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / path / "*.*")
-        if not verbose:
-            bash_command = f"sudo fbi --noverbose --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
-        else:
-            bash_command = f"sudo fbi --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
+        try:
+            path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / path / "*.*")
+            if not verbose:
+                bash_command = f"sudo fbi --noverbose --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
+            else:
+                bash_command = f"sudo fbi --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
 
-        subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        time.sleep(0.5)
-
-        module_log.log("Slideshow running")
+            proc = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, stderr = proc.communicate()
+            module_log.log("Standard output: " + stdout)
+            module_log.log("Error output: " + stderr)
+            time.sleep(0.5)
+            module_log.log("Slideshow running")
+        except Exception as e:
+            module_log.log(e)
 
     def restart_slideshow(self, verbose: bool = False):
         # Stop slideshow and restart the slideshow with the new added image files
