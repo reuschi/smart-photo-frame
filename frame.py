@@ -60,8 +60,8 @@ class Frame:
 
             proc = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = proc.communicate()
-            module_log.log("Standard output: " + stdout)
-            module_log.log("Error output: " + stderr)
+            module_log.log("Standard output: " + str(stdout))
+            module_log.log("Error output: " + str(stderr))
             time.sleep(0.5)
             module_log.log("Slideshow running")
         except Exception as e:
