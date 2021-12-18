@@ -60,12 +60,12 @@ class Frame:
 
             proc = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = proc.communicate()
-            module_log.log("Standard output: " + str(stdout))
-            module_log.log("Error output: " + str(stderr))
+            # module_log.log("Standard output: " + str(stdout))
+            # module_log.log("Error output: " + str(stderr))
             time.sleep(0.5)
             module_log.log("Slideshow running")
         except Exception as e:
-            module_log.log(e)
+            module_log.log("Exception: " + str(e))
 
     def restart_slideshow(self, verbose: bool = False):
         # Stop slideshow and restart the slideshow with the new added image files
