@@ -22,10 +22,10 @@ verbose = config.getboolean('frame', 'verbose')
 
 # IMAP STATICS
 # ------------------------------
-EMAIL_ACCOUNT = config['gmail']['account']
-EMAIL_PASS = config['gmail']['password']
-#EMAIL_HOST = config['gmail']['hostname']
-mail_elements = config.get('gmail', 'fileExtensions').split(',')
+EMAIL_ACCOUNT = config['mail']['account']
+EMAIL_PASS = config['mail']['password']
+EMAIL_HOST = config['mail']['hostname']
+mail_elements = config.get('mail', 'fileExtensions').split(',')
 file_extensions = [str(ext) for ext in mail_elements]
 
 

@@ -16,7 +16,7 @@ GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 if __name__ == "__main__":
     frame = Frame(static_variables.timer, static_variables.blend, static_variables.photocount)
-    imap = ImapMail(static_variables.EMAIL_ACCOUNT, static_variables.EMAIL_PASS, ext=static_variables.file_extensions)
+    imap = ImapMail(static_variables.EMAIL_ACCOUNT, static_variables.EMAIL_PASS, hostname=static_variables.EMAIL_HOST, ext=static_variables.file_extensions)
     tg = Telegram(static_variables.token, static_variables.tg_allowed_senders, static_variables.tg_allowed_admins)
     oc = Owncloud(static_variables.oc_host, static_variables.oc_username, static_variables.oc_password)
     tg.set_commands()
