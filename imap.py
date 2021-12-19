@@ -11,7 +11,7 @@ import texts
 
 class ImapMail:
 
-    def __init__(self, account, passwd, hostname="imap.gmail.com", ext="jpg,JPG", subfolder="Smart Photo Frame"):
+    def __init__(self, account, passwd, hostname, ext="jpg,JPG", subfolder="Smart Photo Frame"):
         self.EMAIL_ACCOUNT = account
         self.EMAIL_PASS = passwd
         self.hostname = hostname
@@ -91,7 +91,7 @@ class ImapMail:
 
         return success
 
-    def init_imap(self, username, password, hostname="imap.gmail.com"):
+    def init_imap(self):
         # Receive new mails
         success = False
         try:
@@ -134,11 +134,3 @@ class ImapMail:
 
         return success
 
-
-def main():
-    mail = ImapMail()
-    return mail.init_imap(mail.EMAIL_ACCOUNT, mail.EMAIL_PASS)
-
-
-if __name__ == "__main__":
-    main()
