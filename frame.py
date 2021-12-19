@@ -73,6 +73,7 @@ class Frame:
         module_log.log("Slideshow restarting")
         self.exit_slideshow()
         self.delete_old_files()
+        # Needed implementation for RaspiZeroW to not terminate the start of the framebuffer while booting up
         time.sleep(2.0)
         self.run_slideshow(verbose=verbose)
 
