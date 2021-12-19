@@ -53,15 +53,15 @@ class Frame:
         # Start the slideshow with all present files in subfolder defined in variable 'path'
         try:
             path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / path / "*.*")
-            if not verbose:
-                bash_command = f"sudo fbi --noverbose --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
-            else:
+            if verbose:
                 bash_command = f"sudo fbi --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
+            else:
+                bash_command = f"sudo fbi --noverbose --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
 
             proc = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = proc.communicate()
             # module_log.log("Standard output: " + str(stdout))
-            # module_log.log("Error output: " + str(stderr))
+            module_log.log("Error output: " + str(stderr))
             time.sleep(0.5)
             module_log.log("Slideshow running")
         except Exception as e:
