@@ -23,7 +23,7 @@ if __name__ == "__main__":
     tg.send_signal()
 
     module_log.log("!!!! SYSTEM STARTED !!!!")
-    frame.restart_slideshow()
+    frame.restart_slideshow(static_variables.verbose)
 
     # Rise presentation Timer
     GPIO.add_event_detect(27, GPIO.FALLING, callback=frame.rise_timer, bouncetime=400)
