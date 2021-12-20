@@ -53,12 +53,7 @@ commands = [{"command": "deleteimg", "description": "Delete an image from frame"
             {"command": "toggle_verbose", "description": "Toggle between showing or hiding image description"},
             {"command": "update", "description": "Update system with current master repository"}]
 
-[gmail]
-account = <mail address>
-password = <mail account password>
-fileExtensions = jpg,JPG,png,PNG,<comma seperated list of allowed file extensions>
-
-[gmx]
+[mail]
 account = <mail address>
 password = <mail account password>
 hostname = <hostname of mail server>
