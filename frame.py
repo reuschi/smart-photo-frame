@@ -8,7 +8,7 @@ import pathlib
 
 class Frame:
 
-    def __init__(self, timer, blend, max_photo):
+    def __init__(self, timer: int, blend: int, max_photo: int):
         self.images = []
         self.timer = timer
         self.blend = blend  # in milliseconds

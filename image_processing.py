@@ -6,9 +6,9 @@ import pathlib
 class IProc:
 
     @staticmethod
-    def rotate_left(image):
+    def rotate_left(image: str):
         try:
-            path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / image)
+            path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / image.lower())
             file = Image.open(path)
             rotated = file.rotate(90, expand=True)
             rotated.save(path)
@@ -18,9 +18,9 @@ class IProc:
             return False
 
     @staticmethod
-    def rotate_right(image):
+    def rotate_right(image: str):
         try:
-            path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / image)
+            path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / image.lower())
             file = Image.open(path)
             rotated = file.rotate(270, expand=True)
             rotated.save(path)
@@ -30,9 +30,9 @@ class IProc:
             return False
 
     @staticmethod
-    def transverse(image):
+    def transverse(image: str):
         pass
 
     @staticmethod
-    def transpose(image):
+    def transpose(image: str):
         pass

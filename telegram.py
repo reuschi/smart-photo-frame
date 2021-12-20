@@ -86,7 +86,7 @@ class Telegram:
         else:
             return "Unknown Error! " + str(answer)
 
-    def set_webhook(self, url, **kwargs):
+    def set_webhook(self, url: str, **kwargs):
         # Set Telegram webhook
         link = self.weblink + "setWebhook"
         data = {
@@ -127,7 +127,7 @@ class Telegram:
         except Exception as e:
             module_log.log(e)
 
-    def download_file(self, source, filename, destination="images"):
+    def download_file(self, source, filename: str, destination: str = "images"):
         # Download the image from the Telegram servers
         try:
             # Build the correct file path on the local file system
@@ -151,7 +151,7 @@ class Telegram:
         content = answer.json()
         module_log.log(content['result'].keys())
 
-    def send_message(self, chat_id, message, reply_to_message_id=None):
+    def send_message(self, chat_id: int, message, reply_to_message_id: int = None):
         # Send a message back to a chat_id
         link = self.weblink + "sendMessage"
         data = {
@@ -164,7 +164,7 @@ class Telegram:
 
         return self.telegram_POST(link, data)
 
-    def send_photo(self, chat_id, photo):
+    def send_photo(self, chat_id: int, photo):
         # Send a photo as a reply
         link = self.weblink + "sendPhoto"
         data = {
@@ -174,7 +174,7 @@ class Telegram:
 
         return self.telegram_POST(link, data)
 
-    def send_file(self, chat_id, file):
+    def send_file(self, chat_id: int, file):
         # Send a byte file as a reply
         link = self.weblink + "sendDocument"
         data = {

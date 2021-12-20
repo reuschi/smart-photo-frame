@@ -11,7 +11,7 @@ import texts
 
 class ImapMail:
 
-    def __init__(self, account, passwd, hostname, ext="jpg,JPG", subfolder="Smart Photo Frame"):
+    def __init__(self, account: str, passwd: str, hostname: str, ext: str = "jpg,JPG", subfolder: str = "Smart Photo Frame"):
         self.EMAIL_ACCOUNT = account
         self.EMAIL_PASS = passwd
         self.hostname = hostname
@@ -19,7 +19,7 @@ class ImapMail:
         self.subfolder = subfolder
         self.language = static_variables.language
 
-    def download_attachment(self, mail, directory="images"):
+    def download_attachment(self, mail, directory: str = "images"):
         # Download attachments from mails sent to the mail account
         success = False
         rv, data = mail.search(None, 'ALL')
