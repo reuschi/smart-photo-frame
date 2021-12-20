@@ -59,7 +59,7 @@ class ImapMail:
                     # Only download file if its extension is on config file
                     if bool(file_name) and (file_extension in self.allowedExtensions):
                         # Define path where to store the file locally
-                        file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / file_name)
+                        file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / file_name.lower())
 
                         if not os.path.isfile(file_path):
                             # If file is not yet downloaded
