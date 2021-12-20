@@ -24,10 +24,10 @@ class Frame:
         except Exception as e:
             module_log.log(e)
 
-    def delete_old_files(self, directory: str = "images", max: int = None):
+    def delete_old_files(self, directory: str = "images", maximum: int = None):
         # Delete older image files in 'directory' that are over amount 'max'
-        if max is None:
-            max = self.max_photocount
+        if maximum is None:
+            maximum = self.max_photocount
 
         module_log.log("Checking for old files to be deleted...")
         file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / "*.*")
@@ -36,7 +36,7 @@ class Frame:
         files = glob.glob(str(file_path))
         files.sort(key=os.path.getmtime, reverse=True)
 
-        for x in range(max, len(files)):
+        for x in range(maximum, len(files)):
             try:
                 bash_command = f"sudo rm {files[x]}"
                 subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -60,9 +60,9 @@ class Frame:
 
             proc = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = proc.communicate()
+            time.sleep(1)
             # module_log.log("Standard output: " + str(stdout))
             module_log.log("Error output: " + str(stderr))
-            time.sleep(0.5)
             module_log.log("Slideshow running")
         except Exception as e:
             module_log.log("Exception: " + str(e))
@@ -74,7 +74,7 @@ class Frame:
         self.exit_slideshow()
         self.delete_old_files()
         # Needed implementation for RaspiZeroW to not terminate the start of the framebuffer while booting up
-        time.sleep(2.0)
+        #time.sleep(2.0)
         self.run_slideshow(verbose=verbose)
 
     def rise_timer(self, channel):
