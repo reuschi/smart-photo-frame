@@ -60,7 +60,7 @@ class Frame:
 
             proc = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = proc.communicate()
-            time.sleep(1)
+            time.sleep(2)
             # module_log.log("Standard output: " + str(stdout))
             module_log.log("Error output: " + str(stderr))
             module_log.log("Slideshow running")
