@@ -74,7 +74,6 @@ class Frame:
         module_log.log("Slideshow restarting")
         self.exit_slideshow()
         self.delete_old_files()
-        #time.sleep(2.0)
         self.run_slideshow(verbose=verbose)
 
     def rise_timer(self, channel):
