@@ -110,7 +110,8 @@ class Telegram:
     def send_signal(self):
         # If signaling is activated, send signal
         if self.status_signal:
-            self.send_message("28068117", texts.texts[self.language]['tg']['snd_signal'])
+            # Send signal only to first admin
+            self.send_message(static_variables.tg_allowed_admins[0], texts.texts[self.language]['tg']['snd_signal'])
             module_log.log("Signaling sent")
 
     def get_file_link(self, file_id) -> str:
