@@ -1,6 +1,7 @@
 from PIL import Image
 import module_log
 import pathlib
+import subprocess
 
 
 class IProc:
@@ -55,3 +56,16 @@ class IProc:
         except Exception as e:
             module_log.log(e)
             return e
+
+    @staticmethod
+    def delete_image(image: str):
+        try:
+            image_file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / image)
+            bash_command = f"sudo rm {image_file}"
+            reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, stderr = reply.communicate()
+            
+            return stderr
+        except FileNotFoundError:
+            return f"No such file or directory: {image}"
+

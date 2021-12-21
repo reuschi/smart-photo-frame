@@ -259,17 +259,18 @@ class Telegram:
 
         images = message_text.split(" ")[1:]
         for img in images:
-            image_file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / img)
-            bash_command = f"sudo rm {image_file}"
-            reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            stdout, stderr = reply.communicate()
-            encoding = 'utf-8'
-            if str(stderr, encoding) == "":
+            #image_file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / img)
+            #bash_command = f"sudo rm {image_file}"
+            #reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            #stdout, stderr = reply.communicate()
+            #encoding = 'utf-8'
+            error = IProc.delete_image(img)
+            if error == "":
                 self.send_message(from_id, texts.texts[self.language]['tg']['id_delete_success'].format(img))
                 module_log.log(f"{img} deleted.")
                 success = True
             else:
-                self.send_message(from_id, str(stderr, encoding))
+                self.send_message(from_id, str(error))
                 module_log.log(f"No image file deleted.")
 
         return success
