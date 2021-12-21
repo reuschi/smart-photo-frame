@@ -21,7 +21,7 @@ class Frame:
 
             module_log.log("Error output: " + str(error))
 
-            if "Terminated" not in error:
+            if "Terminated" not in str(error):
                 return True
 
             return False
