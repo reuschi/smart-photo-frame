@@ -70,7 +70,7 @@ class Frame:
 
         slideshow = self._run_subprocess(bash_command)
         # Needed implementation for RaspiZeroW to not terminate the start of the framebuffer while booting up
-        time.sleep(2)
+        #time.sleep(2)
         module_log.log("Slideshow running")
         return slideshow
 
