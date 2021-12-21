@@ -19,27 +19,23 @@ class Frame:
             reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output, error = reply.communicate()
 
-            module_log.log("Error output: " + str(error))
-
             if "Terminated" not in str(error):
                 return True
 
+            # module_log.log("Standard output: " + str(output))
+            module_log.log("Error output: " + str(error))
             return False
 
         except subprocess.SubprocessError as e:
             module_log.log(e)
             return False
 
-
     def exit_slideshow(self):
         # Kill all running processes of the slideshow
-        try:
-            #os.system("sudo killall -15 fbi")
-            bash_command = f"sudo killall -15 fbi"
-            subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        bash_command = f"sudo killall -15 fbi"
+        #ubprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if self._run_subprocess(bash_command):
             module_log.log("Slideshow killed")
-        except Exception as e:
-            module_log.log(e)
 
     def delete_old_files(self, directory: str = "images", maximum: int = None):
         # Delete older image files in 'directory' that are over amount 'max'
@@ -54,12 +50,12 @@ class Frame:
         files.sort(key=os.path.getmtime, reverse=True)
 
         for x in range(maximum, len(files)):
-            try:
-                bash_command = f"sudo rm {files[x]}"
-                subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                delete = True
-            except Exception as e:
+            bash_command = f"sudo rm {files[x]}"
+            #subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if not self._run_subprocess(bash_command):
                 module_log.log(f"Removing the file {files[x]} was NOT successful: {e}")
+
+            delete = True
 
         if delete:
             module_log.log("Deleting old files is done.")
