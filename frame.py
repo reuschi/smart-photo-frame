@@ -33,7 +33,6 @@ class Frame:
     def exit_slideshow(self):
         # Kill all running processes of the slideshow
         bash_command = f"sudo killall -15 fbi"
-        #ubprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if self._run_subprocess(bash_command):
             module_log.log("Slideshow killed")
 
@@ -51,7 +50,6 @@ class Frame:
 
         for x in range(maximum, len(files)):
             bash_command = f"sudo rm {files[x]}"
-            #subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if not self._run_subprocess(bash_command):
                 module_log.log(f"Removing the file {files[x]} was NOT successful: {e}")
 
@@ -64,24 +62,17 @@ class Frame:
 
     def run_slideshow(self, path: str = "images", verbose: bool = False):
         # Start the slideshow with all present files in subfolder defined in variable 'path'
-        try:
-            path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / path / "*.*")
-            if verbose:
-                bash_command = f"sudo fbi --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
-            else:
-                bash_command = f"sudo fbi --noverbose --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
+        path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / path / "*.*")
+        if verbose:
+            bash_command = f"sudo fbi --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
+        else:
+            bash_command = f"sudo fbi --noverbose --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
 
-            #proc = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            #stdout, stderr = proc.communicate()
-            slideshow = self._run_subprocess(bash_command)
-            # Needed implementation for RaspiZeroW to not terminate the start of the framebuffer while booting up
-            time.sleep(2)
-            # module_log.log("Standard output: " + str(stdout))
-            # module_log.log("Error output: " + str(stderr))
-            module_log.log("Slideshow running")
-            return slideshow
-        except Exception as e:
-            module_log.log("Exception: " + str(e))
+        slideshow = self._run_subprocess(bash_command)
+        # Needed implementation for RaspiZeroW to not terminate the start of the framebuffer while booting up
+        time.sleep(2)
+        module_log.log("Slideshow running")
+        return slideshow
 
     def restart_slideshow(self, verbose: bool = False):
         # Stop slideshow and restart the slideshow with the new added image files
@@ -109,7 +100,8 @@ class Frame:
 
     def system_shutdown(self, channel):
         # Shutdown the whole system
-        module_log.log("!!!! SYSTEM IS GOING TO SHUTDOWN !!!!")
+        #module_log.log("!!!! SYSTEM IS GOING TO SHUTDOWN !!!!")
         bash_command = f"sudo poweroff"
-        subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if self._run_subprocess(bash_command):
+            module_log.log("!!!! SYSTEM IS GOING TO SHUTDOWN !!!!")
         time.sleep(1)
