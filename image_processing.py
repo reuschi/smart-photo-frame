@@ -65,7 +65,7 @@ class IProc:
             reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = reply.communicate()
 
-            return stderr
+            return str(stderr)
         except FileNotFoundError:
             return f"No such file or directory: {image}"
 
