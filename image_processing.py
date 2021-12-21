@@ -64,8 +64,8 @@ class IProc:
             bash_command = f"sudo rm {image_file}"
             reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = reply.communicate()
-
-            return str(stderr)
+            encoding = 'utf-8'
+            return str(stderr, encoding)
         except FileNotFoundError:
             return f"No such file or directory: {image}"
 
