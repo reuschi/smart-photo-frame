@@ -6,61 +6,40 @@ import pathlib
 class IProc:
 
     @staticmethod
-    def rotate_left(image: str):
-        '''
+    def __rotate_left(file: Image) -> Image:
         try:
-            path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / image.lower())
-            file = Image.open(path)
-            #rotated = file.rotate(90, expand=True)
-            #rotated.save(path)
-            return True
+            rotated = file.rotate(90, expand=True)
+            return rotated
         except Exception as e:
             module_log.log(e)
-            return False
-        '''
-        #return IProc.__rotate(image, "l")
-        if IProc.__rotate(image, "l"):
-            module_log.log(f"Image {image} rotated left.")
-            return True
-        else:
-            return False
+            return None
 
     @staticmethod
-    def rotate_right(image: str):
-        '''
+    def __rotate_right(file: Image) -> Image:
         try:
-            path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / image.lower())
-            file = Image.open(path)
             rotated = file.rotate(270, expand=True)
-            rotated.save(path)
-            return True
+            return rotated
         except Exception as e:
             module_log.log(e)
-            return False
-        '''
-        if IProc.__rotate(image, "r"):
-            module_log.log(f"Image {image} rotated left.")
-            return True
-        else:
-            return False
+            return None
 
     @staticmethod
     def transverse(image: str):
-        return IProc.__rotate(image, "tv")
+        pass
 
     @staticmethod
     def transpose(image: str):
-        return IProc.__rotate(image, "tr")
+        pass
 
     @staticmethod
-    def __rotate(image: str, orientation: str):
+    def rotate(image: str, orientation: str):
         try:
             path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / image.lower())
             file = Image.open(path)
             if orientation == "l":
-                rotated = file.rotate(90, expand=True)
+                rotated = IProc.__rotate_left(file)
             elif orientation == "r":
-                rotated = file.rotate(270, expand=True)
+                rotated = IProc.__rotate_right(file)
             elif orientation == "tv":
                 pass
             elif orientation == "tp":
@@ -69,10 +48,10 @@ class IProc:
                 rotated = file.rotate(0, expand=True)
 
             rotated.save(path)
-            return True
+            return "Ok"
         except FileNotFoundError:
             module_log.log(f"No such file or directory: {image}")
-            return False
+            return f"No such file or directory: {image}"
         except Exception as e:
             module_log.log(e)
-            return False
+            return e

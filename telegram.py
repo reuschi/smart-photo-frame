@@ -356,17 +356,21 @@ class Telegram:
                 filename = str(file[i].split(",")[0])
                 rotation = str(file[i].split(",")[1])
 
+                '''
                 if rotation == "r":
                     rotate = IProc.rotate_right(filename)
                     #module_log.log(f"Image {filename} rotated right.")
                 elif rotation == "l":
                     rotate = IProc.rotate_left(filename)
                     #module_log.log(f"Image {filename} rotated left.")
-
-                if rotate:
+                '''
+                result = IProc.rotate(filename, rotation)
+                if result.startswith("Ok"):
                     self.send_message(from_id, texts.texts[self.language]['tg']['rotate_image_success'].format(filename))
                     success = True
                     rotate = False
+                else:
+                    self.send_message(from_id, texts.texts[self.language]['tg']['rotate_image_fail'].format(result))
 
         except Exception as e:
             module_log.log(e)

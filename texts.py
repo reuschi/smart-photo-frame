@@ -25,6 +25,7 @@ texts = {
             "sw_signaling": "Status signaling auf {} gesetzt",
             "snd_signal": "System hochgefahren",
             "rotate_image_success": "Das Bild {} wurde erfolgreich gedreht",
+            "rotate_image_fail": "Das Bild wurde nicht gedreht: {}",
             "toggle_verbose": "Anzeige von Bilddetails auf {} gesetzt",
 
         },
@@ -66,6 +67,7 @@ texts = {
             "sw_signaling": "Status signaling set to {}",
             "snd_signal": "System is booted up",
             "rotate_image_success": "The image {} has been rotated successfully",
+            "rotate_image_fail": "The image has not been rotated: {}",
             "toggle_verbose": "Verbose of details set to {}",
 
         },
