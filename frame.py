@@ -14,6 +14,23 @@ class Frame:
         self.blend = blend  # in milliseconds
         self.max_photocount = max_photo
 
+    def _run_subprocess(self, bash_command: str):
+        try:
+            reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output, error = reply.communicate()
+
+            module_log.log("Error output: " + str(error))
+
+            if "Terminated" not in error:
+                return True
+
+            return False
+
+        except subprocess.SubprocessError as e:
+            module_log.log(e)
+            return False
+
+
     def exit_slideshow(self):
         # Kill all running processes of the slideshow
         try:
@@ -58,13 +75,15 @@ class Frame:
             else:
                 bash_command = f"sudo fbi --noverbose --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
 
-            proc = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            stdout, stderr = proc.communicate()
+            #proc = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            #stdout, stderr = proc.communicate()
+            slideshow = self._run_subprocess(bash_command)
             # Needed implementation for RaspiZeroW to not terminate the start of the framebuffer while booting up
             time.sleep(2)
             # module_log.log("Standard output: " + str(stdout))
-            module_log.log("Error output: " + str(stderr))
+            # module_log.log("Error output: " + str(stderr))
             module_log.log("Slideshow running")
+            return slideshow
         except Exception as e:
             module_log.log("Exception: " + str(e))
 
@@ -74,7 +93,8 @@ class Frame:
         module_log.log("Slideshow restarting")
         self.exit_slideshow()
         self.delete_old_files()
-        self.run_slideshow(verbose=verbose)
+        if not self.run_slideshow(verbose=verbose):
+            self.run_slideshow(verbose=verbose)
 
     def rise_timer(self, channel):
         # Rise timer of presentation, to lower the showing frequency
