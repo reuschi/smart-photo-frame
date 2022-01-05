@@ -1,10 +1,15 @@
+""" Module with Database functions """
+
 import sqlite3
 import pathlib
-import module_log
 import sys
+
+import module_log
 
 
 class DBHelper:
+    """ DBHelper Class """
+
     def __init__(self, table: str):
         str_table = table + ".db"
         db_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / str_table)
@@ -13,25 +18,29 @@ class DBHelper:
         self.table = table
 
     def select(self, command: str):
+        """ Run a SELECT command on database """
         return self.db_cursor.execute(command)
 
     def create_table(self):
+        """ Create a specific table in database """
         self.db_cursor.execute(f"""CREATE TABLE IF NOT EXISTS {self.table} (
                                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                                     last_update_id
                                 )""")
 
     def update_table(self, tbl_name: str):
-        pass
+        """ Update a specific table in database """
 
-    def update_last_id(self, id: int):
-        self.db_cursor.execute(f"UPDATE {self.table} SET last_update_id='{id}' WHERE id=1")
+    def update_last_id(self, index: int):
+        """ Update last message id in database """
+        self.db_cursor.execute(f"UPDATE {self.table} SET last_update_id='{index}' WHERE id=1")
 
-    def insert_last_id(self, id: int):
-        self.db_cursor.execute(f"INSERT INTO {self.table} (last_update_id) VALUES ({id})")
+    def insert_last_id(self, index: int):
+        """ Insert last message id in database """
+        self.db_cursor.execute(f"INSERT INTO {self.table} (last_update_id) VALUES ({index})")
 
     def set_last_update_id(self, update_id):
-        # To set last requested message id in the database
+        """ To set last requested message id in the database """
         try:
             # Build up the database connection and set the cursor to the current database
             module_log.log("Setting last update id in database...")
@@ -54,16 +63,18 @@ class DBHelper:
 
             return True
 
-        except sqlite3.Error as e:
-            module_log.log(e)
-        except Exception as e:
+        except sqlite3.Error as exc:
+            module_log.log(exc)
+        except Exception:
             module_log.log(sys.exc_info()[0] + ": " + sys.exc_info()[1])
         finally:
             self.commit()
 
     def get_last_update_id(self):
-        # To only receive the newest message since the last request it's necessary to send an offset id in the request.
-        # This information is stored in the database and will be gathered by this function.
+        """
+        To only receive the newest message since the last request it's necessary to send an offset id in the request.
+        This information is stored in the database and will be gathered by this function.
+        """
         try:
             module_log.log("Getting last update id from database...")
             update_id = None
@@ -76,21 +87,22 @@ class DBHelper:
                 module_log.log(f"Done. Last Update ID is: {update_id}")
                 return update_id
 
-        except sqlite3.Error as e:
-            module_log.log(e)
-            if "no such table" in str(e):
+        except sqlite3.Error as exc:
+            module_log.log(exc)
+            if "no such table" in str(exc):
                 self.set_last_update_id(0)
-        except sqlite3.OperationalError as e:
-            module_log.log(e)
+        except sqlite3.OperationalError as exc:
+            module_log.log(exc)
         else:
             module_log.log("Failed!")
             return False
 
     def commit(self):
+        """ Commit changes in database """
         self.db_connection.commit()
 
     def close_connection(self):
+        """ Close connection to database """
         if self.db_connection:
             self.db_connection.commit()
             self.db_connection.close()
-

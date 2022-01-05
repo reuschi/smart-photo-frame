@@ -1,3 +1,5 @@
+""" Generating static variables for all modules """
+
 import configparser
 import pathlib
 from ast import literal_eval
@@ -61,15 +63,14 @@ logToScreen = config.getboolean('logging', 'logToScreen')
 
 
 def add_value_to_config(section: str, parameter: str, value: str):
-    # Add a new 'value' to a 'parameter' in 'section' in the config file
+    """ Add a new 'value' to a 'parameter' in 'section' in the config file """
     config[section][parameter] += "," + str(value)
-    with open(config_path, 'w') as conf:
+    with open(config_path, 'w', encoding="utf-8") as conf:
         config.write(conf)
 
 
 def change_config_value(section: str, parameter: str, value: str):
-    # Change 'value' of a configured 'parameter' in 'section'
+    """ Change 'value' of a 'parameter' in 'section' in the config file """
     config[section][parameter] = str(value)
-    with open(config_path, 'w') as conf:
+    with open(config_path, 'w', encoding="utf-8") as conf:
         config.write(conf)
-

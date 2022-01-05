@@ -1,4 +1,7 @@
+""" Logging Module """
+
 import time
+
 import pathlib
 import static_variables
 
@@ -8,12 +11,16 @@ logToScreen = static_variables.logToScreen
 logging_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
 
 
-def log_to_screen(logging, **kwargs):
+def log_to_screen(logging):
+    """ Log to screen/clonsole """
+
     print(f"{logging}", flush=True)
 
 
 def log_to_file(logging):
-    logfile = open(logging_path, "a")
+    """ Log to a file """
+
+    logfile = open(logging_path, "a", encoding="utf-8")
     datetime = time.strftime("%b %d %Y %H:%M:%S")
     logger = str(datetime) + " " + str(logging) + "\n"
     logfile.write(logger)
@@ -21,24 +28,27 @@ def log_to_file(logging):
 
 
 def log(logging):
+    """ Call functions regarding on the configuration values """
+
     if logToFile:
         log_to_file(logging)
     if logToScreen:
         log_to_screen(logging)
 
 
-def flush_log_file(max=100000):
-    # Delete lines of logging file that are over 'max' amount
-    with open(logging_path) as f:
-        for i, l in enumerate(f):
+def flush_log_file(maximum=100000):
+    """ Delete lines of logging file that are over 'max' amount """
+
+    with open(logging_path, encoding="utf-8") as f:
+        for i in enumerate(f):
             pass
 
-    result = i + 1 - max
+    result = i + 1 - maximum
 
     if result > 0:
         log("Flushing log file")
 
-        with open(logging_path, "r+") as file:
+        with open(logging_path, "r+", encoding="utf-8") as file:
             line = file.readlines()
             file.seek(0)
             j = 1

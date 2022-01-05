@@ -1,11 +1,14 @@
+""" Main file to start the Smart Photo Frame """
+
 import time
+
+from RPi import GPIO
 from imap import ImapMail
 from frame import Frame
 from telegram import Telegram
 from owncloud import Owncloud
 import module_log
 import static_variables
-import RPi.GPIO as GPIO
 
 
 GPIO.setmode(GPIO.BCM)
@@ -40,22 +43,21 @@ if __name__ == "__main__":
     while True:
         # Request for new mails every 120 seconds
         if int(time.time()) >= reference_time + 120:
-            mail = imap.init_imap()
+            MAIL = imap.init_imap()
             reference_time = int(time.time())
         else:
-            mail = False
+            MAIL = False
 
         # Request for new images on Owncloud
-        owncloud = oc.download_file()
+        OWNCLOUD = oc.download_file()
 
         # If new images received by mail or Owncloud restart the slideshow with the new images
-        if mail or owncloud:
+        if MAIL or OWNCLOUD:
             frame.restart_slideshow()
 
         # Request for new Telegram message
-        telegram = tg.process_new_message()
+        TELEGRAM = tg.process_new_message()
 
         # If new images received by Telegram restart the slideshow with the new images
-        if telegram:
+        if TELEGRAM:
             frame.restart_slideshow(static_variables.verbose)
-

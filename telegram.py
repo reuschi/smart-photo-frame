@@ -1,20 +1,24 @@
+""" Main module to control the Telegram Bot and react on new messages """
+
+import time
+import shutil
+import pathlib
+import subprocess
+import json
+import sys
+import requests
+import git
+import urllib3
+
 from dbhelper import DBHelper
 from image_processing import IProc
-import requests
-import time
-import urllib3
-import shutil
 import module_log
-import pathlib
 import static_variables
-import subprocess
 import texts
-import json
-import git
-import sys
 
 
 class Telegram:
+    """ Telegram Bot """
 
     def __init__(self, token: str, allowed_senders: list, allowed_admins: list):
         self.token = token
@@ -32,7 +36,7 @@ class Telegram:
         self.db.close_connection()
 
     def telegram_POST(self, link, data={}, file=None) -> dict:
-        # Requesting Telegram API via POST Method
+        """ Requesting Telegram API via POST Method """
         answer = requests.Response()
         try:
             answer = requests.post(link, data=data, files=file)
@@ -45,18 +49,18 @@ class Telegram:
         except requests.exceptions.RetryError:
             status_code = "No DNS available"
             module_log.log(status_code)
-        except requests.exceptions as e:
+        except requests.exceptions as exc:
             status_code = "Any other Exception from Requests has been raised"
             module_log.log(status_code)
-            module_log.log(e)
-        except Exception as e:
-            status_code = f"Unknown exception: {e}"
+            module_log.log(exc)
+        except Exception as exc:
+            status_code = f"Unknown exception: {exc}"
             module_log.log(status_code)
         finally:
             return self.return_status_code(answer)
 
     def read_message(self, **kwargs):
-        # Get new arrived messages since last Update receive
+        """ Get new arrived messages since last Update receive """
         link = self.weblink + "getUpdates"
         data = {}
 
@@ -66,7 +70,7 @@ class Telegram:
         return self.telegram_POST(link, data)
 
     def return_status_code(self, answer):
-        # Return a readable status code
+        """ Return a readable status code """
         if answer.status_code == 200:
             return answer.json()
         elif answer.status_code == 400:
@@ -87,7 +91,7 @@ class Telegram:
             return "Unknown Error! " + str(answer)
 
     def set_webhook(self, url: str, **kwargs):
-        # Set Telegram webhook
+        """ Set Telegram webhook """
         link = self.weblink + "setWebhook"
         data = {
             "url": url
@@ -99,7 +103,7 @@ class Telegram:
         return self.telegram_POST(link, data)
 
     def set_commands(self):
-        # Set all commands defined in the config as shown commands in the bot
+        """ Set all commands defined in the config as shown commands in the bot """
         link = self.weblink + "setMyCommands"
         data = {
             "commands": json.dumps(static_variables.tg_bot_commands)
@@ -108,14 +112,14 @@ class Telegram:
         return self.telegram_POST(link, data)
 
     def send_signal(self):
-        # If signaling is activated, send signal
+        """ If signaling is activated, send signal """
         if self.status_signal:
             # Send signal only to first admin
             self.send_message(static_variables.tg_allowed_admins[0], texts.texts[self.language]['tg']['snd_signal'])
             module_log.log("Signaling sent")
 
     def get_file_link(self, file_id) -> str:
-        # To download a file it's necessary to get the direct link to the file
+        """ To download a file it's necessary to get the direct link to the file """
         try:
             link = self.weblink + "getFile"
             data = {
@@ -125,35 +129,36 @@ class Telegram:
             file_json = self.telegram_POST(link, data)
 
             return self.filelink + file_json['result']['file_path']
-        except Exception as e:
-            module_log.log(e)
+        except Exception as exc:
+            module_log.log(exc)
 
     def download_file(self, source, filename: str, destination: str = "images"):
-        # Download the image from the Telegram servers
+        """ Download the image from the Telegram servers """
         try:
             # Build the correct file path on the local file system
             file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / destination / filename)
             file.parent.mkdir(exist_ok=True, parents=True)
 
             # Get the file downloaded
-            with self.http.request("GET", source, preload_content=False) as r, open(file, "wb") as out_file:
+            with self.http.request("GET", source, preload_content=False) as r, open(file, "wb", encoding="utf-8") as out_file:
                 shutil.copyfileobj(r, out_file)
 
             return True
 
-        except IOError as e:
+        except IOError:
             module_log.log("Unable to download file.")
-        except Exception as e:
-            module_log.log(e)
+        except Exception as exc:
+            module_log.log(exc)
 
         return False
 
     def print_content(self, answer):
+        """ Print a content for debugging """
         content = answer.json()
         module_log.log(content['result'].keys())
 
     def send_message(self, chat_id: int, message, reply_to_message_id: int = None):
-        # Send a message back to a chat_id
+        """ Send a message back to a chat_id """
         link = self.weblink + "sendMessage"
         data = {
             "chat_id": chat_id,
@@ -166,7 +171,7 @@ class Telegram:
         return self.telegram_POST(link, data)
 
     def send_photo(self, chat_id: int, photo):
-        # Send a photo as a reply
+        """ Send a photo as a reply """
         link = self.weblink + "sendPhoto"
         data = {
             "chat_id": chat_id,
@@ -176,7 +181,7 @@ class Telegram:
         return self.telegram_POST(link, data)
 
     def send_file(self, chat_id: int, file):
-        # Send a byte file as a reply
+        """ Send a byte file as a reply """
         link = self.weblink + "sendDocument"
         data = {
             "chat_id": chat_id
@@ -186,13 +191,16 @@ class Telegram:
         }
 
         return_value = self.telegram_POST(link, data, document)
+        '''
         if return_value['result']['document'] != "":
             return True
         else:
             return False
+        '''
+        return bool(return_value['result']['document'])
 
     def replace_special_signs(self, input_text: str):
-        # Replace special signs in comment to store it as file name
+        """ Replace special signs in comment to store it as file name """
         text = input_text.replace(" ", "_")
         text = text.replace("/", "_")
         text = text.replace("\\", "_")
@@ -203,7 +211,7 @@ class Telegram:
         return text
 
     def process_photo_name(self, message):
-        # Rename image file if there is a comment added to the photo
+        """ Rename image file if there is a comment added to the photo """
         file = self.get_file_link(message['message']['photo'][-1]['file_id'])
         extension = file.split(".")[-1]
         if "caption" in message['message']:
@@ -217,7 +225,7 @@ class Telegram:
         return file, filename
 
     def _add_file_extension(self, from_id, message_text):
-        # Add a new file extension to allowed extension list
+        """ Add a new file extension to allowed extension list """
         extension = message_text.split(" ")[1:]
 
         for ext in extension:
@@ -228,7 +236,7 @@ class Telegram:
         module_log.log(f"New extension(s) added: {extension}")
 
     def _add_sender(self, from_id, message_text):
-        # Add a new id to allowed sender list
+        """ Add a new id to allowed sender list """
         add_id = message_text.split(" ")
 
         static_variables.add_value_to_config("telegram", "allowedsenders", add_id[1])
@@ -237,24 +245,24 @@ class Telegram:
         module_log.log(f"New sender added to allowed sender list: {add_id[1]}")
 
     def _get_identity(self, from_id):
-        # Return public ip address to sender
+        """ Return public ip address to sender """
         ip = requests.get("https://api.ipify.org").text
         self.send_message(from_id, ip)
         module_log.log(f"Request for Identity. Identity is: {ip}")
 
     def _list_images(self, from_id):
-        # List all images stored on the disk (in subfolder ./images)
+        """ List all images stored on the disk (in sub folder ./images) """
         path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images")
         try:
             files = [x.name for x in path.glob('**/*') if x.is_file()]
             self.send_message(from_id, str(files))
-            module_log.log(f"Image listing sent.")
+            module_log.log("Image listing sent.")
         except FileNotFoundError:
             self.send_message(from_id, "No image uploaded yet")
-            module_log.log(f"Image folder not yet created")
+            module_log.log("Image folder not yet created")
 
     def _delete_images(self, from_id, message_text):
-        # Delete images from disk
+        """ Delete images from disk """
         success = False
 
         images = message_text.split(" ")[1:]
@@ -271,43 +279,43 @@ class Telegram:
                 success = True
             else:
                 self.send_message(from_id, str(error))
-                module_log.log(f"No image file deleted.")
+                module_log.log("No image file deleted.")
 
         return success
 
     def _send_log(self, from_id):
-        # Fetch log file and send it back to the user
+        """ Fetch log file and send it back to the user """
         file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
         if self.send_file(from_id, file):
-            module_log.log(f"Log File sent.")
+            module_log.log("Log File sent.")
 
     def _send_config(self, from_id):
-        # Fetch config file and send it back to the user
+        """ Fetch config file and send it back to the user """
         file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "config.ini")
         if self.send_file(from_id, file):
-            module_log.log(f"Configuration file sent.")
+            module_log.log("Configuration file sent.")
 
     def _system_reboot(self, from_id, update_id):
-        # Reboot system by shell command
+        """ Reboot system by shell command """
 
         try:
             self.db.set_last_update_id(update_id + 1)
             self.db.commit()
 
-            bash_command = f"sudo reboot"
+            bash_command = "sudo reboot"
             reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = reply.communicate()
-            encoding = 'utf-8'
+            encoding = "utf-8"
             if str(stderr, encoding) == "":
-                module_log.log(f"Reboot initiated")
+                module_log.log("Reboot initiated")
             else:
                 self.send_message(from_id, texts.texts[self.language]['tg']['no_reboot_possible'])
-                module_log.log(f"Error while rebooting")
-        except Exception as e:
-            module_log.log(e)
+                module_log.log("Error while rebooting")
+        except Exception as exc:
+            module_log.log(exc)
 
     def _system_update(self, from_id, message_text):
-        # Update system to current version from GitHub repository
+        """ Update system to current version from GitHub repository """
         success = False
 
         try:
@@ -321,19 +329,19 @@ class Telegram:
         update = repo.git.pull('origin', branch)
         if "Updating" in update:
             self.send_message(from_id, texts.texts[self.language]['tg']['sys_upd_success'])
-            module_log.log(f"System update done")
+            module_log.log("System update done")
             success = True
         elif "Already up to date" in update:
             self.send_message(from_id, texts.texts[self.language]['tg']['sys_upd_no_need'])
-            module_log.log(f"System was up to date")
+            module_log.log("System was up to date")
         else:
             self.send_message(from_id, texts.texts[self.language]['tg']['sys_upd_failed'])
-            module_log.log(f"System update failed!")
+            module_log.log("System update failed!")
 
         return success
 
     def _toggle_signaling(self, from_id):
-        # Switch status signaling
+        """ Switch status signaling """
         if static_variables.status_signal:
             static_variables.status_signal = False
             static_variables.change_config_value('telegram', 'status_signal', 'False')
@@ -346,9 +354,9 @@ class Telegram:
             module_log.log("Status signaling set to On")
 
     def _rotate(self, from_id, message_text):
-        # Rotate images 90 degrees left or right
+        """ Rotate images 90 degrees left or right """
         success = False
-        rotate = False
+        # rotate = False
 
         try:
             file = message_text.split()
@@ -369,17 +377,17 @@ class Telegram:
                 if result.startswith("Ok"):
                     self.send_message(from_id, texts.texts[self.language]['tg']['rotate_image_success'].format(filename))
                     success = True
-                    rotate = False
+                    # rotate = False
                 else:
                     self.send_message(from_id, texts.texts[self.language]['tg']['rotate_image_fail'].format(result))
 
-        except Exception as e:
-            module_log.log(e)
+        except Exception as exc:
+            module_log.log(exc)
         finally:
             return success
 
     def _toggle_verbose(self, from_id):
-        # Toggle verbose view of image show
+        """ Toggle verbose view of image show """
         if not static_variables.verbose:
             static_variables.verbose = True
             self.send_message(from_id, texts.texts[self.language]['tg']['toggle_verbose'].format("On"))
@@ -391,6 +399,7 @@ class Telegram:
         return True
 
     def process_admin_commands(self, message):
+        """ Process admin commands """
         success = False
         from_id = message['message']['from']['id']
         message_text = message['message']['text']
@@ -436,6 +445,7 @@ class Telegram:
         return success
 
     def process_new_message(self):
+        """ Process a new incoming message """
         try:
             success = False
 
@@ -478,6 +488,5 @@ class Telegram:
             # Terminate the script
             module_log.log("Script interrupted by terminal input")
             sys.exit(1)
-        except TypeError as e:
-            module_log.log("TypeError: " + str(e))
-
+        except TypeError as exc:
+            module_log.log("TypeError: " + str(exc))
