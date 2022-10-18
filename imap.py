@@ -15,7 +15,8 @@ import texts
 class ImapMail:
     """ Get mails and process the attachments """
 
-    def __init__(self, account: str, passwd: str, hostname: str, ext: str = "jpg,JPG", subfolder: str = "Smart Photo Frame"):
+    def __init__(self, account: str, passwd: str, hostname: str,
+                 ext: str = "jpg,JPG", subfolder: str = "Smart Photo Frame"):
         self.email_account = account
         self.email_password = passwd
         self.hostname = hostname
@@ -67,16 +68,17 @@ class ImapMail:
                     file_name = "mail_" + part.get_filename()
                     file_extension = os.path.splitext(file_name)[1].lower().replace('.','')
 
-                    # Only download file if its extension is on config file
+                    # Only download file if its extension is in config file
                     if bool(file_name) and (file_extension in self.allowed_extensions):
                         # Define path where to store the file locally
-                        file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / file_name.lower())
+                        file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() /
+                                                 directory / file_name.lower())
 
                         if not os.path.isfile(file_path):
                             # If file is not yet downloaded
-                            fp = open(file_path, 'wb')
-                            fp.write(part.get_payload(decode=True))
-                            fp.close()
+                            file = open(file_path, 'wb')
+                            file.write(part.get_payload(decode=True))
+                            file.close()
                             module_log.log(f"New file downloaded: {file_path}")
                             success = True
                         elif os.path.isfile(file_path):
@@ -97,8 +99,8 @@ class ImapMail:
                             mail.expunge()
                         else:
                             mail.store(num, '+FLAGS', '\\Deleted')
-                except Exception as e:
-                    module_log.log(e)
+                except Exception as exc:
+                    module_log.log(exc)
 
         return success
 
