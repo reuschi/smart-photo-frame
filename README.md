@@ -104,7 +104,8 @@ For the possibility to let the frame download images from your owncloud account,
 
 ## Creating the automatic run of the script
 
-To run the frame automatically via bootup you additionally need to add the a new service to systemd to call **main.py**. A detailed instruction can be found here: \ https://www.thedigitalpictureframe.com/ultimate-guide-systemd-autostart-scripts-raspberry-pi/. \
+To run the frame automatically via bootup you additionally need to add the a new service to systemd to call **main.py**. A detailed instruction can be found here: \
+https://www.thedigitalpictureframe.com/ultimate-guide-systemd-autostart-scripts-raspberry-pi/. \
 When running the script on bootup, the output can be seen via
 ```
 journalctl -l -f -u your.service
