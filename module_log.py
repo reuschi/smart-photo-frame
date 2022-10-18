@@ -40,8 +40,7 @@ def flush_log_file(maximum=100000):
     """ Delete lines of logging file that are over 'max' amount """
 
     with open(logging_path, encoding="utf-8") as f:
-        for i in enumerate(f):
-            pass
+        i = len(f.readlines())
 
     result = i + 1 - maximum
 
