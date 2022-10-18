@@ -70,6 +70,7 @@ texts = {
             "rotate_image_success": "The image {} has been rotated successfully",
             "rotate_image_fail": "The image has not been rotated: {}",
             "toggle_verbose": "Verbose of details set to {}",
+            "rotate_index_error": "Please send command in following format: '/rotate <dateiname>,<rotationsrichtung>'",
 
         },
         "imap": {
