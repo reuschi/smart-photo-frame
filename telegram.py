@@ -13,7 +13,7 @@ import urllib3
 from dbhelper import DBHelper
 from image_processing import IProc
 import module_log
-import static_variables
+import static_variables as static
 import texts
 
 
@@ -27,9 +27,9 @@ class Telegram:
         self.weblink = f"https://api.telegram.org/bot{token}/"
         self.filelink = f"https://api.telegram.org/file/bot{token}/"
         self.http = urllib3.PoolManager()
-        self.language = static_variables.language
-        self.status_signal = static_variables.status_signal
-        self.timeout = static_variables.poll_timeout
+        #self.language = static_variables.language
+        #self.status_signal = static_variables.status_signal
+        #self.timeout = static_variables.poll_timeout
         self.db = DBHelper("telegram_bot")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -74,19 +74,19 @@ class Telegram:
         if answer.status_code == 200:
             return answer.json()
         elif answer.status_code == 400:
-            return texts.texts[self.language]['tg']['return_400']
+            return texts.texts[static.language]['tg']['return_400']
         elif answer.status_code == 401:
-            return texts.texts[self.language]['tg']['return_401']
+            return texts.texts[static.language]['tg']['return_401']
         elif answer.status_code == 403:
-            return texts.texts[self.language]['tg']['return_403']
+            return texts.texts[static.language]['tg']['return_403']
         elif answer.status_code == 404:
-            return texts.texts[self.language]['tg']['return_404']
+            return texts.texts[static.language]['tg']['return_404']
         elif answer.status_code == 406:
-            return texts.texts[self.language]['tg']['return_406']
+            return texts.texts[static.language]['tg']['return_406']
         elif answer.status_code == 420:
-            return texts.texts[self.language]['tg']['return_420']
+            return texts.texts[static.language]['tg']['return_420']
         elif answer.status_code == 500:
-            return texts.texts[self.language]['tg']['return_500']
+            return texts.texts[static.language]['tg']['return_500']
         else:
             return "Unknown Error! " + str(answer)
 
@@ -106,16 +106,17 @@ class Telegram:
         """ Set all commands defined in the config as shown commands in the bot """
         link = self.weblink + "setMyCommands"
         data = {
-            "commands": json.dumps(static_variables.tg_bot_commands)
+            "commands": json.dumps(static.tg_bot_commands)
         }
         module_log.log(data)
         return self.telegram_POST(link, data)
 
     def send_signal(self):
         """ If signaling is activated, send signal """
-        if self.status_signal:
+        if static.status_signal:
             # Send signal only to first admin
-            self.send_message(static_variables.tg_allowed_admins[0], texts.texts[self.language]['tg']['snd_signal'])
+            self.send_message(static.tg_allowed_admins[0],
+                              texts.texts[static.language]['tg']['snd_signal'])
             module_log.log("Signaling sent")
 
     def get_file_link(self, file_id) -> str:
@@ -140,7 +141,8 @@ class Telegram:
             file.parent.mkdir(exist_ok=True, parents=True)
 
             # Get the file downloaded
-            with self.http.request("GET", source, preload_content=False) as r, open(file, "wb", encoding="utf-8") as out_file:
+            with self.http.request("GET", source, preload_content=False) as r, \
+                    open(file, "wb", encoding="utf-8") as out_file:
                 shutil.copyfileobj(r, out_file)
 
             return True
@@ -230,18 +232,21 @@ class Telegram:
 
         for ext in extension:
             ext = ext.replace(".", "")
-            static_variables.add_value_to_config("gmail", "file_extensions", ext)
+            static.add_value_to_config("gmail", "file_extensions", ext)
 
-        self.send_message(from_id, texts.texts[self.language]['tg']['new_file_extension'].format(extension))
+        self.send_message(from_id,
+                          texts.texts[static.language]['tg']['new_file_extension'].
+                          format(extension))
         module_log.log(f"New extension(s) added: {extension}")
 
     def _add_sender(self, from_id, message_text):
         """ Add a new id to allowed sender list """
         add_id = message_text.split(" ")
 
-        static_variables.add_value_to_config("telegram", "allowedsenders", add_id[1])
+        static.add_value_to_config("telegram", "allowedsenders", add_id[1])
         self.allowed_senders.append(int(add_id[1]))
-        self.send_message(from_id, texts.texts[self.language]['tg']['new_sender_id'].format(add_id[1]))
+        self.send_message(from_id,
+                          texts.texts[static.language]['tg']['new_sender_id'].format(add_id[1]))
         module_log.log(f"New sender added to allowed sender list: {add_id[1]}")
 
     def _get_identity(self, from_id):
@@ -267,14 +272,11 @@ class Telegram:
 
         images = message_text.split(" ")[1:]
         for img in images:
-            #image_file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / img)
-            #bash_command = f"sudo rm {image_file}"
-            #reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            #stdout, stderr = reply.communicate()
-            #encoding = 'utf-8'
             error = IProc.delete_image(img)
             if error == "":
-                self.send_message(from_id, texts.texts[self.language]['tg']['id_delete_success'].format(img))
+                self.send_message(from_id,
+                                  texts.texts[static.language]['tg']['id_delete_success'].
+                                  format(img))
                 module_log.log(f"{img} deleted.")
                 success = True
             else:
@@ -303,13 +305,14 @@ class Telegram:
             self.db.commit()
 
             bash_command = "sudo reboot"
-            reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
             stdout, stderr = reply.communicate()
             encoding = "utf-8"
             if str(stderr, encoding) == "":
                 module_log.log("Reboot initiated")
             else:
-                self.send_message(from_id, texts.texts[self.language]['tg']['no_reboot_possible'])
+                self.send_message(from_id, texts.texts[static.language]['tg']['no_reboot_possible'])
                 module_log.log("Error while rebooting")
         except Exception as exc:
             module_log.log(exc)
@@ -328,29 +331,31 @@ class Telegram:
         repo.git.checkout(branch)
         update = repo.git.pull('origin', branch)
         if "Updating" in update:
-            self.send_message(from_id, texts.texts[self.language]['tg']['sys_upd_success'])
+            self.send_message(from_id, texts.texts[static.language]['tg']['sys_upd_success'])
             module_log.log("System update done")
             success = True
         elif "Already up to date" in update:
-            self.send_message(from_id, texts.texts[self.language]['tg']['sys_upd_no_need'])
+            self.send_message(from_id, texts.texts[static.language]['tg']['sys_upd_no_need'])
             module_log.log("System was up to date")
         else:
-            self.send_message(from_id, texts.texts[self.language]['tg']['sys_upd_failed'])
+            self.send_message(from_id, texts.texts[static.language]['tg']['sys_upd_failed'])
             module_log.log("System update failed!")
 
         return success
 
     def _toggle_signaling(self, from_id):
         """ Switch status signaling """
-        if static_variables.status_signal:
-            static_variables.status_signal = False
-            static_variables.change_config_value('telegram', 'status_signal', 'False')
-            self.send_message(from_id, texts.texts[self.language]['tg']['sw_signaling'].format("Off"))
+        if static.status_signal:
+            static.status_signal = False
+            static.change_config_value('telegram', 'status_signal', 'False')
+            self.send_message(from_id,
+                              texts.texts[static.language]['tg']['sw_signaling'].format("Off"))
             module_log.log("Status signaling set to Off")
         else:
-            static_variables.status_signal = True
-            static_variables.change_config_value('telegram', 'status_signal', 'True')
-            self.send_message(from_id, texts.texts[self.language]['tg']['sw_signaling'].format("On"))
+            static.status_signal = True
+            static.change_config_value('telegram', 'status_signal', 'True')
+            self.send_message(from_id,
+                              texts.texts[static.language]['tg']['sw_signaling'].format("On"))
             module_log.log("Status signaling set to On")
 
     def _rotate(self, from_id, message_text):
@@ -375,11 +380,15 @@ class Telegram:
                 '''
                 result = IProc.rotate(filename, rotation)
                 if result.startswith("Ok"):
-                    self.send_message(from_id, texts.texts[self.language]['tg']['rotate_image_success'].format(filename))
+                    self.send_message(from_id,
+                                      texts.texts[static.language]['tg']['rotate_image_success'].
+                                      format(filename))
                     success = True
                     # rotate = False
                 else:
-                    self.send_message(from_id, texts.texts[self.language]['tg']['rotate_image_fail'].format(result))
+                    self.send_message(from_id,
+                                      texts.texts[static.language]['tg']['rotate_image_fail'].
+                                      format(result))
 
         except Exception as exc:
             module_log.log(exc)
@@ -388,14 +397,25 @@ class Telegram:
 
     def _toggle_verbose(self, from_id):
         """ Toggle verbose view of image show """
-        if not static_variables.verbose:
-            static_variables.verbose = True
-            self.send_message(from_id, texts.texts[self.language]['tg']['toggle_verbose'].format("On"))
-            module_log.log(texts.texts['EN']['tg']['toggle_verbose'].format("On"))
+        on_off = ""
+        if not static.verbose:
+            static.verbose = True
+            on_off = "On"
+            #self.send_message(from_id,
+            #                  texts.texts[static.language]['tg']['toggle_verbose'].
+            #                  format("On"))
+            #module_log.log(texts.texts['EN']['tg']['toggle_verbose'].format("On"))
         else:
-            static_variables.verbose = False
-            self.send_message(from_id, texts.texts[self.language]['tg']['toggle_verbose'].format("Off"))
-            module_log.log(texts.texts['EN']['tg']['toggle_verbose'].format("Off"))
+            static.verbose = False
+            on_off = "Off"
+            #self.send_message(from_id,
+            #                  texts.texts[static.language]['tg']['toggle_verbose'].
+            #                  format("Off"))
+            #module_log.log(texts.texts['EN']['tg']['toggle_verbose'].format("Off"))
+        self.send_message(from_id,
+                          texts.texts[static.language]['tg']['toggle_verbose'].
+                          format(on_off))
+        module_log.log(texts.texts['EN']['tg']['toggle_verbose'].format(on_off))
         return True
 
     def process_admin_commands(self, message):
@@ -451,7 +471,7 @@ class Telegram:
 
             # Get the last requested id and read the latest messages
             offset = self.db.get_last_update_id()
-            answer = self.read_message(offset=offset, timeout=self.timeout)
+            answer = self.read_message(offset=offset, timeout=static.poll_timeout)
 
             # Answer must not be a str
             for message in answer['result']:
@@ -465,7 +485,9 @@ class Telegram:
 
                         if self.download_file(file, filename):
                             # If download of the sent photo is successfully reply to it
-                            self.send_message(from_id, texts.texts[self.language]['tg']['thanks_image_upload'], message['message']['message_id'])
+                            self.send_message(from_id,
+                                              texts.texts[static.language]['tg']['thanks_image_upload'],
+                                              message['message']['message_id'])
                             success = True
                     elif "text" in message['message'] and from_id in self.allowed_admins:
                         # If user sent text
@@ -477,7 +499,9 @@ class Telegram:
                 else:
                     # If no allowed sender was found in config
                     module_log.log(f"Sender not allowed to send photos. ID: {from_id}")
-                    self.send_message(from_id, texts.texts[self.language]['tg']['sender_not_allowed'].format(from_id))
+                    self.send_message(from_id,
+                                      texts.texts[static.language]['tg']['sender_not_allowed'].
+                                      format(from_id))
 
                 self.db.set_last_update_id(message['update_id'] + 1)
                 self.db.commit()
