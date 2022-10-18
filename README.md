@@ -6,7 +6,7 @@ This is a Smart Photo Frame to show a slideshow of pictures that were sent via e
 
 ## Recommended hardware and software
 
-**Computing Hardware:** Every RaspberryPi with Wireless connection (successfully running on ZeroW)\
+**Computing Hardware:** Every RaspberryPi with wireless or wired connection (successfully running on ZeroW)\
 **Display:** Each HDMI connectable display
 
 **Operating System:** RaspberryPi OS (Lite installation is enough)\
@@ -23,20 +23,20 @@ This is a Smart Photo Frame to show a slideshow of pictures that were sent via e
 
 ## Folder structure
 
-When repository is cloned, no subfolders are created. To store your images, a subfolder named "images" will be created while importing the first image. Within this folder you can delete or add new photos manually or by Telegram command.\
+When repository is cloned, no subfolders are created. To store your images, a subfolder named "images" will be created while importing the first image. Within this folder you can delete or add new photos manually or by Telegram command. After adding or deleting (if done by hand) the frame needs to be restarted manually. If uploaded or deleted by Telegram command, this is done automatically.\
 All other data is stored in the main folder of the cloned repository.\
-Automatic gernerated files by the frame are:
+Automatic generated files by the frame are:
 * telegram_bot.db
 * messages.log
 
-If you delete these files manually after creation, maybe some errors can arise.
+If you delete these files manually after creation, some errors may occur.
 
 ## Config file
 
 The config file should be stored as **config.ini** in the same folder as the **main.py** and should look like the following:
 ```
 [telegram]
-token = <Telegram API Token>
+token = <Your Telegram API Token>
 allowedsenders = 123456789,<comma seperated Telegram user id's>
 admins = <comma seperated Telegram user id's> ; will be allowed to send admin commands
 auth_password = <admin password>
@@ -56,8 +56,8 @@ commands = [{"command": "deleteimg", "description": "Delete an image from frame"
 [mail]
 account = <mail address>
 password = <mail account password>
-hostname = <hostname of mail server>
-fileExtensions = jpg,JPG,png,PNG,<comma seperated list of allowed file extensions>
+hostname = <hostname of imap or pop3 mail server>
+fileExtensions = jpg,png,<comma seperated list of allowed file extensions - case-insensitive>
 
 [owncloud]
 host = <hostname>
@@ -70,7 +70,7 @@ subfolder = <foldername> ; subfolder on owncloud
 timer = 10 ; single photo display time in seconds 
 blend = 750 ; blend time between two photos in ms
 photocount = 200 ; amount of maximum photos to circle
-verbose = TrueFalse ; verbose file information during slideshow
+verbose = True/False ; verbose file information during slideshow
 
 [logging]
 logToFile = True/False ; set logging to file
@@ -90,7 +90,7 @@ You need to create your own Telegram Bot. For that just follow the tasks:
 5. Copy the token and store it in the config file as shown above
 6. Open the conversation with the Bot
 
-Now the Bot should be ready to receive messages. If you send messages to the Bot while the frame is not running, nothing is happening. To get a reply on your sent photos, you must run the **main.py**. In most cases the script must run as *sudo*.
+Now, the Bot should be ready to receive and send messages. If you send messages via web browser or mobile phone to the Bot while the frame is not running, nothing happens. To get a reply on your sent photos, you must run the **main.py**. In most cases the script must run as *sudo*.
 
 ## Preparing your mailbox
 
@@ -100,7 +100,7 @@ If you want to use a mailbox at Gmail, as I did, you need to adjust the mailbox 
 
 ## Preparing your Owncloud account
 
-For the possibility to let the frame download imaes from your owncloud account, a subfolder named **"images"** should be added to the root directory. All files added to this folder will be downloaded by the frame and automatically deleted from the owncloud account unless you deactivate the deletion by the config file.
+For the possibility to let the frame download images from your owncloud account, a subfolder named **"images"** should be added to the root directory. All files added to this folder will be downloaded by the frame and automatically deleted from the owncloud account, unless you deactivate the deletion by the config file.
 
 ## Creating the automatic run of the script
 
@@ -109,7 +109,7 @@ To run the frame automatically via bootup you additionally need to add the call 
 ## Hardware enhancements
 
 By adding hardware buttons to the RasPi you can offer your Frame users the possibility to handle the Frame. There are already preparations done for three buttons in sum. One button can be used to rise the display time of each photo in steps of 2 seconds. Another button can be used to lower the display time of each photo - down to 2 seconds. The third button can be used to properly shut down the whole RasPi (e.g. for moving from one place to another or at night).\
-Those thre buttons are are mentioned to be installed on the following ports:
+Those three buttons are mentioned to be installed on the following ports:
 * Pin 27: Rise the timer
 * Pin 19: Lower the timer
 * Pin 9: Shut down the system
@@ -121,4 +121,5 @@ For my use case I soldered them directly on the RasPi and gave the buttons that 
 
 - [ ] Complete the replacement of all texts in english and german
 - [x] Implement another interconnection between frame and sender (OwnCloud, Dropbox, etc.)
-- [ ] Find a different presenter application to also display videos
+~~- [ ] Find a different presenter application to also display videos~~
+- [ ] Complete the full implementation of OwnCloud
