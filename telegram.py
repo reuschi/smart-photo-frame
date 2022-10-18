@@ -344,12 +344,9 @@ class Telegram:
 
         module_log.log(f"Updating branch {branch}")
 
-        bash_command = "sudo find / -name frame.py"
-        #with subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE,
-        #                             stderr=subprocess.PIPE) as path:
-        module_log.log(pathlib.Path(__file__).parent.absolute())
-
-        repo = git.Repo('/home/pi/python/smart-photo-frame')
+        #module_log.log(pathlib.Path(__file__).parent.absolute())
+        #repo = git.Repo('/home/pi/python/smart-photo-frame')
+        repo = git.Repo(pathlib.Path(__file__).parent.absolute())
         repo.git.checkout(branch)
         update = repo.git.pull('origin', branch)
         if "Updating" in update:
