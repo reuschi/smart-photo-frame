@@ -343,19 +343,25 @@ class Telegram:
             branch = "master"
 
         module_log.log(f"Updating branch {branch}")
+
+        bash_command = "sudo find / -name frame.py"
+        with subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE) as path:
+            module_log.log(pathlib.Path(__file__).parent.absolute() / path )
+
         repo = git.Repo('/home/pi/python/smart-photo-frame')
         repo.git.checkout(branch)
         update = repo.git.pull('origin', branch)
         if "Updating" in update:
             self.send_message(from_id, texts.texts[static.language]['tg']['sys_upd_success'])
-            module_log.log("System update done")
+            module_log.log("Application update done. System needs to be restarted.")
             success = True
         elif "Already up to date" in update:
             self.send_message(from_id, texts.texts[static.language]['tg']['sys_upd_no_need'])
-            module_log.log("System was up to date")
+            module_log.log("Application was up to date")
         else:
             self.send_message(from_id, texts.texts[static.language]['tg']['sys_upd_failed'])
-            module_log.log("System update failed!")
+            module_log.log("Application update failed!")
 
         return success
 
