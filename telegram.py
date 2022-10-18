@@ -447,8 +447,10 @@ class Telegram:
 
         return success
 
-    def process_new_photo(self, message, from_id):
+    def process_new_photo(self, message):
         """ Process a new photo """
+        from_id = message['message']['from']['id']
+
         file, filename = self.process_photo_name(message)
 
         if self.download_file(file, filename):
@@ -477,17 +479,7 @@ class Telegram:
                     module_log.log("Message: " + str(message['message']))
                     if "photo" in message['message']:
                         # If user sent a photo
-                        """
-                        file, filename = self.process_photo_name(message)
-
-                        if self.download_file(file, filename):
-                            # If download of the sent photo is successfully reply to it
-                            self.send_message(from_id,
-                                              texts.texts[static.language]['tg']['thanks_image_upload'],
-                                              message['message']['message_id'])
-                            success = True
-                        """
-                        success = self.process_new_photo(message, from_id)
+                        success = self.process_new_photo(message)
                     elif "text" in message['message'] and from_id in self.allowed_admins:
                         # If user sent text
                         success = self.process_admin_commands(message)
