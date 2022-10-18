@@ -27,8 +27,9 @@ class Frame:
         :return:
         """
         try:
-            reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            output, error = reply.communicate()
+            reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
+            _output, error = reply.communicate()
 
             if "Terminated" not in str(error):
                 return True
@@ -96,10 +97,12 @@ class Frame:
         if verbose:
             bash_command = f"sudo fbi --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
         else:
-            bash_command = f"sudo fbi --noverbose --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
+            bash_command = f"sudo fbi --noverbose --random --blend {self.blend}" \
+                           f" -a -t {self.timer} -T 1 {path}"
 
         slideshow = self._run_subprocess(bash_command)
-        # Needed implementation for RaspiZeroW to not terminate the start of the framebuffer while booting up
+        # Needed implementation for RaspiZeroW to not terminate the start of the
+        # framebuffer while booting up
         #time.sleep(2)
         module_log.log("Slideshow running")
         return slideshow
@@ -119,7 +122,7 @@ class Frame:
         if not self.run_slideshow(verbose=verbose):
             self.run_slideshow(verbose=verbose)
 
-    def rise_timer(self, channel):
+    def rise_timer(self, _channel):
         """
         Rise timer of presentation, to lower the showing frequency
 
@@ -131,7 +134,7 @@ class Frame:
         module_log.log(f"Timer raised to: {self.timer}.")
         self.restart_slideshow()
 
-    def lower_timer(self, channel):
+    def lower_timer(self, _channel):
         """
         Lower timer of presentation, to rise the showing frequency
 
@@ -146,7 +149,7 @@ class Frame:
         else:
             module_log.log(f"Timer already at: {self.timer}. Lowering not possible!")
 
-    def system_shutdown(self, channel):
+    def system_shutdown(self, _channel):
         """
         Shutdown the whole system
 

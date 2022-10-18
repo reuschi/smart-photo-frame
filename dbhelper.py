@@ -52,8 +52,10 @@ class DBHelper:
             # If there is no table in the database then create it first
             self.create_table()
 
-            # Write the last update id into the database. If the value already exists just update the value of the field
-            for row in self.select(f"SELECT EXISTS (SELECT last_update_id FROM {self.table} WHERE id=1)"):
+            # Write the last update id into the database.
+            # If the value already exists just update the value of the field
+            for row in self.select(f"SELECT EXISTS (SELECT last_update_id FROM "
+                                   f"{self.table} WHERE id=1)"):
                 if row[0] == 1:
                     self.update_last_id(update_id)
                     module_log.log(f"DB Update successful! ID: {update_id}")
@@ -70,9 +72,12 @@ class DBHelper:
         finally:
             self.commit()
 
+        return False
+
     def get_last_update_id(self):
         """
-        To only receive the newest message since the last request it's necessary to send an offset id in the request.
+        To only receive the newest message since the last request it's necessary to send
+        an offset id in the request.
         This information is stored in the database and will be gathered by this function.
         """
         try:
@@ -95,7 +100,8 @@ class DBHelper:
             module_log.log(exc)
         else:
             module_log.log("Failed!")
-            return False
+
+        return False
 
     def commit(self):
         """ Commit changes in database """
