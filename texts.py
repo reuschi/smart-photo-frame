@@ -1,4 +1,4 @@
-
+"""Providing text modules for the whole package"""
 
 texts = {
     "DE": {

@@ -20,11 +20,13 @@ def log_to_screen(logging):
 def log_to_file(logging):
     """ Log to a file """
 
-    logfile = open(logging_path, "a", encoding="utf-8")
+    #logfile = open(logging_path, "a", encoding="utf-8")
     datetime = time.strftime("%b %d %Y %H:%M:%S")
     logger = str(datetime) + " " + str(logging) + "\n"
-    logfile.write(logger)
-    logfile.close()
+    with open(logging_path, "a", encoding="utf-8") as logfile:
+        logfile.write(logger)
+
+    #logfile.close()
 
 
 def log(logging):
@@ -39,8 +41,10 @@ def log(logging):
 def flush_log_file(maximum=100000):
     """ Delete lines of logging file that are over 'max' amount """
 
-    with open(logging_path, encoding="utf-8") as f:
-        for count, value in enumerate(f):
+    count = 0
+
+    with open(logging_path, encoding="utf-8") as file:
+        for count, _value in enumerate(file):
             pass
 
     result = count + 1 - maximum

@@ -1,7 +1,6 @@
 """ Module to control Owncloud connection """
 
 import pathlib
-from collections import namedtuple
 import easywebdav2
 
 import module_log
@@ -21,7 +20,8 @@ class Owncloud:
     def connect(self):
         """ Connect to the webdav webservice of owncloud """
 
-        self.owncloud = easywebdav2.connect(self.host, username=self.username, password=self.password)
+        self.owncloud = easywebdav2.connect(self.host, username=self.username,
+                                            password=self.password)
         self.owncloud.cd("/remote.php/webdav/images")
 
     def create_dir(self, dirname: str):
@@ -31,7 +31,7 @@ class Owncloud:
             self.owncloud.mkdir("/remote.php/webdav/" + dirname)
             module_log.log(f"Directory {dirname} created.")
 
-    def ls(self):
+    def list(self):
         """ List folders and files """
 
         return self.owncloud.ls()
@@ -52,7 +52,7 @@ class Owncloud:
     def download_file(self):
         """ Download a file """
 
-        listing = self.ls()
+        listing = self.list()
         success = False
         module_log.log("Requesting new files from OwnCloud...")
 
@@ -62,7 +62,8 @@ class Owncloud:
                     module_log.log("New file found on Owncloud. Start downloading")
                     path = getattr(file, "name")
                     filename = str(self._get_filename(path))
-                    upload_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / filename)
+                    upload_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() /
+                                               "images" / filename)
                     self.owncloud.download(path, upload_path)
                     success = True
                     module_log.log(f"File {filename} downloaded successfully from Owncloud.")
