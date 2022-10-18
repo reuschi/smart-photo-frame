@@ -121,5 +121,5 @@ For my use case I soldered them directly on the RasPi and gave the buttons that 
 
 - [ ] Complete the replacement of all texts in english and german
 - [x] Implement another interconnection between frame and sender (OwnCloud, Dropbox, etc.)
-~~- [ ] Find a different presenter application to also display videos~~
+- [ ] ~~Find a different presenter application to also display videos~~
 - [ ] Complete the full implementation of OwnCloud
