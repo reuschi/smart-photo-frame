@@ -39,7 +39,7 @@ class Telegram:
         """ Requesting Telegram API via POST Method """
         answer = requests.Response()
         try:
-            answer = requests.post(link, data=data, files=file)
+            answer = requests.post(link, data=data, files=file, timeout=30)
         except requests.exceptions.ConnectionError:
             status_code = "Connection refused"
             module_log.log(status_code)
@@ -73,22 +73,22 @@ class Telegram:
         """ Return a readable status code """
         if answer.status_code == 200:
             return answer.json()
-        elif answer.status_code == 400:
+        if answer.status_code == 400:
             return texts.texts[static.language]['tg']['return_400']
-        elif answer.status_code == 401:
+        if answer.status_code == 401:
             return texts.texts[static.language]['tg']['return_401']
-        elif answer.status_code == 403:
+        if answer.status_code == 403:
             return texts.texts[static.language]['tg']['return_403']
-        elif answer.status_code == 404:
+        if answer.status_code == 404:
             return texts.texts[static.language]['tg']['return_404']
-        elif answer.status_code == 406:
+        if answer.status_code == 406:
             return texts.texts[static.language]['tg']['return_406']
-        elif answer.status_code == 420:
+        if answer.status_code == 420:
             return texts.texts[static.language]['tg']['return_420']
-        elif answer.status_code == 500:
+        if answer.status_code == 500:
             return texts.texts[static.language]['tg']['return_500']
-        else:
-            return "Unknown Error! " + str(answer)
+
+        return "Unknown Error! " + str(answer)
 
     def set_webhook(self, url: str, **kwargs):
         """ Set Telegram webhook """
@@ -141,9 +141,9 @@ class Telegram:
             file.parent.mkdir(exist_ok=True, parents=True)
 
             # Get the file downloaded
-            with self.http.request("GET", source, preload_content=False) as r, \
+            with self.http.request("GET", source, preload_content=False) as read, \
                     open(file, "wb", encoding="utf-8") as out_file:
-                shutil.copyfileobj(r, out_file)
+                shutil.copyfileobj(read, out_file)
 
             return True
 
@@ -251,9 +251,9 @@ class Telegram:
 
     def _get_identity(self, from_id):
         """ Return public ip address to sender """
-        ip = requests.get("https://api.ipify.org").text
-        self.send_message(from_id, ip)
-        module_log.log(f"Request for Identity. Identity is: {ip}")
+        ip_address = requests.get("https://api.ipify.org", timeout=30).text
+        self.send_message(from_id, ip_address)
+        module_log.log(f"Request for Identity. Identity is: {ip_address}")
 
     def _list_images(self, from_id):
         """ List all images stored on the disk (in sub folder ./images) """
