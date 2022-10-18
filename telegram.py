@@ -142,7 +142,7 @@ class Telegram:
 
             # Get the file downloaded
             with self.http.request("GET", source, preload_content=False) as read, \
-                    open(file, "wb", encoding="utf-8") as out_file:
+                    open(file, "wb") as out_file:
                 shutil.copyfileobj(read, out_file)
 
             return True
