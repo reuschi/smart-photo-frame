@@ -35,8 +35,10 @@ class Telegram:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.db.close_connection()
 
-    def telegram_POST(self, link, data={}, file=None) -> dict:
+    def telegram_POST(self, link, data=None, file=None) -> dict:
         """ Requesting Telegram API via POST Method """
+        if data is None:
+            data ={}
         answer = requests.Response()
         try:
             answer = requests.post(link, data=data, files=file, timeout=30)
@@ -49,15 +51,11 @@ class Telegram:
         except requests.exceptions.RetryError:
             status_code = "No DNS available"
             module_log.log(status_code)
-        except requests.exceptions as exc:
-            status_code = "Any other Exception from Requests has been raised"
-            module_log.log(status_code)
-            module_log.log(exc)
         except Exception as exc:
             status_code = f"Unknown exception: {exc}"
             module_log.log(status_code)
-        finally:
-            return self.return_status_code(answer)
+
+        return self.return_status_code(answer)
 
     def read_message(self, **kwargs):
         """ Get new arrived messages since last Update receive """
@@ -132,6 +130,7 @@ class Telegram:
             return self.filelink + file_json['result']['file_path']
         except Exception as exc:
             module_log.log(exc)
+            return ""
 
     def download_file(self, source, filename: str, destination: str = "images"):
         """ Download the image from the Telegram servers """
@@ -193,12 +192,7 @@ class Telegram:
         }
 
         return_value = self.telegram_POST(link, data, document)
-        '''
-        if return_value['result']['document'] != "":
-            return True
-        else:
-            return False
-        '''
+
         return bool(return_value['result']['document'])
 
     def replace_special_signs(self, input_text: str):
@@ -307,7 +301,7 @@ class Telegram:
             bash_command = "sudo reboot"
             reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE)
-            stdout, stderr = reply.communicate()
+            _stdout, stderr = reply.communicate()
             encoding = "utf-8"
             if str(stderr, encoding) == "":
                 module_log.log("Reboot initiated")
@@ -343,7 +337,7 @@ class Telegram:
 
         return success
 
-    def _toggle_signaling(self, from_id):
+    def _toggle_signaling(self, from_id) -> bool:
         """ Switch status signaling """
         if static.status_signal:
             static.status_signal = False
@@ -358,7 +352,7 @@ class Telegram:
                               texts.texts[static.language]['tg']['sw_signaling'].format("On"))
             module_log.log("Status signaling set to On")
 
-    def _rotate(self, from_id, message_text):
+    def _rotate(self, from_id, message_text) -> bool:
         """ Rotate images 90 degrees left or right """
         success = False
         # rotate = False
@@ -387,33 +381,24 @@ class Telegram:
             self.send_message(from_id, texts.texts[static.language]['tg']['rotate_index_error'])
         except Exception as exc:
             module_log.log(exc)
-        finally:
-            return success
 
-    def _toggle_verbose(self, from_id):
+        return success
+
+    def _toggle_verbose(self, from_id) -> bool:
         """ Toggle verbose view of image show """
         on_off = ""
         if not static.verbose:
             static.verbose = True
             on_off = "On"
-            #self.send_message(from_id,
-            #                  texts.texts[static.language]['tg']['toggle_verbose'].
-            #                  format("On"))
-            #module_log.log(texts.texts['EN']['tg']['toggle_verbose'].format("On"))
         else:
             static.verbose = False
             on_off = "Off"
-            #self.send_message(from_id,
-            #                  texts.texts[static.language]['tg']['toggle_verbose'].
-            #                  format("Off"))
-            #module_log.log(texts.texts['EN']['tg']['toggle_verbose'].format("Off"))
         self.send_message(from_id,
-                          texts.texts[static.language]['tg']['toggle_verbose'].
-                          format(on_off))
-        module_log.log(texts.texts['EN']['tg']['toggle_verbose'].format(on_off))
+                          texts.texts[static.language]['tg']['toggle_verbose'].format(on_off))
+        module_log.log(texts.texts[static.language]['tg']['toggle_verbose'].format(on_off))
         return True
 
-    def process_admin_commands(self, message):
+    def process_admin_commands(self, message) -> bool:
         """ Process admin commands """
         success = False
         from_id = message['message']['from']['id']
@@ -459,7 +444,20 @@ class Telegram:
 
         return success
 
-    def process_new_message(self):
+    def process_new_photo(self, message, from_id):
+        """ Process a new photo """
+        file, filename = self.process_photo_name(message)
+
+        if self.download_file(file, filename):
+            # If download of the sent photo is successfully reply to it
+            self.send_message(from_id,
+                              texts.texts[static.language]['tg']['thanks_image_upload'],
+                              message['message']['message_id'])
+            return True
+
+        return False
+
+    def process_new_message(self) -> bool:
         """ Process a new incoming message """
         try:
             success = False
@@ -476,6 +474,7 @@ class Telegram:
                     module_log.log("Message: " + str(message['message']))
                     if "photo" in message['message']:
                         # If user sent a photo
+                        """
                         file, filename = self.process_photo_name(message)
 
                         if self.download_file(file, filename):
@@ -484,6 +483,8 @@ class Telegram:
                                               texts.texts[static.language]['tg']['thanks_image_upload'],
                                               message['message']['message_id'])
                             success = True
+                        """
+                        success = self.process_new_photo(message, from_id)
                     elif "text" in message['message'] and from_id in self.allowed_admins:
                         # If user sent text
                         success = self.process_admin_commands(message)
@@ -509,3 +510,4 @@ class Telegram:
             sys.exit(1)
         except TypeError as exc:
             module_log.log("TypeError: " + str(exc))
+            return False
