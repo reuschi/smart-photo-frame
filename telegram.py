@@ -390,6 +390,9 @@ class Telegram:
                                       texts.texts[static.language]['tg']['rotate_image_fail'].
                                       format(result))
 
+        except IndexError as inderr:
+            module_log.log(texts.texts[static.language]['tg']['rotate_image_fail'].format(inderr))
+            module_log.log(texts.texts[static.language]['tg']['rotate_index_error'])
         except Exception as exc:
             module_log.log(exc)
         finally:

@@ -27,6 +27,7 @@ texts = {
             "rotate_image_success": "Das Bild {} wurde erfolgreich gedreht",
             "rotate_image_fail": "Das Bild wurde nicht gedreht: {}",
             "toggle_verbose": "Anzeige von Bilddetails auf {} gesetzt",
+            "rotate_index_error": "Bitte geben Sie den Befehl in folgendem Format an: '/rotate <dateiname>,<rotationsrichtung>'",
 
         },
         "imap": {
