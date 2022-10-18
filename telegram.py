@@ -370,14 +370,6 @@ class Telegram:
                 filename = str(file[i].split(",")[0])
                 rotation = str(file[i].split(",")[1])
 
-                '''
-                if rotation == "r":
-                    rotate = IProc.rotate_right(filename)
-                    #module_log.log(f"Image {filename} rotated right.")
-                elif rotation == "l":
-                    rotate = IProc.rotate_left(filename)
-                    #module_log.log(f"Image {filename} rotated left.")
-                '''
                 result = IProc.rotate(filename, rotation)
                 if result.startswith("Ok"):
                     self.send_message(from_id,
@@ -392,7 +384,7 @@ class Telegram:
 
         except IndexError as inderr:
             module_log.log(texts.texts[static.language]['tg']['rotate_image_fail'].format(inderr))
-            module_log.log(texts.texts[static.language]['tg']['rotate_index_error'])
+            self.send_message(from_id, texts.texts[static.language]['tg']['rotate_index_error'])
         except Exception as exc:
             module_log.log(exc)
         finally:
