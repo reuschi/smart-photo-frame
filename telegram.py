@@ -382,7 +382,6 @@ class Telegram:
         """ Rotate images 90 degrees left or right """
 
         success = False
-        # rotate = False
 
         try:
             file = message_text.split()
