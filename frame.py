@@ -20,12 +20,8 @@ class Frame:
 
     @staticmethod
     def _run_subprocess(bash_command: str):
-        """
-        Run a subprocess including the bash_command
+        """ Run a subprocess including the bash_command """
 
-        :param bash_command:
-        :return:
-        """
         try:
             reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE)
@@ -43,24 +39,14 @@ class Frame:
             return False
 
     def exit_slideshow(self):
-        """
-        Kill all running processes of the slideshow
-
-        :return:
-        """
+        """ Kill all running processes of the slideshow """
 
         bash_command = "sudo killall -15 fbi"
         if self._run_subprocess(bash_command):
             module_log.log("Slideshow killed")
 
     def delete_old_files(self, directory: str = "images", maximum: int = None):
-        """
-        Delete older image files in 'directory' that are over amount 'max'
-
-        :param directory:
-        :param maximum:
-        :return:
-        """
+        """ Delete older image files in 'directory' that are over amount 'max' """
 
         if maximum is None:
             maximum = self.max_photocount
@@ -85,13 +71,7 @@ class Frame:
             module_log.log("There were no files to be deleted.")
 
     def run_slideshow(self, path: str = "images", verbose: bool = False):
-        """
-        Start the slideshow with all present files in subfolder defined in variable 'path'
-
-        :param path:
-        :param verbose:
-        :return:
-        """
+        """ Start the slideshow with all present files in subfolder defined in variable 'path' """
 
         path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / path / "*.*")
         if verbose:
@@ -108,12 +88,7 @@ class Frame:
         return slideshow
 
     def restart_slideshow(self, verbose: bool = False):
-        """
-        Stop slideshow and restart the slideshow with the new added image files
-
-        :param verbose:
-        :return:
-        """
+        """ Stop slideshow and restart the slideshow with the new added image files """
 
         module_log.flush_log_file()
         module_log.log("Slideshow restarting")
@@ -123,24 +98,14 @@ class Frame:
             self.run_slideshow(verbose=verbose)
 
     def rise_timer(self, _channel):
-        """
-        Rise timer of presentation, to lower the showing frequency
-
-        :param channel:
-        :return: None
-        """
+        """ Rise timer of presentation, to lower the showing frequency """
 
         self.timer += 2
         module_log.log(f"Timer raised to: {self.timer}.")
         self.restart_slideshow()
 
     def lower_timer(self, _channel):
-        """
-        Lower timer of presentation, to rise the showing frequency
-
-        :param channel:
-        :return:
-        """
+        """ Lower timer of presentation, to rise the showing frequency """
 
         if self.timer >= 4:
             self.timer -= 2
@@ -150,12 +115,7 @@ class Frame:
             module_log.log(f"Timer already at: {self.timer}. Lowering not possible!")
 
     def system_shutdown(self, _channel):
-        """
-        Shutdown the whole system
-
-        :param channel:
-        :return:
-        """
+        """ Shutdown the whole system """
 
         #module_log.log("!!!! SYSTEM IS GOING TO SHUTDOWN !!!!")
         bash_command = "sudo poweroff"

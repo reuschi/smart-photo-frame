@@ -27,9 +27,6 @@ class Telegram:
         self.weblink = f"https://api.telegram.org/bot{token}/"
         self.filelink = f"https://api.telegram.org/file/bot{token}/"
         self.http = urllib3.PoolManager()
-        #self.language = static_variables.language
-        #self.status_signal = static_variables.status_signal
-        #self.timeout = static_variables.poll_timeout
         self.db = DBHelper("telegram_bot")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -37,6 +34,7 @@ class Telegram:
 
     def telegram_POST(self, link, data=None, file=None) -> dict:
         """ Requesting Telegram API via POST Method """
+
         if data is None:
             data = {}
         answer = requests.Response()
@@ -62,6 +60,7 @@ class Telegram:
 
     def read_message(self, **kwargs):
         """ Get new arrived messages since last Update receive """
+
         link = self.weblink + "getUpdates"
         data = {}
 
@@ -72,6 +71,7 @@ class Telegram:
 
     def return_status_code(self, answer):
         """ Return a readable status code """
+
         if answer.status_code == 200:
             return answer.json()
         if answer.status_code == 400:
@@ -93,6 +93,7 @@ class Telegram:
 
     def set_webhook(self, url: str, **kwargs):
         """ Set Telegram webhook """
+
         link = self.weblink + "setWebhook"
         data = {
             "url": url
@@ -105,6 +106,7 @@ class Telegram:
 
     def set_commands(self):
         """ Set all commands defined in the config as shown commands in the bot """
+
         link = self.weblink + "setMyCommands"
         data = {
             "commands": json.dumps(static.tg_bot_commands)
@@ -114,6 +116,7 @@ class Telegram:
 
     def send_signal(self):
         """ If signaling is activated, send signal """
+
         if static.status_signal:
             # Send signal only to first admin
             self.send_message(static.tg_allowed_admins[0],
@@ -122,6 +125,7 @@ class Telegram:
 
     def get_file_link(self, file_id) -> str:
         """ To download a file it's necessary to get the direct link to the file """
+
         try:
             link = self.weblink + "getFile"
             data = {
@@ -137,6 +141,7 @@ class Telegram:
 
     def download_file(self, source, filename: str, destination: str = "images"):
         """ Download the image from the Telegram servers """
+
         try:
             # Build the correct file path on the local file system
             file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / destination / filename)
@@ -158,11 +163,13 @@ class Telegram:
 
     def print_content(self, answer):
         """ Print a content for debugging """
+
         content = answer.json()
         module_log.log(content['result'].keys())
 
     def send_message(self, chat_id: int, message, reply_to_message_id: int = None):
         """ Send a message back to a chat_id """
+
         link = self.weblink + "sendMessage"
         data = {
             "chat_id": chat_id,
@@ -176,6 +183,7 @@ class Telegram:
 
     def send_photo(self, chat_id: int, photo):
         """ Send a photo as a reply """
+
         link = self.weblink + "sendPhoto"
         data = {
             "chat_id": chat_id,
@@ -186,6 +194,7 @@ class Telegram:
 
     def send_file(self, chat_id: int, file):
         """ Send a byte file as a reply """
+
         link = self.weblink + "sendDocument"
         data = {
             "chat_id": chat_id
@@ -200,6 +209,7 @@ class Telegram:
 
     def replace_special_signs(self, input_text: str):
         """ Replace special signs in comment to store it as file name """
+
         text = input_text.replace(" ", "_")
         text = text.replace("/", "_")
         text = text.replace("\\", "_")
@@ -211,6 +221,7 @@ class Telegram:
 
     def process_photo_name(self, message):
         """ Rename image file if there is a comment added to the photo """
+
         file = self.get_file_link(message['message']['photo'][-1]['file_id'])
         extension = file.split(".")[-1]
         if "caption" in message['message']:
@@ -225,6 +236,7 @@ class Telegram:
 
     def _add_file_extension(self, from_id, message_text):
         """ Add a new file extension to allowed extension list """
+
         extension = message_text.split(" ")[1:]
 
         for ext in extension:
@@ -238,6 +250,7 @@ class Telegram:
 
     def _add_sender(self, from_id, message_text):
         """ Add a new id to allowed sender list """
+
         add_id = message_text.split(" ")
 
         static.add_value_to_config("telegram", "allowedsenders", add_id[1])
@@ -248,12 +261,14 @@ class Telegram:
 
     def _get_identity(self, from_id):
         """ Return public ip address to sender """
+
         ip_address = requests.get("https://api.ipify.org", timeout=30).text
         self.send_message(from_id, ip_address)
         module_log.log(f"Request for Identity. Identity is: {ip_address}")
 
     def _list_images(self, from_id):
         """ List all images stored on the disk (in sub folder ./images) """
+
         path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images")
         try:
             files = [x.name for x in path.glob('**/*') if x.is_file()]
@@ -265,6 +280,7 @@ class Telegram:
 
     def _delete_images(self, from_id, message_text):
         """ Delete images from disk """
+
         success = False
 
         images = message_text.split(" ")[1:]
@@ -284,12 +300,14 @@ class Telegram:
 
     def _send_log(self, from_id):
         """ Fetch log file and send it back to the user """
+
         file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
         if self.send_file(from_id, file):
             module_log.log("Log File sent.")
 
     def _send_config(self, from_id):
         """ Fetch config file and send it back to the user """
+
         file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "config.ini")
         if self.send_file(from_id, file):
             module_log.log("Configuration file sent.")
@@ -316,6 +334,7 @@ class Telegram:
 
     def _system_update(self, from_id, message_text):
         """ Update system to current version from GitHub repository """
+
         success = False
 
         try:
@@ -340,8 +359,9 @@ class Telegram:
 
         return success
 
-    def _toggle_signaling(self, from_id) -> bool:
+    def _toggle_signaling(self, from_id):
         """ Switch status signaling """
+
         if static.status_signal:
             static.status_signal = False
             static.change_config_value('telegram', 'status_signal', 'False')
@@ -357,6 +377,7 @@ class Telegram:
 
     def _rotate(self, from_id, message_text) -> bool:
         """ Rotate images 90 degrees left or right """
+
         success = False
         # rotate = False
 
@@ -389,6 +410,7 @@ class Telegram:
 
     def _toggle_verbose(self, from_id) -> bool:
         """ Toggle verbose view of image show """
+
         on_off = ""
         if not static.verbose:
             static.verbose = True
@@ -403,6 +425,7 @@ class Telegram:
 
     def process_admin_commands(self, message) -> bool:
         """ Process admin commands """
+
         success = False
         from_id = message['message']['from']['id']
         message_text = message['message']['text']
@@ -449,8 +472,8 @@ class Telegram:
 
     def process_new_photo(self, message):
         """ Process a new photo """
-        from_id = message['message']['from']['id']
 
+        from_id = message['message']['from']['id']
         file, filename = self.process_photo_name(message)
 
         if self.download_file(file, filename):
@@ -464,6 +487,7 @@ class Telegram:
 
     def process_new_message(self) -> bool:
         """ Process a new incoming message """
+
         try:
             success = False
 

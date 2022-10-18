@@ -19,10 +19,12 @@ class DBHelper:
 
     def select(self, command: str):
         """ Run a SELECT command on database """
+
         return self.db_cursor.execute(command)
 
     def create_table(self):
         """ Create a specific table in database """
+
         self.db_cursor.execute(f"""CREATE TABLE IF NOT EXISTS {self.table} (
                                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                                     last_update_id
@@ -33,14 +35,17 @@ class DBHelper:
 
     def update_last_id(self, index: int):
         """ Update last message id in database """
+
         self.db_cursor.execute(f"UPDATE {self.table} SET last_update_id='{index}' WHERE id=1")
 
     def insert_last_id(self, index: int):
         """ Insert last message id in database """
+
         self.db_cursor.execute(f"INSERT INTO {self.table} (last_update_id) VALUES ({index})")
 
     def set_last_update_id(self, update_id):
         """ To set last requested message id in the database """
+
         try:
             # Build up the database connection and set the cursor to the current database
             module_log.log("Setting last update id in database...")
@@ -105,10 +110,12 @@ class DBHelper:
 
     def commit(self):
         """ Commit changes in database """
+
         self.db_connection.commit()
 
     def close_connection(self):
         """ Close connection to database """
+
         if self.db_connection:
             self.db_connection.commit()
             self.db_connection.close()

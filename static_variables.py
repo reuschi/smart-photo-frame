@@ -64,6 +64,7 @@ logToScreen = config.getboolean('logging', 'logToScreen')
 
 def add_value_to_config(section: str, parameter: str, value: str):
     """ Add a new 'value' to a 'parameter' in 'section' in the config file """
+
     config[section][parameter] += "," + str(value)
     with open(config_path, 'w', encoding="utf-8") as conf:
         config.write(conf)
@@ -71,6 +72,7 @@ def add_value_to_config(section: str, parameter: str, value: str):
 
 def change_config_value(section: str, parameter: str, value: str):
     """ Change 'value' of a 'parameter' in 'section' in the config file """
+
     config[section][parameter] = str(value)
     with open(config_path, 'w', encoding="utf-8") as conf:
         config.write(conf)

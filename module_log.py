@@ -20,13 +20,10 @@ def log_to_screen(logging):
 def log_to_file(logging):
     """ Log to a file """
 
-    #logfile = open(logging_path, "a", encoding="utf-8")
     datetime = time.strftime("%b %d %Y %H:%M:%S")
     logger = str(datetime) + " " + str(logging) + "\n"
     with open(logging_path, "a", encoding="utf-8") as logfile:
         logfile.write(logger)
-
-    #logfile.close()
 
 
 def log(logging):

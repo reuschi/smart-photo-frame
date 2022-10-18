@@ -25,13 +25,7 @@ class ImapMail:
         self.language = static_variables.language
 
     def download_attachment(self, mail, directory: str = "images"):
-        """
-        Download attachments from mails stored in a specific sub folder
-
-        :param mail:
-        :param directory:
-        :return:
-        """
+        """ Download attachments from mails stored in a specific sub folder """
 
         success = False
         receive, data = mail.search(None, 'ALL')
@@ -105,13 +99,10 @@ class ImapMail:
         return success
 
     def init_imap(self):
-        """
-        Receive new mails
-
-        :return:
-        """
+        """ Receive new mails """
 
         success = False
+
         try:
             module_log.log("Trying to fetch new mails")
             # Initialize connection and login to mail account
