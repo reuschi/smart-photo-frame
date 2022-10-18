@@ -38,10 +38,10 @@ class Telegram:
     def telegram_POST(self, link, data=None, file=None) -> dict:
         """ Requesting Telegram API via POST Method """
         if data is None:
-            data ={}
+            data = {}
         answer = requests.Response()
         try:
-            answer = requests.post(link, data=data, files=file, timeout=30)
+            answer = requests.post(link, data=data, files=file, timeout=90)
         except requests.exceptions.ConnectionError:
             status_code = "Connection refused"
             module_log.log(status_code)
@@ -50,6 +50,9 @@ class Telegram:
             module_log.log(status_code)
         except requests.exceptions.RetryError:
             status_code = "No DNS available"
+            module_log.log(status_code)
+        except requests.exceptions.Timeout:
+            status_code = "The request timed out"
             module_log.log(status_code)
         except Exception as exc:
             status_code = f"Unknown exception: {exc}"
