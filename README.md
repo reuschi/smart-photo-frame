@@ -109,7 +109,8 @@ https://www.thedigitalpictureframe.com/ultimate-guide-systemd-autostart-scripts-
 When running the script on bootup, the output can be seen via
 ```
 journalctl -l -f -u your.service
-``` 
+```
+or otherwise just download the logfile.
 
 ## Hardware enhancements
 
