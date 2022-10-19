@@ -72,6 +72,18 @@ class Telegram:
     def return_status_code(self, answer):
         """ Return a readable status code """
 
+        return_statments = {
+            200: answer.json(),
+            400: texts.texts[static.language]['tg']['return_400'],
+            401: texts.texts[static.language]['tg']['return_401'],
+            403: texts.texts[static.language]['tg']['return_403'],
+            404: texts.texts[static.language]['tg']['return_404'],
+            406: texts.texts[static.language]['tg']['return_406'],
+            420: texts.texts[static.language]['tg']['return_420'],
+            500: texts.texts[static.language]['tg']['return_500']
+        }
+
+        """
         if answer.status_code == 200:
             return answer.json()
         if answer.status_code == 400:
@@ -88,8 +100,12 @@ class Telegram:
             return texts.texts[static.language]['tg']['return_420']
         if answer.status_code == 500:
             return texts.texts[static.language]['tg']['return_500']
+        """
 
-        return "Unknown Error! " + str(answer)
+        try:
+            return return_statments.get(answer.status_code)
+        except Exception:
+            return "Unknown Error! " + str(answer)
 
     def set_webhook(self, url: str, **kwargs):
         """ Set Telegram webhook """
