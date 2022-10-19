@@ -4,7 +4,6 @@ from imaplib import IMAP4_SSL
 from socket import gaierror
 import email
 import email.header
-import os.path
 import pathlib
 
 import module_log
@@ -60,7 +59,6 @@ class ImapMail:
 
                     # Get filename and extension of the downloadable file
                     file_name = "mail_" + part.get_filename()
-                    # file_extension = os.path.splitext(file_name)[1].lower().replace('.','')
                     file_extension = pathlib.Path(file_name).suffix.replace('.','')
                     module_log.log(f"File Extension: {file_extension}")
 
@@ -70,7 +68,6 @@ class ImapMail:
                         file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() /
                                                  directory / file_name.lower())
 
-                        # if not os.path.isfile(file_path):
                         if not pathlib.Path.is_file(file_path):
                             # If file is not yet downloaded
                             file = open(file_path, 'wb')
@@ -78,7 +75,7 @@ class ImapMail:
                             file.close()
                             module_log.log(f"New file downloaded: {file_path}")
                             success = True
-                        elif os.path.isfile(file_path):
+                        elif pathlib.Path.is_file(file_path):
                             # If file already exists, don't download it
                             module_log.log("Filename already exists!")
                         else:
