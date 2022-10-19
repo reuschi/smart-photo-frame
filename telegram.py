@@ -320,9 +320,9 @@ class Telegram:
             self.db.commit()
 
             bash_command = "sudo reboot"
-            reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE)
-            _stdout, stderr = reply.communicate()
+            with subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE) as reply:
+                _stdout, stderr = reply.communicate()
             encoding = "utf-8"
             if str(stderr, encoding) == "":
                 module_log.log("Reboot initiated")

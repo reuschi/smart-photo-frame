@@ -70,9 +70,8 @@ class ImapMail:
 
                         if not pathlib.Path.is_file(file_path):
                             # If file is not yet downloaded
-                            file = open(file_path, 'wb')
-                            file.write(part.get_payload(decode=True))
-                            file.close()
+                            with open(file_path, 'wb') as file:
+                                file.write(part.get_payload(decode=True))
                             module_log.log(f"New file downloaded: {file_path}")
                             success = True
                         elif pathlib.Path.is_file(file_path):

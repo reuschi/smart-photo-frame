@@ -74,9 +74,9 @@ class IProc:
         try:
             image_file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / image)
             bash_command = f"sudo rm {image_file}"
-            reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE)
-            _stdout, stderr = reply.communicate()
+            with subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE) as reply:
+                _stdout, stderr = reply.communicate()
             encoding = 'utf-8'
             return str(stderr, encoding)
         except FileNotFoundError:

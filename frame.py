@@ -23,9 +23,6 @@ class Frame:
         """ Run a subprocess including the bash_command """
 
         try:
-            # reply = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE,
-            #                         stderr=subprocess.PIPE)
-            # _output, error = reply.communicate()
             with subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE) as reply:
                 _output, error = reply.communicate()
