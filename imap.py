@@ -62,7 +62,7 @@ class ImapMail:
                     file_name = "mail_" + part.get_filename()
                     # file_extension = os.path.splitext(file_name)[1].lower().replace('.','')
                     file_extension = pathlib.Path(file_name).suffix.replace('.','')
-                    module_log(f"File Extension: {file_extension}")
+                    module_log.log(f"File Extension: {file_extension}")
 
                     # Only download file if its extension is in config file
                     if bool(file_name) and (file_extension in self.allowed_extensions):
