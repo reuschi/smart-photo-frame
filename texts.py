@@ -38,6 +38,9 @@ texts = {
 
         },
         "owncloud": {
+            "dir_create": "Directory {} created.",
+            "file_deleted": "File {} deleted from Owncloud.",
+            "file_downloaded": "File {} downloaded successfully from Owncloud.",
 
         },
         "log": {
@@ -81,6 +84,9 @@ texts = {
 
         },
         "owncloud": {
+            "dir_create": "Directory {} created.",
+            "file_deleted": "File {} deleted from Owncloud.",
+            "file_downloaded": "File {} downloaded successfully from Owncloud.",
 
         },
         "log": {
