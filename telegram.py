@@ -83,25 +83,6 @@ class Telegram:
             500: texts.texts[static.language]['tg']['return_500']
         }
 
-        """
-        if answer.status_code == 200:
-            return answer.json()
-        if answer.status_code == 400:
-            return texts.texts[static.language]['tg']['return_400']
-        if answer.status_code == 401:
-            return texts.texts[static.language]['tg']['return_401']
-        if answer.status_code == 403:
-            return texts.texts[static.language]['tg']['return_403']
-        if answer.status_code == 404:
-            return texts.texts[static.language]['tg']['return_404']
-        if answer.status_code == 406:
-            return texts.texts[static.language]['tg']['return_406']
-        if answer.status_code == 420:
-            return texts.texts[static.language]['tg']['return_420']
-        if answer.status_code == 500:
-            return texts.texts[static.language]['tg']['return_500']
-        """
-
         try:
             return return_statments.get(answer.status_code)
         except Exception:
