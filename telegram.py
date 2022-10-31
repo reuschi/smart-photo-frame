@@ -238,7 +238,10 @@ class Telegram:
 
         for ext in extension:
             ext = ext.replace(".", "")
-            static.add_value_to_config("gmail", "file_extensions", ext)
+            if "gmail.com" in static.EMAIL_HOST:
+                static.add_value_to_config("gmail", "file_extensions", ext)
+            else:
+                static.add_value_to_config("mail", "file_extensions", ext)
 
         self.send_message(from_id,
                           texts.texts[static.language]['tg']['new_file_extension'].
@@ -341,8 +344,6 @@ class Telegram:
 
         module_log.log(f"Updating branch {branch}")
 
-        #module_log.log(pathlib.Path(__file__).parent.absolute())
-        #repo = git.Repo('/home/pi/python/smart-photo-frame')
         repo = git.Repo(pathlib.Path(__file__).parent.absolute())
         repo.git.checkout(branch)
         update = repo.git.pull('origin', branch)
