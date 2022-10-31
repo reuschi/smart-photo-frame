@@ -92,6 +92,23 @@ You need to create your own Telegram Bot. For that just follow the tasks:
 
 Now, the Bot should be ready to receive and send messages. If you send messages via web browser or mobile phone to the Bot while the frame is not running, nothing happens. To get a reply on your sent photos, you must run the **main.py**. In most cases the script must run as *sudo*.
 
+## Current implemented Telegram Bot commands
+
+As seen above in the config, the follwing bot commands will be placed to the bot configuration:
+
+* /deleteimg <name_of_image_1>,<name_of_image_2>,etc. - Deletes one or more images from images folder of the frame.
+* /getconfig - Returns the current config.ini as downloadable file.
+* /getident - Returns the current public IP address of the frame.
+* /getlog - Returns the message.log file from frame root as downloadable file.
+* /listimg - Lists all images stored in the images folder.
+* /reboot - Reboots the whole system (RasPi).
+* /rotate <image_name_1>,<l/r> <image_name_2>,<l/r> etc. - Rotates the named image(s) 90° to the left (l) or to the right (r).
+* /toggle_signaling - Toggles the Feedback from the frame when it's booted up or shutting down.
+* /toggle_verbose - Toggled the display of additional information in the image presentation of the frame.
+* /update (<repository_name>) - Update system with current master repository. If entered a name, then this command tries to checkout and update the named branch.
+
+You can add some more commands by your own by just adding them to the configuration. All of the listed commands will be pushed to the Telegram Bot when starting the frame.
+
 ## Preparing your mailbox
 
 To only get those mails downloaded that are intended for the photo frame, you should create a subfolder in your mailbox. By default the system awaits the folder name to be **"Smart Photo Frame"**. You can change it in the source code as you want.\
