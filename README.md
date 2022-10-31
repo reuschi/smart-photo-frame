@@ -23,7 +23,7 @@ This is a Smart Photo Frame to show a slideshow of pictures that were sent via e
 
 ## Folder structure
 
-When repository is cloned, no subfolders are created. To store your images, a subfolder named "images" will be created while importing the first image. Within this folder you can delete or add new photos manually or by Telegram command. After adding or deleting (if done by hand) the frame needs to be restarted manually. If uploaded or deleted by Telegram command, this is done automatically.\
+When repository is cloned, no subfolders are created. To store your images, a subfolder named **"images"** will be created while importing the first image. Within this folder you can delete or add new photos manually or by Telegram command. After adding or deleting (if done by hand) the frame needs to be restarted manually. If uploaded or deleted by Telegram command, this is done automatically.\
 All other data is stored in the main folder of the cloned repository.\
 Automatic generated files by the frame are:
 * telegram_bot.db
@@ -96,16 +96,16 @@ Now, the Bot should be ready to receive and send messages. If you send messages 
 
 As seen above in the config, the follwing bot commands will be placed to the bot configuration:
 
-* /deleteimg <name_of_image_1>,<name_of_image_2>,etc. - Deletes one or more images from images folder of the frame.
-* /getconfig - Returns the current config.ini as downloadable file.
-* /getident - Returns the current public IP address of the frame.
-* /getlog - Returns the message.log file from frame root as downloadable file.
-* /listimg - Lists all images stored in the images folder.
-* /reboot - Reboots the whole system (RasPi).
-* /rotate <image_name_1>,<l/r> <image_name_2>,<l/r> etc. - Rotates the named image(s) 90° to the left (l) or to the right (r).
-* /toggle_signaling - Toggles the Feedback from the frame when it's booted up or shutting down.
-* /toggle_verbose - Toggled the display of additional information in the image presentation of the frame.
-* /update (<repository_name>) - Update system with current master repository. If entered a name, then this command tries to checkout and update the named branch.
+* */deleteimg <name_of_image_1>,<name_of_image_2>,etc.* - Deletes one or more images from images folder of the frame.
+* */getconfig* - Returns the current config.ini as downloadable file.
+* */getident* - Returns the current public IP address of the frame.
+* */getlog* - Returns the message.log file from frame root as downloadable file.
+* */listimg* - Lists all images stored in the images folder.
+* */reboot* - Reboots the whole system (RasPi).
+* */rotate <image_name_1>,<l/r> <image_name_2>,<l/r> etc.* - Rotates the named image(s) 90° to the left (l) or to the right (r). Files must be seperated by whitespaces and file names needs to be followed by orientation.
+* */toggle_signaling* - Toggles the Feedback from the frame when it's booted up or shutting down.
+* */toggle_verbose* - Toggled the display of additional information in the image presentation of the frame.
+* */update (<repository_name>)* - Update system with current master repository. If entered a name, then this command tries to checkout and update the named branch.
 
 You can add some more commands by your own by just adding them to the configuration. All of the listed commands will be pushed to the Telegram Bot when starting the frame.
 
