@@ -44,15 +44,14 @@ if __name__ == "__main__":
     reference_time = int(time.time()) - 120
 
     while True:
-        # Request for new mails every 120 seconds
+        # Request for new mails and new images on Owncloud every 120 seconds
         if int(time.time()) >= reference_time + 120:
             MAIL = imap.init_imap()
+            OWNCLOUD = oc.download_file()
             reference_time = int(time.time())
         else:
             MAIL = False
-
-        # Request for new images on Owncloud
-        OWNCLOUD = oc.download_file()
+            OWNCLOUD = False
 
         # If new images received by mail or Owncloud restart the slideshow with the new images
         if MAIL or OWNCLOUD:
