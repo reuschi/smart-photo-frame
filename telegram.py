@@ -239,9 +239,9 @@ class Telegram:
         for ext in extension:
             ext = ext.replace(".", "")
             if "gmail.com" in static.EMAIL_HOST:
-                static.add_value_to_config("gmail", "file_extensions", ext)
+                static.add_value_to_config("gmail", "fileExtensions", ext)
             else:
-                static.add_value_to_config("mail", "file_extensions", ext)
+                static.add_value_to_config("mail", "fileExtensions", ext)
 
         self.send_message(from_id,
                           texts.texts[static.language]['tg']['new_file_extension'].
