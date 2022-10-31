@@ -108,7 +108,7 @@ class Telegram:
         data = {
             "commands": json.dumps(static.tg_bot_commands)
         }
-        module_log.log(data)
+
         return self.telegram_POST(link, data)
 
     def send_signal(self):
