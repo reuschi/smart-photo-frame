@@ -72,7 +72,7 @@ class Telegram:
     def return_status_code(self, answer):
         """ Return a readable status code """
 
-        return_statments = {
+        return_statements = {
             200: answer.json(),
             400: texts.texts[static.language]['tg']['return_400'],
             401: texts.texts[static.language]['tg']['return_401'],
@@ -84,7 +84,7 @@ class Telegram:
         }
 
         try:
-            return return_statments.get(answer.status_code)
+            return return_statements.get(answer.status_code)
         except Exception:
             return "Unknown Error! " + str(answer)
 

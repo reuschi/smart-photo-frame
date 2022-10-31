@@ -6,7 +6,7 @@ This is a Smart Photo Frame to show a slideshow of pictures that were sent via e
 
 ## Recommended hardware and software
 
-**Computing Hardware:** Every RaspberryPi with wireless or wired connection (successfully running on ZeroW)\
+**Computing Hardware:** Every RaspberryPi (or other Linux driven system) with wireless or wired connection (successfully running on ZeroW)\
 **Display:** Each HDMI connectable display
 
 **Operating System:** RaspberryPi OS (Lite installation is enough)\
@@ -29,7 +29,7 @@ Automatic generated files by the frame are:
 * telegram_bot.db
 * messages.log
 
-If you delete these files manually after creation, some errors may occur.
+If you delete these files manually after creation, some errors may occur or the download of the files will not work as expected for some time.
 
 ## Config file
 
@@ -97,9 +97,9 @@ Now, the Bot should be ready to receive and send messages. If you send messages 
 As seen above in the config, the follwing bot commands will be placed to the bot configuration:
 
 * */deleteimg <name_of_image_1>,<name_of_image_2>,etc.* - Deletes one or more images from images folder of the frame.
-* */getconfig* - Returns the current config.ini as downloadable file.
+* */getconfig* - Returns the current **config.ini** as downloadable file.
 * */getident* - Returns the current public IP address of the frame.
-* */getlog* - Returns the message.log file from frame root as downloadable file.
+* */getlog* - Returns the **message.log** file from frame root as downloadable file.
 * */listimg* - Lists all images stored in the images folder.
 * */reboot* - Reboots the whole system (RasPi).
 * */rotate <image_name_1>,<l/r> <image_name_2>,<l/r> etc.* - Rotates the named image(s) 90° to the left (l) or to the right (r). Files must be seperated by whitespaces and file names needs to be followed by orientation.
@@ -133,9 +133,9 @@ or otherwise just download the logfile.
 
 By adding hardware buttons to the RasPi you can offer your Frame users the possibility to handle the Frame. There are already preparations done for three buttons in sum. One button can be used to rise the display time of each photo in steps of 2 seconds. Another button can be used to lower the display time of each photo - down to 2 seconds. The third button can be used to properly shut down the whole RasPi (e.g. for moving from one place to another or at night).\
 Those three buttons are mentioned to be installed on the following ports:
-* Pin 27: Rise the timer
-* Pin 19: Lower the timer
-* Pin 9: Shut down the system
+* **Pin 27:** Rise the timer
+* **Pin 19:** Lower the timer
+* **Pin 9:** Shut down the system
 
 All ports are configured as Pull-Up ports and need to be connected to ground.\
 For my use case I soldered them directly on the RasPi and gave the buttons that raise and lower the timer a higher hardware button.
@@ -145,4 +145,3 @@ For my use case I soldered them directly on the RasPi and gave the buttons that 
 - [ ] Complete the replacement of all texts in english and german
 - [x] Implement another interconnection between frame and sender (OwnCloud, Dropbox, etc.)
 - [ ] ~~Find a different presenter application to also display videos~~
-- [ ] Complete the full implementation of OwnCloud
