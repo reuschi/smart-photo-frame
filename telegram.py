@@ -287,7 +287,9 @@ class Telegram:
 
         success = False
 
-        images = message_text.split(" ")[1:]
+        images_txt = message_text.split(" ")
+        images = images_txt[1].split(",")
+
         for img in images:
             error = IProc.delete_image(img)
             if error == "":
