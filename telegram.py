@@ -234,9 +234,10 @@ class Telegram:
     def _add_file_extension(self, from_id, message_text):
         """ Add a new file extension to allowed extension list """
 
-        extension = message_text.split(" ")[1:]
+        extension_txt = message_text.split(" ")
+        extensions = extension_txt[1].split(",")
 
-        for ext in extension:
+        for ext in extensions:
             ext = ext.replace(".", "")
             if "gmail.com" in static.EMAIL_HOST:
                 static.add_value_to_config("gmail", "fileExtensions", ext)
@@ -245,24 +246,22 @@ class Telegram:
 
         self.send_message(from_id,
                           texts.texts[static.language]['tg']['new_file_extension'].
-                          format(extension))
-        module_log.log(f"New extension(s) added: {extension}")
+                          format(extensions))
+        module_log.log(f"New extension(s) added: {extensions}")
 
     def _add_sender(self, from_id, message_text):
         """ Add a new id to allowed sender list """
 
-        add_id = message_text.split(" ")
-        module_log.log(add_id)
-        sender_ids = add_id[1].split(",")
-        module_log.log(sender_ids)
+        sender_id_txt = message_text.split(" ")
+        sender_ids = sender_id_txt[1].split(",")
 
         for sender in sender_ids:
             static.add_value_to_config("telegram", "allowedsenders", sender)
             self.allowed_senders.append(int(sender))
 
         self.send_message(from_id,
-                          texts.texts[static.language]['tg']['new_sender_id'].format(add_id))
-        module_log.log(f"New sender added to allowed sender list: {add_id[1]}")
+                          texts.texts[static.language]['tg']['new_sender_id'].format(sender_ids))
+        module_log.log(f"New sender added to allowed sender list: {sender_ids}")
 
     def _get_identity(self, from_id):
         """ Return public ip address to sender """
