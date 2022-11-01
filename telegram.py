@@ -234,34 +234,44 @@ class Telegram:
     def _add_file_extension(self, from_id, message_text):
         """ Add a new file extension to allowed extension list """
 
-        extension_txt = message_text.split(" ")
-        extensions = extension_txt[1].split(",")
+        try:
+            extension_txt = message_text.split(" ")
+            extensions = extension_txt[1].split(",")
 
-        for ext in extensions:
-            ext = ext.replace(".", "")
-            if "gmail.com" in static.EMAIL_HOST:
-                static.add_value_to_config("gmail", "fileExtensions", ext)
-            else:
-                static.add_value_to_config("mail", "fileExtensions", ext)
+            for ext in extensions:
+                ext = ext.replace(".", "")
+                if "gmail.com" in static.EMAIL_HOST:
+                    static.add_value_to_config("gmail", "fileExtensions", ext)
+                else:
+                    static.add_value_to_config("mail", "fileExtensions", ext)
 
-        self.send_message(from_id,
-                          texts.texts[static.language]['tg']['new_file_extension'].
-                          format(extensions))
-        module_log.log(f"New extension(s) added: {extensions}")
+            self.send_message(from_id,
+                              texts.texts[static.language]['tg']['new_file_extension'].
+                              format(extensions))
+            module_log.log(f"New extension(s) added: {extensions}")
+        except AttributeError:
+            module_log.log(f"Error. No new extension(s) added.")
+        except ValueError:
+            module_log.log(f"Error. No new extension(s) added.")
 
     def _add_sender(self, from_id, message_text):
         """ Add a new id to allowed sender list """
 
-        sender_id_txt = message_text.split(" ")
-        sender_ids = sender_id_txt[1].split(",")
+        try:
+            sender_id_txt = message_text.split(" ")
+            sender_ids = sender_id_txt[1].split(",")
 
-        for sender in sender_ids:
-            static.add_value_to_config("telegram", "allowedsenders", sender)
-            self.allowed_senders.append(int(sender))
+            for sender in sender_ids:
+                static.add_value_to_config("telegram", "allowedsenders", sender)
+                self.allowed_senders.append(int(sender))
 
-        self.send_message(from_id,
-                          texts.texts[static.language]['tg']['new_sender_id'].format(sender_ids))
-        module_log.log(f"New sender added to allowed sender list: {sender_ids}")
+            self.send_message(from_id,
+                              texts.texts[static.language]['tg']['new_sender_id'].format(sender_ids))
+            module_log.log(f"New sender added to allowed sender list: {sender_ids}")
+        except AttributeError:
+            module_log.log(f"Error. No new sender added.")
+        except ValueError:
+            module_log.log(f"Error. No new sender added.")
 
     def _get_identity(self, from_id):
         """ Return public ip address to sender """
@@ -287,20 +297,25 @@ class Telegram:
 
         success = False
 
-        images_txt = message_text.split(" ")
-        images = images_txt[1].split(",")
+        try:
+            images_txt = message_text.split(" ")
+            images = images_txt[1].split(",")
 
-        for img in images:
-            error = IProc.delete_image(img)
-            if error == "":
-                self.send_message(from_id,
-                                  texts.texts[static.language]['tg']['id_delete_success'].
-                                  format(img))
-                module_log.log(f"{img} deleted.")
-                success = True
-            else:
-                self.send_message(from_id, str(error))
-                module_log.log("No image file deleted.")
+            for img in images:
+                error = IProc.delete_image(img)
+                if error == "":
+                    self.send_message(from_id,
+                                      texts.texts[static.language]['tg']['id_delete_success'].
+                                      format(img))
+                    module_log.log(f"{img} deleted.")
+                    success = True
+                else:
+                    self.send_message(from_id, str(error))
+                    module_log.log("No image file deleted.")
+        except AttributeError:
+            module_log.log(f"Error. No image deleted.")
+        except ValueError:
+            module_log.log(f"Error. No image deleted.")
 
         return success
 
