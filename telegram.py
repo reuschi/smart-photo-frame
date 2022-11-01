@@ -234,7 +234,7 @@ class Telegram:
     def _add_file_extension(self, from_id, message_text):
         """ Add a new file extension to allowed extension list """
 
-        extension = message_text.split(" ").split(",")
+        extension = message_text.split(" ")[1:]
 
         for ext in extension:
             ext = ext.replace(".", "")
@@ -251,7 +251,7 @@ class Telegram:
     def _add_sender(self, from_id, message_text):
         """ Add a new id to allowed sender list """
 
-        add_id = message_text.split(" ").split(",")
+        add_id = message_text.split(" ")[1:]
 
         for sender in add_id:
             static.add_value_to_config("telegram", "allowedsenders", sender)
