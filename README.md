@@ -77,7 +77,7 @@ logToFile = True/False ; set logging to file
 logToScreen = True/False ; set logging to screen 
 
 [global]
-language = EN ; available: EN & DE - other languages need to be added to texts.py
+language = EN/DE ; language of return text messages - other languages need to be added to texts.py
 ```
 
 ## Creating a Telegram Bot
