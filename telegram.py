@@ -251,9 +251,10 @@ class Telegram:
     def _add_sender(self, from_id, message_text):
         """ Add a new id to allowed sender list """
 
-        add_id = message_text.split(" ")[1:]
+        add_id = message_text.split(" ")
+        sender_ids = add_id[1].split(",")
 
-        for sender in add_id:
+        for sender in sender_ids:
             static.add_value_to_config("telegram", "allowedsenders", sender)
             self.allowed_senders.append(int(sender))
 
