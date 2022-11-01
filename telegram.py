@@ -252,7 +252,9 @@ class Telegram:
         """ Add a new id to allowed sender list """
 
         add_id = message_text.split(" ")
+        module_log.log(add_id)
         sender_ids = add_id[1].split(",")
+        module_log.log(sender_ids)
 
         for sender in sender_ids:
             static.add_value_to_config("telegram", "allowedsenders", sender)
