@@ -8,7 +8,7 @@ from frame import Frame
 from telegram import Telegram
 from owncloud import Owncloud
 import module_log
-import static_variables
+import static_variables as static
 
 
 GPIO.setmode(GPIO.BCM)
@@ -18,18 +18,18 @@ GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
 if __name__ == "__main__":
-    frame = Frame(static_variables.timer, static_variables.blend, static_variables.photocount)
-    imap = ImapMail(static_variables.EMAIL_ACCOUNT, static_variables.EMAIL_PASS,
-                    static_variables.EMAIL_HOST, static_variables.file_extensions)
-    tg = Telegram(static_variables.token, static_variables.tg_allowed_senders,
-                  static_variables.tg_allowed_admins)
-    oc = Owncloud(static_variables.oc_host, static_variables.oc_username,
-                  static_variables.oc_password)
+    frame = Frame(static.timer, static.blend, static.photocount)
+    imap = ImapMail(static.EMAIL_ACCOUNT, static.EMAIL_PASS,
+                    static.EMAIL_HOST, static.file_extensions)
+    tg = Telegram(static.tg_token, static.tg_allowed_senders,
+                  static.tg_allowed_admins)
+    oc = Owncloud(static.oc_host, static.oc_username,
+                  static.oc_password)
     tg.set_commands()
     tg.send_signal()
 
     module_log.log("!!!! SYSTEM STARTED !!!!")
-    frame.restart_slideshow(static_variables.verbose)
+    frame.restart_slideshow(static.verbose)
 
     # Rise presentation Timer
     GPIO.add_event_detect(27, GPIO.FALLING, callback=frame.rise_timer, bouncetime=400)
