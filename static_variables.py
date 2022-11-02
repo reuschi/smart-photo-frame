@@ -61,6 +61,7 @@ oc_subfolder = config['owncloud']['subfolder']
 # ------------------------------
 logToFile = config.getboolean('logging', 'logToFile')
 logToScreen = config.getboolean('logging', 'logToScreen')
+debug = config.getboolean('logging', 'debug')
 
 
 def add_value_to_config(section: str, parameter: str, value: str):

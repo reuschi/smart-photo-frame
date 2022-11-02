@@ -7,7 +7,7 @@ import email.header
 import pathlib
 
 import module_log
-import static_variables
+import static_variables as static
 import texts
 
 
@@ -21,7 +21,7 @@ class ImapMail:
         self.hostname = hostname
         self.allowed_extensions = ext
         self.subfolder = subfolder
-        self.language = static_variables.language
+        self.language = static.language
 
     def download_attachment(self, mail, directory: str = "images"):
         """ Download attachments from mails stored in a specific sub folder """
@@ -108,7 +108,8 @@ class ImapMail:
             imap = IMAP4_SSL(host=self.hostname, port=993)
             receive, data = imap.login(self.email_account, self.email_password)
 
-            module_log.log(data)
+            if static.debug:
+                module_log.log(data)
 
             # Receive Mailboxes
             receive, mailboxes = imap.list()
