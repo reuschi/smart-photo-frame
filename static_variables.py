@@ -54,6 +54,7 @@ oc_host = config['owncloud']['host']
 oc_username = config['owncloud']['username']
 oc_password = config['owncloud']['password']
 oc_delete = config.getboolean('owncloud', 'delete_after_download')
+oc_subfolder = config['owncloud']['subfolder']
 
 
 # LOGGING VARIABLES

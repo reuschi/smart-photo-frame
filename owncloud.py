@@ -4,7 +4,7 @@ import pathlib
 import easywebdav2
 
 import module_log
-import static_variables
+import static_variables as static
 
 
 class Owncloud:
@@ -22,7 +22,7 @@ class Owncloud:
 
         self.owncloud = easywebdav2.connect(self.host, username=self.username,
                                             password=self.password)
-        self.owncloud.cd("/remote.php/webdav/images")
+        self.owncloud.cd("/remote.php/webdav/" + static.oc_subfolder)
 
     def create_dir(self, dirname: str):
         """ Create a sub directory """
@@ -67,7 +67,7 @@ class Owncloud:
                     self.owncloud.download(path, upload_path)
                     success = True
                     module_log.log(f"File {filename} downloaded successfully from Owncloud.")
-                    if static_variables.oc_delete:
+                    if static.oc_delete:
                         self.delete_file(path)
             if not success:
                 module_log.log("No new files found on OwnCloud.")
