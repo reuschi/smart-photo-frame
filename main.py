@@ -62,4 +62,4 @@ if __name__ == "__main__":
 
         # If new images received by Telegram restart the slideshow with the new images
         if TELEGRAM:
-            frame.restart_slideshow(static_variables.verbose)
+            frame.restart_slideshow(static.verbose)
