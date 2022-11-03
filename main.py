@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     if hasattr(static, 'oc_host'):
         oc = Owncloud(static.oc_host, static.oc_username,
-                  static.oc_password)
+                      static.oc_password)
 
     if hasattr(static, 'tg_token'):
         tg = Telegram(static.tg_token, static.tg_allowed_senders,
@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
         # If new images received by mail or Owncloud restart the slideshow with the new images
         if MAIL or OWNCLOUD:
-            frame.restart_slideshow()
+            frame.restart_slideshow(static.verbose)
 
         # Request for new Telegram message
         if hasattr(static, 'tg_token'):
