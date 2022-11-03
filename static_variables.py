@@ -11,7 +11,7 @@ config.read(config_path)
 
 # GLOBAL
 # ------------------------------
-if config['global'] is not None:
+if 'global' in config:
     language = config['global']['language']
 
 
@@ -51,7 +51,7 @@ tg_bot_commands = literal_eval(config['telegram']['commands'])
 
 # OWNCLOUD STATICS
 # ------------------------------
-if config['owncloud'] is not None:
+if 'owncloud' in config:
     oc = True
     oc_host = config['owncloud']['host']
     oc_username = config['owncloud']['username']
