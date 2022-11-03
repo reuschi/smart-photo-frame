@@ -79,6 +79,7 @@ logToScreen = True/False ; set logging to screen
 [global]
 language = EN/DE ; language of return text messages - other languages need to be added to texts.py
 ```
+By not adding the sections *telegram*, *mail*, and/or *owncloud* into the config file, you can exclude this module from using. So, if you just want to use this frame with a Telegram Bot and by Mail, you can delete the owncloud section from your config file and the frame will not try to gather images files from Owncloud .
 
 ## Creating a Telegram Bot
 
