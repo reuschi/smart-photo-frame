@@ -114,9 +114,12 @@ class ImapMail:
 
             # Receive Mailboxes
             receive, mailboxes = imap.list()
-            if receive == 'OK' and static.debug:
+            if receive == 'OK':
                 # For debugging purposes
-                module_log.log("Mailboxes found: " + str(mailboxes))
+                module_log.log("Mailbox found")
+                if static.debug:
+                    # For debugging purposes
+                    module_log.log(str(mailboxes))
             else:
                 module_log.log("No Mailbox found")
                 return texts.texts[self.language]['imap']['no_mailbox_found']
