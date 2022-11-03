@@ -11,8 +11,7 @@ config.read(config_path)
 
 # GLOBAL
 # ------------------------------
-if 'global' in config:
-    language = config['global']['language']
+language = config['global']['language']
 
 
 # FRAME VARIABLES
@@ -25,34 +24,35 @@ verbose = config.getboolean('frame', 'verbose')
 
 # IMAP STATICS
 # ------------------------------
-EMAIL_ACCOUNT = config['mail']['account']
-EMAIL_PASS = config['mail']['password']
-EMAIL_HOST = config['mail']['hostname']
-mail_elements = config.get('mail', 'fileExtensions').split(',')
-file_extensions = [str(ext) for ext in mail_elements]
+if 'mail' in config:
+    EMAIL_ACCOUNT = config['mail']['account']
+    EMAIL_PASS = config['mail']['password']
+    EMAIL_HOST = config['mail']['hostname']
+    mail_elements = config.get('mail', 'fileExtensions').split(',')
+    file_extensions = [str(ext) for ext in mail_elements]
 
 
 # TELEGRAM STATICS
 # ------------------------------
-tg_token = config['telegram']['token']
-status_signal = config.getboolean('telegram', 'status_signal')
-poll_timeout = int(config['telegram']['poll_timeout'])
+if 'telegram' in config:
+    tg_token = config['telegram']['token']
+    status_signal = config.getboolean('telegram', 'status_signal')
+    poll_timeout = int(config['telegram']['poll_timeout'])
 
-# Fetch allowed senders
-tg_elements = config.get('telegram', 'allowedsenders').split(',')
-tg_allowed_senders = [int(x) for x in tg_elements]
-# Fetch allowed admins
-tg_admin_elements = config.get('telegram', 'admins').split(',')
-tg_allowed_admins = [int(x) for x in tg_admin_elements]
-# Fetch Bot commands
-tg_bot_commands = literal_eval(config['telegram']['commands'])
-#tg_bot_commands = [int(x) for x in tg_commands_elements]
+    # Fetch allowed senders
+    tg_elements = config.get('telegram', 'allowedsenders').split(',')
+    tg_allowed_senders = [int(x) for x in tg_elements]
+    # Fetch allowed admins
+    tg_admin_elements = config.get('telegram', 'admins').split(',')
+    tg_allowed_admins = [int(x) for x in tg_admin_elements]
+    # Fetch Bot commands
+    tg_bot_commands = literal_eval(config['telegram']['commands'])
+    #tg_bot_commands = [int(x) for x in tg_commands_elements]
 
 
 # OWNCLOUD STATICS
 # ------------------------------
 if 'owncloud' in config:
-    oc = True
     oc_host = config['owncloud']['host']
     oc_username = config['owncloud']['username']
     oc_password = config['owncloud']['password']
