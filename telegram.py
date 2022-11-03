@@ -519,11 +519,13 @@ class Telegram:
             # Answer must not be a str
             for message in answer['result']:
                 from_id = message['message']['from']['id']
+
+                # For debugging purposes
+                if static.debug:
+                    module_log.log("Message: " + str(message['message']))
+
                 if from_id in self.allowed_senders:
                     # Only allow specific senders to send a photo to the frame
-                    if static.debug:
-                        module_log.log("Message: " + str(message['message']))
-
                     if "photo" in message['message']:
                         # If user sent a photo
                         success = self.process_new_photo(message)

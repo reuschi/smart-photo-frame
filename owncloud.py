@@ -59,7 +59,7 @@ class Owncloud:
         try:
             for file in listing:
                 if getattr(file, "contenttype") == "image/jpeg":
-                    module_log.log("New file found on Owncloud. Start downloading")
+                    module_log.log("New file found on Owncloud. Start downloading.")
                     path = getattr(file, "name")
                     filename = str(self._get_filename(path))
                     upload_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() /
@@ -73,6 +73,6 @@ class Owncloud:
                 module_log.log("No new files found on OwnCloud.")
             return success
         except easywebdav2.WebdavException as exc:
-            module_log.log("Error while downloading")
+            module_log.log("Error while downloading.")
             module_log.log(exc)
             return False

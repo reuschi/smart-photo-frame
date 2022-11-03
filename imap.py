@@ -108,12 +108,14 @@ class ImapMail:
             imap = IMAP4_SSL(host=self.hostname, port=993)
             receive, data = imap.login(self.email_account, self.email_password)
 
+            # For debugging purposes
             if static.debug:
                 module_log.log(data)
 
             # Receive Mailboxes
             receive, mailboxes = imap.list()
-            if receive == 'OK':
+            if receive == 'OK' and static.debug:
+                # For debugging purposes
                 module_log.log("Mailboxes found: " + str(mailboxes))
             else:
                 module_log.log("No Mailbox found")
