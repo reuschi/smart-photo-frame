@@ -19,15 +19,20 @@ GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 if __name__ == "__main__":
     frame = Frame(static.timer, static.blend, static.photocount)
-    imap = ImapMail(static.EMAIL_ACCOUNT, static.EMAIL_PASS,
-                    static.EMAIL_HOST, static.file_extensions)
-    tg = Telegram(static.tg_token, static.tg_allowed_senders,
-                  static.tg_allowed_admins)
-    if hasattr(static, 'oc'):
+
+    if hasattr(static, 'EMAIL_ACCOUNT'):
+        imap = ImapMail(static.EMAIL_ACCOUNT, static.EMAIL_PASS,
+                        static.EMAIL_HOST, static.file_extensions)
+
+    if hasattr(static, 'oc_host'):
         oc = Owncloud(static.oc_host, static.oc_username,
                   static.oc_password)
-    tg.set_commands()
-    tg.send_signal()
+
+    if hasattr(static, 'tg_token'):
+        tg = Telegram(static.tg_token, static.tg_allowed_senders,
+                      static.tg_allowed_admins)
+        tg.set_commands()
+        tg.send_signal()
 
     module_log.log("!!!! SYSTEM STARTED !!!!")
     frame.restart_slideshow(static.verbose)
@@ -51,8 +56,9 @@ if __name__ == "__main__":
     while True:
         # Request for new mails and new images on Owncloud every 120 seconds
         if int(time.time()) >= reference_time + 120:
-            MAIL = imap.init_imap()
-            if hasattr(static, 'oc'):
+            if hasattr(static, 'EMAIL_ACCOUNT'):
+                MAIL = imap.init_imap()
+            if hasattr(static, 'oc_host'):
                 OWNCLOUD = oc.download_file()
             reference_time = int(time.time())
         else:
@@ -64,7 +70,8 @@ if __name__ == "__main__":
             frame.restart_slideshow()
 
         # Request for new Telegram message
-        TELEGRAM = tg.process_new_message()
+        if hasattr(static, 'tg_token'):
+            TELEGRAM = tg.process_new_message()
 
         # If new images received by Telegram restart the slideshow with the new images
         if TELEGRAM:
