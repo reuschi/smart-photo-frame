@@ -23,7 +23,8 @@ if __name__ == "__main__":
                     static.EMAIL_HOST, static.file_extensions)
     tg = Telegram(static.tg_token, static.tg_allowed_senders,
                   static.tg_allowed_admins)
-    oc = Owncloud(static.oc_host, static.oc_username,
+    if static.oc:
+        oc = Owncloud(static.oc_host, static.oc_username,
                   static.oc_password)
     tg.set_commands()
     tg.send_signal()
@@ -47,7 +48,8 @@ if __name__ == "__main__":
         # Request for new mails and new images on Owncloud every 120 seconds
         if int(time.time()) >= reference_time + 120:
             MAIL = imap.init_imap()
-            OWNCLOUD = oc.download_file()
+            if static.oc:
+                OWNCLOUD = oc.download_file()
             reference_time = int(time.time())
         else:
             MAIL = False

@@ -11,7 +11,8 @@ config.read(config_path)
 
 # GLOBAL
 # ------------------------------
-language = config['global']['language']
+if config['global'] is not None:
+    language = config['global']['language']
 
 
 # FRAME VARIABLES
@@ -50,11 +51,13 @@ tg_bot_commands = literal_eval(config['telegram']['commands'])
 
 # OWNCLOUD STATICS
 # ------------------------------
-oc_host = config['owncloud']['host']
-oc_username = config['owncloud']['username']
-oc_password = config['owncloud']['password']
-oc_delete = config.getboolean('owncloud', 'delete_after_download')
-oc_subfolder = config['owncloud']['subfolder']
+if config['owncloud'] is not None:
+    oc = True
+    oc_host = config['owncloud']['host']
+    oc_username = config['owncloud']['username']
+    oc_password = config['owncloud']['password']
+    oc_delete = config.getboolean('owncloud', 'delete_after_download')
+    oc_subfolder = config['owncloud']['subfolder']
 
 
 # LOGGING VARIABLES
