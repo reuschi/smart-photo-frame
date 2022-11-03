@@ -74,7 +74,8 @@ verbose = True/False ; verbose file information during slideshow
 
 [logging]
 logToFile = True/False ; set logging to file
-logToScreen = True/False ; set logging to screen 
+logToScreen = True/False ; set logging to screen
+debug = True/False ; set debug mode for more detailed messages
 
 [global]
 language = EN/DE ; language of return text messages - other languages need to be added to texts.py
