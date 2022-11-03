@@ -34,7 +34,10 @@ class Owncloud:
     def list(self):
         """ List folders and files """
 
-        return self.owncloud.ls()
+        try:
+            return self.owncloud.ls()
+        except ConnectionError as exc:
+            module_log.log(f"Connection Error. Connection reset by peer. Try again.")
 
     @staticmethod
     def _get_filename(path: str):
