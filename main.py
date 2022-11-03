@@ -44,6 +44,10 @@ if __name__ == "__main__":
     # Set current time to 120 seconds in the past
     reference_time = int(time.time()) - 120
 
+    OWNCLOUD = False
+    MAIL = False
+    TELEGRAM = False
+
     while True:
         # Request for new mails and new images on Owncloud every 120 seconds
         if int(time.time()) >= reference_time + 120:
