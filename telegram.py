@@ -212,7 +212,12 @@ class Telegram:
         text = text.replace("\\", "_")
         text = text.replace("*", "-")
         text = text.replace(".", "_")
+        text = text.replace(",", "_")
+        text = text.replace(";", "_")
         text = text.replace("ß", "ss")
+        text = text.replace("ä", "ae")
+        text = text.replace("ö", "oe")
+        text = text.replace("ü", "ue")
 
         return text
 
