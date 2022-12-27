@@ -131,7 +131,7 @@ class Gmail:
             file_data = base64.urlsafe_b64decode(data.encode('UTF-8'))
 
             if path.exists():
-                module_log.log(f"Datei '{filename}' existiert bereits")
+                module_log.log(texts.texts[static.language]['google']['file_exists'].format(filename))
 
             else:
                 with open(path, 'wb') as file:
@@ -164,18 +164,20 @@ class Gmail:
                         #print(f"Attachment-ID: {part['body']['attachmentId']}")
                         if self.read_attachment(message_id, part['body']['attachmentId'],
                                                 part['filename']):
-                            module_log.log(f"{part['filename']} erfolgreich heruntergeladen!")
+                            module_log.log(texts.texts[static.language]['google']['download_successfully'].
+                                           format(part['filename']))
                             success = True
                             restart = True
                         else:
-                            module_log.log(f"Download von {part['filename']} fehlgeschlagen!")
+                            module_log.log(texts.texts[static.language]['google']['download_failed'].
+                                           format(part['filename']))
                             success = False
                     else:
                         continue
 
                 if success:
                     #module_log.log(self.delete_message(message_id))
-                    module_log.log(f"Mail {mail['id']} löschen")
+                    module_log.log(texts.texts[static.language]['google']['mail_deleted'].format(mail['id']))
                     success = False
 
         except Exception as exc:

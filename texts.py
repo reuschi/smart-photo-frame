@@ -34,6 +34,12 @@ texts = {
             "no_mailbox_found": "FEHLER: Keine Mailbox zum Öffnen gefunden",
             "mailbox_open_error": "FEHLER: Keine Mailbox zum Öffnen gefunden. {}"
         },
+        "google": {
+            "file_exists": "Datei '{}' existiert bereits",
+            "download_successfully": "'{}' erfolgreich heruntergeladen!",
+            "download_failed": "Download von '{}' fehlgeschlagen!",
+            "mail_deleted": "Mail {} gelöscht"
+        },
         "frame": {
 
         },
@@ -79,6 +85,12 @@ texts = {
         "imap": {
             "no_mailbox_found": "ERROR: No Mailbox to open",
             "mailbox_open_error": "ERROR: Unable to open mailbox"
+        },
+        "google": {
+            "file_exists": "File '{}' already exists",
+            "download_successfully": "'{}' successfully downloaded!",
+            "download_failed": "Download of '{}' failed!",
+            "mail_deleted": "Mail {} deleted"
         },
         "frame": {
 
