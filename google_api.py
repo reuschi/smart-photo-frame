@@ -42,7 +42,8 @@ class Gmail:
 
         with build("gmail", "v1", credentials=self.creds) as service:
             labels = service.users().labels().list(userId="me").execute()
-            return labels['labels']
+
+        return labels['labels']
 
     def get_label_id_by_name(self, name="Smart Photo Frame"):
         """ Retrieve label ID by its configured name """
@@ -85,7 +86,8 @@ class Gmail:
 
         store_dir = Path(__file__).parent.absolute()
         extension = filename.split(".")[1]
-        filename = "mail_" + time.strftime("%Y%m%d_") + filename + "." + extension.lower()
+        filename_base = filename.split(".")[0]
+        filename = "mail_" + time.strftime("%Y%m%d_") + filename_base + "." + extension.lower()
         path = Path(store_dir / destination / filename)
 
         with build("gmail", "v1", credentials=self.creds) as service:
