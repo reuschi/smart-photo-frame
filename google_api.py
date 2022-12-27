@@ -27,15 +27,16 @@ class Gmail:
     def _authorize(self):
         if Path(Path(__file__).parent.absolute() / "token.json").exists():
             self.creds = Credentials.from_authorized_user_file(
-                Path(Path(__file__).parent.absolute() / "token.json").read_text(), self.SCOPES)
+                str(Path(Path(__file__).parent.absolute() / "token.json")), self.SCOPES)
         if not self.creds or not self.creds.valid:
             if self.creds and self.creds.expired and self.creds.refresh_token:
                 self.creds.refresh(Request())
             else:
-                file_path = Path(Path(__file__).parent.absolute() / "credentials.json").read_text()
+                file_path = str(Path(Path(__file__).parent.absolute() / "credentials.json"))
+                print(file_path)
                 self.flow = InstalledAppFlow.from_client_secrets_file(file_path, self.SCOPES)
                 self.creds = self.flow.run_local_server(port=0)
-            with open(Path(Path(__file__).parent.absolute() / "token.json").read_text(), "w", encoding="UTF-8") as token:
+            with open(str(Path(Path(__file__).parent.absolute() / "token.json")), "w", encoding="UTF-8") as token:
                 token.write(self.creds.to_json())
 
     def _reformat_filename(self, filename):
@@ -93,8 +94,9 @@ class Gmail:
         for message in mails['messages']:
             if label_id in message['labelIds']:
                 #new_mails['messages'].
+                pass
 
-        return message
+        return new_mails
 
     def read_message(self, message_id):
         """ Read message with msg_id """
