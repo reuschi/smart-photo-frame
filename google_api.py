@@ -110,6 +110,7 @@ class Gmail:
         """ Download attachments from all mails in mailbox """
 
         success = False
+        restart = False
 
         try:
             for mail in mails['messages']:
@@ -131,6 +132,7 @@ class Gmail:
                                                 part['filename']):
                             module_log.log(f"{part['filename']} erfolgreich heruntergeladen!")
                             success = True
+                            restart = True
                         else:
                             module_log.log(f"Download von {part['filename']} fehlgeschlagen!")
                             success = False
@@ -145,4 +147,4 @@ class Gmail:
         except Exception as exc:
             module_log.log(f"Exception during file download from mail: {exc}")
 
-        return success
+        return restart
