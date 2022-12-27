@@ -7,6 +7,7 @@ from imap import ImapMail
 from frame import Frame
 from telegram import Telegram
 from owncloud import Owncloud
+from google_api import Gmail
 import module_log
 import static_variables as static
 
@@ -20,9 +21,15 @@ GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 if __name__ == "__main__":
     frame = Frame(static.timer, static.blend, static.photocount)
 
+    label_id = None
+
     if hasattr(static, 'EMAIL_ACCOUNT'):
-        imap = ImapMail(static.EMAIL_ACCOUNT, static.EMAIL_PASS,
-                        static.EMAIL_HOST, static.file_extensions)
+        if "gmail.com" in static.EMAIL_ACCOUNT:
+            imap = Gmail()
+            label_id = imap.get_label_id_by_name()
+        else:
+            imap = ImapMail(static.EMAIL_ACCOUNT, static.EMAIL_PASS,
+                            static.EMAIL_HOST, static.file_extensions)
 
     if hasattr(static, 'oc_host'):
         oc = Owncloud(static.oc_host, static.oc_username,
@@ -54,25 +61,34 @@ if __name__ == "__main__":
     TELEGRAM = False
 
     while True:
-        # Request for new mails and new images on Owncloud every 120 seconds
-        if int(time.time()) >= reference_time + 120:
-            if hasattr(static, 'EMAIL_ACCOUNT'):
-                MAIL = imap.init_imap()
-            if hasattr(static, 'oc_host'):
-                OWNCLOUD = oc.download_file()
-            reference_time = int(time.time())
-        else:
-            MAIL = False
-            OWNCLOUD = False
+        try:
+            # Request for new mails and new images on Owncloud every 120 seconds
+            if int(time.time()) >= reference_time + 120:
+                if hasattr(static, 'EMAIL_ACCOUNT'):
+                    if "gmail.com" in static.EMAIL_ACCOUNT:
+                        mails = imap.get_message_ids()
+                        MAIL = imap.download_attachment(mails, label_id)
+                    else:
+                        MAIL = imap.init_imap()
+                if hasattr(static, 'oc_host'):
+                    OWNCLOUD = oc.download_file()
+                reference_time = int(time.time())
+            else:
+                MAIL = False
+                OWNCLOUD = False
 
-        # If new images received by mail or Owncloud restart the slideshow with the new images
-        if MAIL or OWNCLOUD:
-            frame.restart_slideshow(static.verbose)
+            # If new images received by mail or Owncloud restart the slideshow with the new images
+            if MAIL or OWNCLOUD:
+                frame.restart_slideshow(static.verbose)
 
-        # Request for new Telegram message
-        if hasattr(static, 'tg_token'):
-            TELEGRAM = tg.process_new_message()
+            # Request for new Telegram message
+            if hasattr(static, 'tg_token'):
+                TELEGRAM = tg.process_new_message()
 
-        # If new images received by Telegram restart the slideshow with the new images
-        if TELEGRAM:
-            frame.restart_slideshow(static.verbose)
+            # If new images received by Telegram restart the slideshow with the new images
+            if TELEGRAM:
+                frame.restart_slideshow(static.verbose)
+
+        except Exception as exc:
+            module_log.log(f"An exception occured: {exc}")
+
