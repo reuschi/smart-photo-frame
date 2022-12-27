@@ -25,19 +25,20 @@ class Gmail:
         self._authorize()
 
     def _authorize(self):
-        if Path("token.json").exists():
+        if Path(Path(__file__).parent.absolute() / "token.json").exists():
             self.creds = Credentials.from_authorized_user_file("token.json", self.SCOPES)
         if not self.creds or not self.creds.valid:
             if self.creds and self.creds.expired and self.creds.refresh_token:
                 self.creds.refresh(Request())
             else:
-                self.flow = InstalledAppFlow.from_client_secrets_file("credentials.json",
-                                                                      self.SCOPES)
+                file_path = str(Path(Path(__file__).parent.absolute() / "credentials.json"))
+                self.flow = InstalledAppFlow.from_client_secrets_file(file_path, self.SCOPES)
                 self.creds = self.flow.run_local_server(port=0)
-            with open("token.json", "w", encoding="UTF-8") as token:
+            with open(Path(__file__).parent.absolute() / "token.json", "w", encoding="UTF-8") as token:
                 token.write(self.creds.to_json())
 
     def _reformat_filename(self, filename):
+        """ Reformat filename for correct download storage """
 
         filename = filename.replace("ß", "ss")
         filename = filename.replace("ä", "ae")
