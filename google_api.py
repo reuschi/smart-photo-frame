@@ -26,15 +26,16 @@ class Gmail:
 
     def _authorize(self):
         if Path(Path(__file__).parent.absolute() / "token.json").exists():
-            self.creds = Credentials.from_authorized_user_file("token.json", self.SCOPES)
+            self.creds = Credentials.from_authorized_user_file(
+                Path(Path(__file__).parent.absolute() / "token.json").read_text(), self.SCOPES)
         if not self.creds or not self.creds.valid:
             if self.creds and self.creds.expired and self.creds.refresh_token:
                 self.creds.refresh(Request())
             else:
-                file_path = str(Path(Path(__file__).parent.absolute() / "credentials.json"))
+                file_path = Path(Path(__file__).parent.absolute() / "credentials.json").read_text()
                 self.flow = InstalledAppFlow.from_client_secrets_file(file_path, self.SCOPES)
                 self.creds = self.flow.run_local_server(port=0)
-            with open(Path(__file__).parent.absolute() / "token.json", "w", encoding="UTF-8") as token:
+            with open(Path(Path(__file__).parent.absolute() / "token.json").read_text(), "w", encoding="UTF-8") as token:
                 token.write(self.creds.to_json())
 
     def _reformat_filename(self, filename):
@@ -80,6 +81,20 @@ class Gmail:
             messages = service.users().messages().list(userId="me").execute()
 
         return messages
+
+    def get_message_ids_by_label_name(self, label="Smart Photo Frame"):
+        """ Retrieve only messages with defined label set """
+
+        mails = self.get_message_ids()
+        label_id = self.get_label_id_by_name(label)
+
+        new_mails = {}
+
+        for message in mails['messages']:
+            if label_id in message['labelIds']:
+                #new_mails['messages'].
+
+        return message
 
     def read_message(self, message_id):
         """ Read message with msg_id """
