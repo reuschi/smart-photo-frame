@@ -37,6 +37,22 @@ class Gmail:
             with open("token.json", "w", encoding="UTF-8") as token:
                 token.write(self.creds.to_json())
 
+    def _reformat_filename(self, filename):
+
+        filename = filename.replace("ß", "ss")
+        filename = filename.replace("ä", "ae")
+        filename = filename.replace("ö", "oe")
+        filename = filename.replace("ü", "ue")
+        filename = filename.replace(" ", "_")
+        filename = filename.replace("/", "_")
+
+        name = filename.split(".")[0]
+        extension = filename.split(".")[1]
+
+        new_filename = "mail_" + time.strftime("%Y%m%d_") + name + "." + extension.lower()
+
+        return new_filename
+
     def get_labels(self):
         """ Retrieve all configured labels """
 
@@ -85,10 +101,10 @@ class Gmail:
         """ Read an attachment of a message and write it to the local file system """
 
         store_dir = Path(__file__).parent.absolute()
-        extension = filename.split(".")[1]
-        filename_base = filename.split(".")[0]
-        filename = "mail_" + time.strftime("%Y%m%d_") + filename_base + "." + extension.lower()
-        path = Path(store_dir / destination / filename)
+        #extension = filename.split(".")[1]
+        #filename_base = filename.split(".")[0]
+        #filename = "mail_" + time.strftime("%Y%m%d_") + filename_base + "." + extension.lower()
+        path = Path(store_dir / destination / self._reformat_filename(filename))
 
         with build("gmail", "v1", credentials=self.creds) as service:
             attachment = service.users().messages().attachments().get(
