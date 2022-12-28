@@ -4,7 +4,7 @@ from imaplib import IMAP4_SSL
 from socket import gaierror
 import email
 import email.header
-import pathlib
+from pathlib import Path
 
 import module_log
 import static_variables as static
@@ -59,22 +59,22 @@ class ImapMail:
 
                     # Get filename and extension of the downloadable file
                     file_name = "mail_" + part.get_filename()
-                    file_extension = pathlib.Path(file_name).suffix.replace('.','').lower()
+                    file_extension = Path(file_name).suffix.replace('.','').lower()
                     module_log.log(f"File Extension: {file_extension}")
 
                     # Only download file if its extension is in config file
                     if bool(file_name) and (file_extension in self.allowed_extensions):
                         # Define path where to store the file locally
-                        file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() /
+                        file_path = Path(Path(__file__).parent.absolute() /
                                                  directory / file_name.lower())
 
-                        if not pathlib.Path.is_file(file_path):
+                        if not Path.is_file(file_path):
                             # If file is not yet downloaded
                             with open(file_path, 'wb') as file:
                                 file.write(part.get_payload(decode=True))
                             module_log.log(f"New file downloaded: {file_path}")
                             success = True
-                        elif pathlib.Path.is_file(file_path):
+                        elif Path.is_file(file_path):
                             # If file already exists, don't download it
                             module_log.log("Filename already exists!")
                         else:

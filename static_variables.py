@@ -1,12 +1,12 @@
 """ Generating static variables for all modules """
 
 import configparser
-import pathlib
+from pathlib import Path
 from ast import literal_eval
 
 
 config = configparser.ConfigParser()
-config_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / 'config.ini')
+config_path = Path(Path(__file__).parent.absolute() / 'config.ini')
 config.read(config_path)
 
 # GLOBAL

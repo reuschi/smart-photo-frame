@@ -1,7 +1,7 @@
 """ Module with Database functions """
 
 import sqlite3
-import pathlib
+from pathlib import Path
 import sys
 
 import module_log
@@ -12,7 +12,7 @@ class DBHelper:
 
     def __init__(self, table: str):
         str_table = table + ".db"
-        db_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / str_table)
+        db_path = Path(Path(__file__).parent.absolute() / str_table)
         self.db_connection = sqlite3.connect(db_path)
         self.db_cursor = self.db_connection.cursor()
         self.table = table

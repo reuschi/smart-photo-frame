@@ -1,6 +1,6 @@
 """ Module to control Owncloud connection """
 
-import pathlib
+from pathlib import Path
 import easywebdav2
 
 import module_log
@@ -36,8 +36,10 @@ class Owncloud:
 
         try:
             return self.owncloud.ls()
-        except ConnectionError as exc:
-            module_log.log(f"Connection Error. Connection reset by peer. Try again.")
+        except ConnectionError:
+            module_log.log("Connection Error. Connection reset by peer. Try again.")
+
+        return None
 
     @staticmethod
     def _get_filename(path: str):
@@ -65,8 +67,7 @@ class Owncloud:
                     module_log.log("New file found on Owncloud. Start downloading.")
                     path = getattr(file, "name")
                     filename = str(self._get_filename(path))
-                    upload_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() /
-                                               "images" / filename)
+                    upload_path = Path(Path(__file__).parent.absolute() / "images" / filename)
                     self.owncloud.download(path, upload_path)
                     success = True
                     module_log.log(f"File {filename} downloaded successfully from Owncloud.")

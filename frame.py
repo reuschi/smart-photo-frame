@@ -4,7 +4,7 @@ import os
 import subprocess
 import time
 import glob
-import pathlib
+from pathlib import Path
 
 import module_log
 import static_variables as static
@@ -53,7 +53,7 @@ class Frame:
             maximum = self.max_photocount
 
         module_log.log("Checking for old files to be deleted...")
-        file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / "*.*")
+        file_path = Path(Path(__file__).parent.absolute() / directory / "*.*")
         delete = False
 
         files = glob.glob(str(file_path))
@@ -74,7 +74,7 @@ class Frame:
     def run_slideshow(self, path: str = "images", verbose: bool = False):
         """ Start the slideshow with all present files in subfolder defined in variable 'path' """
 
-        path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / path / "*.*")
+        path = Path(Path(__file__).parent.absolute() / path / "*.*")
         if verbose:
             bash_command = f"sudo fbi --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
         else:

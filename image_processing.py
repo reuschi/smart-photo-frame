@@ -1,6 +1,6 @@
 """ Processing images on the SD Card """
 
-import pathlib
+from pathlib import Path
 import subprocess
 
 from PIL import Image
@@ -45,7 +45,7 @@ class IProc:
         """ Depending on the orientation, the image can be rotated left or right """
 
         try:
-            path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / image.lower())
+            path = Path(Path(__file__).parent.absolute() / "images" / image.lower())
             file = Image.open(path)
             if orientation == "l":
                 rotated = IProc.__rotate_left(file)
@@ -72,7 +72,7 @@ class IProc:
         """ Delete an image """
 
         try:
-            image_file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images" / image)
+            image_file = Path(Path(__file__).parent.absolute() / "images" / image)
             bash_command = f"sudo rm {image_file}"
             with subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE) as reply:

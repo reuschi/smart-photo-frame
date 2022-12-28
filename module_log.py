@@ -2,13 +2,13 @@
 
 import time
 
-import pathlib
+from pathlib import Path
 import static_variables
 
 
 logToFile = static_variables.logToFile
 logToScreen = static_variables.logToScreen
-logging_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
+logging_path = Path(Path(__file__).parent.absolute() / "message.log")
 
 
 def log_to_screen(logging):

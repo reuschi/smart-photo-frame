@@ -2,7 +2,7 @@
 
 import time
 import shutil
-import pathlib
+from pathlib import Path
 import subprocess
 import json
 import sys
@@ -141,7 +141,7 @@ class Telegram:
 
         try:
             # Build the correct file path on the local file system
-            file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / destination / filename)
+            file = Path(Path(__file__).parent.absolute() / destination / filename)
             file.parent.mkdir(exist_ok=True, parents=True)
 
             # Get the file downloaded
@@ -255,9 +255,9 @@ class Telegram:
                               format(extensions))
             module_log.log(f"New extension(s) added: {extensions}")
         except AttributeError:
-            module_log.log(f"Error. No new extension(s) added.")
+            module_log.log("Error. No new extension(s) added.")
         except ValueError:
-            module_log.log(f"Error. No new extension(s) added.")
+            module_log.log("Error. No new extension(s) added.")
 
     def _add_sender(self, from_id, message_text):
         """ Add a new id to allowed sender list """
@@ -271,12 +271,13 @@ class Telegram:
                 self.allowed_senders.append(int(sender))
 
             self.send_message(from_id,
-                              texts.texts[static.language]['tg']['new_sender_id'].format(sender_ids))
+                              texts.texts[static.language]['tg']['new_sender_id'].
+                              format(sender_ids))
             module_log.log(f"New sender added to allowed sender list: {sender_ids}")
         except AttributeError:
-            module_log.log(f"Error. No new sender added.")
+            module_log.log("Error. No new sender added.")
         except ValueError:
-            module_log.log(f"Error. No new sender added.")
+            module_log.log("Error. No new sender added.")
 
     def _get_identity(self, from_id):
         """ Return public ip address to sender """
@@ -288,7 +289,7 @@ class Telegram:
     def _list_images(self, from_id):
         """ List all images stored on the disk (in sub folder ./images) """
 
-        path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "images")
+        path = Path(Path(__file__).parent.absolute() / "images")
         try:
             files = [x.name for x in path.glob('**/*') if x.is_file()]
             self.send_message(from_id, str(files))
@@ -318,23 +319,23 @@ class Telegram:
                     self.send_message(from_id, str(error))
                     module_log.log("No image file deleted.")
         except AttributeError:
-            module_log.log(f"Error. No image deleted.")
+            module_log.log("Error. No image deleted.")
         except ValueError:
-            module_log.log(f"Error. No image deleted.")
+            module_log.log("Error. No image deleted.")
 
         return success
 
     def _send_log(self, from_id):
         """ Fetch log file and send it back to the user """
 
-        file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "message.log")
+        file = Path(Path(__file__).parent.absolute() / "message.log")
         if self.send_file(from_id, file):
             module_log.log("Log File sent.")
 
     def _send_config(self, from_id):
         """ Fetch config file and send it back to the user """
 
-        file = pathlib.Path(pathlib.Path(__file__).parent.absolute() / "config.ini")
+        file = Path(Path(__file__).parent.absolute() / "config.ini")
         if self.send_file(from_id, file):
             module_log.log("Configuration file sent.")
 
@@ -370,7 +371,7 @@ class Telegram:
 
         module_log.log(f"Updating branch {branch}")
 
-        repo = git.Repo(pathlib.Path(__file__).parent.absolute())
+        repo = git.Repo(Path(__file__).parent.absolute())
         repo.git.checkout(branch)
         update = repo.git.pull('origin', branch)
         if "Updating" in update:
