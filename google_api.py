@@ -36,7 +36,8 @@ class Gmail:
                 print(file_path)
                 self.flow = InstalledAppFlow.from_client_secrets_file(file_path, self.SCOPES)
                 self.creds = self.flow.run_local_server(port=0)
-            with open(str(Path(Path(__file__).parent.absolute() / "token.json")), "w", encoding="UTF-8") as token:
+            with open(str(Path(Path(__file__).parent.absolute() / "token.json")), "w",
+                      encoding="UTF-8") as token:
                 token.write(self.creds.to_json())
 
     def _reformat_filename(self, filename):
@@ -89,12 +90,14 @@ class Gmail:
         mails = self.get_message_ids()
         label_id = self.get_label_id_by_name(label)
 
-        new_mails = {}
+        new_mails = {
+            'messages': []
+        }
 
         for message in mails['messages']:
-            if label_id in message['labelIds']:
-                #new_mails['messages'].
-                pass
+            msg = self.read_message(message['id'])
+            if label_id in msg['labelIds']:
+                new_mails['messages'].append({'id': message['id']})
 
         return new_mails
 
@@ -119,9 +122,6 @@ class Gmail:
         """ Read an attachment of a message and write it to the local file system """
 
         store_dir = Path(__file__).parent.absolute()
-        #extension = filename.split(".")[1]
-        #filename_base = filename.split(".")[0]
-        #filename = "mail_" + time.strftime("%Y%m%d_") + filename_base + "." + extension.lower()
         path = Path(store_dir / destination / self._reformat_filename(filename))
 
         with build("gmail", "v1", credentials=self.creds) as service:
@@ -131,7 +131,8 @@ class Gmail:
             file_data = base64.urlsafe_b64decode(data.encode('UTF-8'))
 
             if path.exists():
-                module_log.log(texts.texts[static.language]['google']['file_exists'].format(filename))
+                module_log.log(texts.texts[static.language]['google']['file_exists'].
+                               format(filename))
 
             else:
                 with open(path, 'wb') as file:
@@ -140,7 +141,7 @@ class Gmail:
 
             return False
 
-    def download_attachment(self, mails, label=None):
+    def download_attachment(self, mails):
         """ Download attachments from all mails in mailbox """
 
         success = False
@@ -148,20 +149,15 @@ class Gmail:
 
         try:
             for mail in mails['messages']:
-                #print(mail['id'])
                 message = self.read_message(mail['id'])
                 message_id = message["id"]
                 message_parts = message["payload"]["parts"]
 
                 for part in message_parts:
-                    #print(f"Part-ID: {part['partId']}")
-                    #print(f"Mime-Type: {part['mimeType']}")
-                    #print(f"Filename: {part['filename']}")
-
                     extension = part['filename'].split(".")
 
-                    if 'image' in part['mimeType'] and extension[1].lower() in static.file_extensions:
-                        #print(f"Attachment-ID: {part['body']['attachmentId']}")
+                    if 'image' in part['mimeType'] and \
+                            extension[1].lower() in static.file_extensions:
                         if self.read_attachment(message_id, part['body']['attachmentId'],
                                                 part['filename']):
                             module_log.log(texts.texts[static.language]['google']['download_successfully'].
@@ -175,9 +171,9 @@ class Gmail:
                     else:
                         continue
 
-                if success:
-                    #module_log.log(self.delete_message(message_id))
-                    module_log.log(texts.texts[static.language]['google']['mail_deleted'].format(mail['id']))
+                if success and self.delete_message(message_id):
+                    module_log.log(texts.texts[static.language]['google']['mail_deleted'].
+                                   format(mail['id']))
                     success = False
 
         except Exception as exc:

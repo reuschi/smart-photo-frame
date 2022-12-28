@@ -65,9 +65,10 @@ if __name__ == "__main__":
             # Request for new mails and new images on Owncloud every 120 seconds
             if int(time.time()) >= reference_time + 120:
                 if hasattr(static, 'EMAIL_ACCOUNT'):
+                    # If mail account is Gmail
                     if "gmail.com" in static.EMAIL_ACCOUNT:
-                        mails = imap.get_message_ids()
-                        MAIL = imap.download_attachment(mails, label_id)
+                        mails = imap.get_message_ids_by_label_name()
+                        MAIL = imap.download_attachment(mails)
                     else:
                         MAIL = imap.init_imap()
                 if hasattr(static, 'oc_host'):
@@ -91,4 +92,3 @@ if __name__ == "__main__":
 
         except Exception as exc:
             module_log.log(f"An exception occured: {exc}")
-
