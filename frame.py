@@ -7,6 +7,7 @@ import glob
 import pathlib
 
 import module_log
+import static_variables as static
 
 
 class Frame:
@@ -101,6 +102,7 @@ class Frame:
         """ Rise timer of presentation, to lower the showing frequency """
 
         self.timer += 2
+        static.change_config_value('frame', 'timer', str(self.timer))
         module_log.log(f"Timer raised to: {self.timer}.")
         self.restart_slideshow()
 
@@ -109,6 +111,7 @@ class Frame:
 
         if self.timer >= 4:
             self.timer -= 2
+            static.change_config_value('frame', 'timer', str(self.timer))
             module_log.log(f"Timer lowered to: {self.timer}.")
             self.restart_slideshow()
         else:
