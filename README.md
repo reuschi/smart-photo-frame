@@ -20,7 +20,7 @@ This is a Smart Photo Frame to show a slideshow of pictures that were sent via e
 2. Create your own config.ini file (see chapter for config)
 3. If you want to be able to update the frame via Telegram, you need to store your GitHub login data in store manager on RasPi and copy the ".gitconfig" and ".git-credentials" files to "/root".
 4. Connect an HDMI screen to the RasPi (TV, computer monitor, HDMI display, etc.)
-5. If you're using Gmail as mailbox, you need to activate the Gmail API on your account and stroe the credentials.json in the root directory of the progam
+5. If you're using Gmail as mailbox, you need to activate the Gmail API on your account and store the "credentials.json" in the root directory of the progam
 
 ## Folder structure
 
@@ -119,7 +119,6 @@ You can add some more commands by your own by just adding them to the configurat
 
 To only get those mails downloaded that are intended for the photo frame, you should create a subfolder in your mailbox. By default the system awaits the folder name to be **"Smart Photo Frame"**. You can change it in the source code as you want.\
 New mails should be moved automatically to this subfolder or sorted out by an inbox rule.\
-<!--If you want to use a mailbox at Gmail, as I did, you need to adjust the mailbox settings. Either you activate the login for unsecure third party apps or you activate the 2FA and register another third party app where you create a new password which you can enter in the configuration of the Picture Frame.-->
 If you want to use a mailbox at Gmail, as I did, you need to activate the Gmail API like described here: https://developers.google.com/gmail/api/quickstart/python. You just need to follow the steps *Enable the API* and *Authorize credentials for a desktop application*. But don't forget to add your email address to the testusers in the *OAuth-Consent Screen* section. Store the data for access (credentials.json) in the folder of the frame script. 
 
 ## Preparing your Owncloud account
