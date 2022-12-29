@@ -1,134 +1,147 @@
+""" Fetching new mails from specific mail account """
+
 from imaplib import IMAP4_SSL
-from socket import gethostbyname,gaierror
+from socket import gaierror
 import email
 import email.header
-import os.path
+from pathlib import Path
+
 import module_log
-import pathlib
-import static_variables
+import static_variables as static
+import texts
 
 
-# Initialize static variables
-EMAIL_ACCOUNT = static_variables.EMAIL_ACCOUNT
-EMAIL_PASS = static_variables.EMAIL_PASS
-allowedExtensions = static_variables.fileExtensions
+class ImapMail:
+    """ Get mails and process the attachments """
 
+    def __init__(self, account: str, passwd: str, hostname: str,
+                 ext: str = "jpg,JPG", subfolder: str = "Smart Photo Frame"):
+        self.email_account = account
+        self.email_password = passwd
+        self.hostname = hostname
+        self.allowed_extensions = ext
+        self.subfolder = subfolder
+        self.language = static.language
 
-def downloadAttachment(M, directory='images'):
-    # Download attachments from mails sent to the mail account
-    success = False
-    rv, data = M.search(None, 'ALL')
-    if rv != 'OK':
-        module_log.log("Request to Mailbox was not successful!")
-        return False
+    def download_attachment(self, mail, directory: str = "images"):
+        """ Download attachments from mails stored in a specific sub folder """
 
-    if not data[0]:
-        module_log.log("No new mail found")
-    else:
-        for num in data[0].split():
-            module_log.log("Trying to download mail attachment...")
+        success = False
+        receive, data = mail.search(None, 'ALL')
+        if receive != 'OK':
+            module_log.log("Request to Mailbox was not successful!")
+            return False
 
-            # Try to fetch new mails
-            rv, data = M.fetch(num, '(RFC822)')
-            if rv != 'OK':
-                module_log.log("ERROR getting message", num)
-                return False
+        if not data[0]:
+            module_log.log("No new mail found")
+        else:
+            for num in data[0].split():
+                module_log.log("Trying to download mail attachment...")
 
-            msg = email.message_from_bytes(data[0][1])
+                # Try to fetch new mails
+                receive, data = mail.fetch(num, '(RFC822)')
+                if receive != 'OK':
+                    module_log.log("ERROR getting message")
+                    return False
 
-            # Downloading attachments
-            for part in msg.walk():
-                # Only download attachments, if they are real attachments
-                if part.get_content_maintype() == 'multipart':
-                    continue
-                else:
+                msg = email.message_from_bytes(data[0][1])
+
+                # Downloading attachments
+                for part in msg.walk():
+                    # Only download attachments, if they are real attachments
+                    if part.get_content_maintype() == 'multipart':
+                        continue
+
                     module_log.log("No attachment found!")
 
-                if part.get('Content-Disposition') is None:
-                    continue
+                    if part.get('Content-Disposition') is None:
+                        continue
 
-                # Get filename and extension of the downloadable file
-                fileName = "mail_" + part.get_filename()
-                fileExtension = os.path.splitext(fileName)[1].lower()
+                    # Get filename and extension of the downloadable file
+                    file_name = "mail_" + part.get_filename()
+                    file_extension = Path(file_name).suffix.replace('.','').lower()
+                    module_log.log(f"File Extension: {file_extension}")
 
-                # Only download file if its extension is on config file
-                if bool(fileName) and (fileExtension in allowedExtensions):
-                    # Define path where to store the file locally
-                    filePath = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / fileName)
+                    # Only download file if its extension is in config file
+                    if bool(file_name) and (file_extension in self.allowed_extensions):
+                        # Define path where to store the file locally
+                        file_path = Path(Path(__file__).parent.absolute() /
+                                                 directory / file_name.lower())
 
-                    if not os.path.isfile(filePath):
-                        # If file is not yet downloaded
-                        fp = open(filePath, 'wb')
-                        fp.write(part.get_payload(decode=True))
-                        fp.close()
-                        module_log.log(f"New file downloaded: {filePath}")
-                        success = True
-                    elif os.path.isfile(filePath):
-                        # If file already exists, don't download it
-                        module_log.log("Filename already exists!")
+                        if not Path.is_file(file_path):
+                            # If file is not yet downloaded
+                            with open(file_path, 'wb') as file:
+                                file.write(part.get_payload(decode=True))
+                            module_log.log(f"New file downloaded: {file_path}")
+                            success = True
+                        elif Path.is_file(file_path):
+                            # If file already exists, don't download it
+                            module_log.log("Filename already exists!")
+                        else:
+                            # If there is no new file to download
+                            module_log.log("No new file downloaded!")
                     else:
-                        # If there is no new file to download
-                        module_log.log("No new file downloaded!")
-                else:
-                    # If file extension is not allowed to download
-                    module_log.log(f"File Extension not allowed ('{fileExtension}')")
+                        # If file extension is not allowed to download
+                        module_log.log(f"File Extension not allowed ('{file_extension}')")
 
-            # After downloading the attachments move the mail into Trash folder
-            try:
-                if rv == 'OK':
-                    M.store(num, '+X-GM-LABELS', '\\Trash')
-                    M.expunge()
-            except Exception as e:
-                module_log.log(e)
+                # After downloading the attachments move the mail into Trash folder
+                try:
+                    if receive == 'OK':
+                        if "gmail.com" in self.hostname:
+                            mail.store(num, '+X-GM-LABELS', '\\Trash')
+                            mail.expunge()
+                        else:
+                            mail.store(num, '+FLAGS', '\\Deleted')
+                except Exception as exc:
+                    module_log.log(exc)
 
-    return success
+        return success
 
+    def init_imap(self):
+        """ Receive new mails """
 
-def initImap(username, password, hostname="imap.gmail.com"):
-    # Receive new mails
-    success = False
-    try:
-        module_log.log("Trying to fetch new mails")
-        # Initialize connection and login to mail account
-        Mail = IMAP4_SSL(host=hostname, port=993)
-        rv, data = Mail.login(username, password)
+        success = False
 
-        module_log.log(data)
+        try:
+            module_log.log("Trying to fetch new mails")
+            # Initialize connection and login to mail account
+            imap = IMAP4_SSL(host=self.hostname, port=993)
+            receive, data = imap.login(self.email_account, self.email_password)
 
-        # Receive Mailboxes
-        rv, mailboxes = Mail.list()
-        if rv == 'OK':
-            module_log.log("Mailboxes found: " + str(mailboxes))
-        else:
-            module_log.log("No Mailbox found")
-            return "ERROR: No Mailbox to open"
+            # For debugging purposes
+            if static.debug:
+                module_log.log(data)
 
-        # Select mailbox folder to download images from and download new images
-        rv, data = Mail.select('"Smart Photo Frame"')
-        if rv == 'OK':
-            module_log.log("Processing mailbox...")
+            # Receive Mailboxes
+            receive, mailboxes = imap.list()
+            if receive == 'OK':
+                # For debugging purposes
+                module_log.log("Mailbox found")
+                if static.debug:
+                    # For debugging purposes
+                    module_log.log(str(mailboxes))
+            else:
+                module_log.log("No Mailbox found")
+                return texts.texts[self.language]['imap']['no_mailbox_found']
 
-            success = downloadAttachment(Mail)
-        else:
-            return f"ERROR: Unable to open mailbox {rv}"
+            # Select mailbox folder to download images from and download new images
+            receive, data = imap.select(f'"{self.subfolder}"')
+            if receive == 'OK':
+                module_log.log("Processing mailbox...")
 
-        # Close connection to mail server
-        Mail.close()
-        Mail.logout()
+                success = self.download_attachment(imap)
+            else:
+                return texts.texts[self.language]['imap']['mailbox_open_error'].format(receive)
 
-    except gaierror as e:
-        module_log.log("DNS name not resolvable. Try again later.")
-    except IMAP4_SSL.error as e:
-        module_log.log(e)
-    except Exception as e:
-        module_log.log(e)
+            # Close connection to mail server
+            imap.close()
+            imap.logout()
 
-    return success
+        except gaierror:
+            module_log.log("DNS name not resolvable. Try again later.")
+        except IMAP4_SSL.error as exc:
+            module_log.log(exc)
+        except Exception as exc:
+            module_log.log(exc)
 
-
-def main():
-    return initImap(EMAIL_ACCOUNT, EMAIL_PASS)
-
-
-if __name__ == "__main__":
-    main()
+        return success

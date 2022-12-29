@@ -1,138 +1,127 @@
+""" This module is to control the frame process itself """
+
 import os
 import subprocess
 import time
-import imap
-import telegram
-import module_log
 import glob
-import pathlib
-import static_variables
-import RPi.GPIO as GPIO
+from pathlib import Path
+
+import module_log
+import static_variables as static
 
 
-# Initialize static variables
-images = []
-timer = static_variables.timer
-blend = static_variables.blend    # in milliseconds
-photocount = static_variables.photocount
+class Frame:
+    """ Main class for frame and slideshow control """
 
-# Initialize GPIOs für Buttons
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(9, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    def __init__(self, timer: int, blend: int, max_photo: int):
+        self.images = []
+        self.timer = timer
+        self.blend = blend  # in milliseconds
+        self.max_photocount = max_photo
 
+    @staticmethod
+    def _run_subprocess(bash_command: str):
+        """ Run a subprocess including the bash_command """
 
-def exit_Slideshow():
-    # Kill all running processes of the slideshow
-    try:
-        os.system("sudo killall -15 fbi")
-        module_log.log("Slideshow killed")
-    except Exception as e:
-        module_log.log(e)
-
-
-def delete_Old_Files(directory="images", max=photocount):
-    # Delete older image files in 'directory' that are over amount 'max'
-    module_log.log("Checking for old files to be deleted...")
-    file_path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / directory / "*.*")
-    delete = False
-
-    files = glob.glob(str(file_path))
-    files.sort(key=os.path.getmtime, reverse=True)
-
-    for x in range(max, len(files)):
         try:
-            os.remove(files[x])
+            with subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE) as reply:
+                _output, error = reply.communicate()
+
+            if "Terminated" not in str(error):
+                return True
+
+            # module_log.log("Standard output: " + str(output))
+            module_log.log("Error output: " + str(error))
+            return False
+
+        except subprocess.SubprocessError as exc:
+            module_log.log(exc)
+            return False
+
+    def exit_slideshow(self):
+        """ Kill all running processes of the slideshow """
+
+        bash_command = "sudo killall -15 fbi"
+        if self._run_subprocess(bash_command):
+            module_log.log("Slideshow killed")
+
+    def delete_old_files(self, directory: str = "images", maximum: int = None):
+        """ Delete older image files in 'directory' that are over amount 'max' """
+
+        if maximum is None:
+            maximum = self.max_photocount
+
+        module_log.log("Checking for old files to be deleted...")
+        file_path = Path(Path(__file__).parent.absolute() / directory / "*.*")
+        delete = False
+
+        files = glob.glob(str(file_path))
+        files.sort(key=os.path.getmtime, reverse=True)
+
+        for index in range(maximum, len(files)):
+            bash_command = f"sudo rm {files[index]}"
+            if not self._run_subprocess(bash_command):
+                module_log.log(f"Removing the file {files[index]} was NOT successful.")
+
             delete = True
-        except Exception as e:
-            module_log.log(f"Removing the file {files[x]} was NOT successful: {e}")
 
-    if delete:
-        module_log.log("Deleting old files is done.")
-    else:
-        module_log.log("There were no files to be deleted.")
-
-
-def run_Slideshow(path='images'):
-    # Start the slideshow with all present files in subfolder defined in variable 'path'
-    path = pathlib.Path(pathlib.Path(__file__).parent.absolute() / path / "*.*")
-    bashCommand = f"sudo fbi --noverbose --random --blend {blend} -a -t {timer} -T 1 {path}"
-    process = subprocess.Popen(bashCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    time.sleep(0.5)
-
-    module_log.log("Slideshow running")
-
-
-def restart_Slideshow():
-    # Stop slideshow and restart the slideshow with the new added image files
-    module_log.flush_Log_File()
-    module_log.log("Slideshow restarting")
-    exit_Slideshow()
-    delete_Old_Files()
-    run_Slideshow()
-
-
-def rise_Timer(channel):
-    # Rise timer of presentation, to lower the showing frequency
-    global timer
-
-    timer += 2
-    module_log.log(f"Timer raised to: {timer}.")
-    restart_Slideshow()
-
-
-def lower_Timer(channel):
-    # Lower timer of presentation, to rise the showing frequency
-    global timer
-
-    if timer >= 4:
-        timer -= 2
-        module_log.log(f"Timer lowered to: {timer}.")
-        restart_Slideshow()
-    else:
-        module_log.log(f"Timer already at: {timer}. Lowering not possible!")
-
-
-def system_Shut_Down(channel):
-    # Shutdown the whole system
-    module_log.log("!!!! SYSTEM IS GOING TO SHUTDOWN !!!!")
-    os.system("sudo poweroff")
-    time.sleep(1)
-
-
-if __name__ == '__main__':
-    module_log.log("!!!! SYSTEM STARTED !!!!")
-    restart_Slideshow()
-
-    i = 0
-
-    # Rise presentation Timer
-    GPIO.add_event_detect(27, GPIO.FALLING, callback=rise_Timer, bouncetime=400)
-
-    # Lower presentation Timer
-    GPIO.add_event_detect(19, GPIO.FALLING, callback=lower_Timer, bouncetime=400)
-
-    # Shutdown the system
-    GPIO.add_event_detect(9, GPIO.FALLING, callback=system_Shut_Down, bouncetime=400)
-
-    while True:
-        # Request for new mails every 2 minutes
-        if i >= 7:
-            mail = imap.main()
-            i = 0
+        if delete:
+            module_log.log("Deleting old files is done.")
         else:
-            i += 1
-            mail = False
+            module_log.log("There were no files to be deleted.")
 
-        # Request for new Telegram message
-        tg = telegram.main()
+    def run_slideshow(self, path: str = "images", verbose: bool = False):
+        """ Start the slideshow with all present files in subfolder defined in variable 'path' """
 
-        # If new images received by mail or Telegram restart the slideshow with the new images
-        if tg or mail:
-            restart_Slideshow()
+        path = Path(Path(__file__).parent.absolute() / path / "*.*")
+        if verbose:
+            bash_command = f"sudo fbi --random --blend {self.blend} -a -t {self.timer} -T 1 {path}"
+        else:
+            bash_command = f"sudo fbi --noverbose --random --blend {self.blend}" \
+                           f" -a -t {self.timer} -T 1 {path}"
 
-        time.sleep(15)
+        slideshow = self._run_subprocess(bash_command)
+        # Needed implementation for RaspiZeroW to not terminate the start of the
+        # framebuffer while booting up
+        #time.sleep(2)
+        module_log.log("Slideshow running")
+        return slideshow
 
+    def restart_slideshow(self, verbose: bool = False):
+        """ Stop slideshow and restart the slideshow with the new added image files """
 
+        module_log.flush_log_file()
+        module_log.log("Slideshow restarting")
+        self.exit_slideshow()
+        self.delete_old_files()
+        if not self.run_slideshow(verbose=verbose):
+            self.run_slideshow(verbose=verbose)
 
+    def rise_timer(self, _channel):
+        """ Rise timer of presentation, to lower the showing frequency """
+
+        self.timer += 2
+        static.change_config_value('frame', 'timer', str(self.timer))
+        module_log.log(f"Timer raised to: {self.timer}.")
+        self.restart_slideshow()
+
+    def lower_timer(self, _channel):
+        """ Lower timer of presentation, to rise the showing frequency """
+
+        if self.timer >= 4:
+            self.timer -= 2
+            static.change_config_value('frame', 'timer', str(self.timer))
+            module_log.log(f"Timer lowered to: {self.timer}.")
+            self.restart_slideshow()
+        else:
+            module_log.log(f"Timer already at: {self.timer}. Lowering not possible!")
+
+    def system_shutdown(self, _channel):
+        """ Shutdown the whole system """
+
+        #module_log.log("!!!! SYSTEM IS GOING TO SHUTDOWN !!!!")
+        bash_command = "sudo poweroff"
+        if self._run_subprocess(bash_command):
+            module_log.log("!!!! SYSTEM IS GOING TO SHUTDOWN !!!!")
+        time.sleep(1)
