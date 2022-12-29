@@ -15,8 +15,9 @@ import texts
 
 
 class Gmail:
-    """ Google API class """
+    """ Google Gmail API class """
 
+    # Set scopes for API access
     SCOPES = ["https://mail.google.com/"]
 
     def __init__(self, label="Smart Photo Frame"):
@@ -25,6 +26,8 @@ class Gmail:
         self._authorize()
 
     def _authorize(self):
+        """ Authorize the script against Google """
+
         if Path(Path(__file__).parent.absolute() / "token.json").exists():
             self.creds = Credentials.from_authorized_user_file(
                 str(Path(Path(__file__).parent.absolute() / "token.json")), self.SCOPES)
@@ -102,7 +105,7 @@ class Gmail:
         return new_mails
 
     def read_message(self, message_id):
-        """ Read message with msg_id """
+        """ Read a single message """
 
         with build("gmail", "v1", credentials=self.creds) as service:
             message = service.users().messages().get(userId="me", id=message_id).execute()
