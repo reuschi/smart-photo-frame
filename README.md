@@ -6,7 +6,7 @@ This is a Smart Photo Frame to show a slideshow of pictures that were sent via e
 
 ## Recommended hardware and software
 
-**Computing Hardware:** Every RaspberryPi (or other Linux driven system) with wireless or wired connection (successfully running on ZeroW)\
+**Computing Hardware:** Every RaspberryPi (or other Linux driven system) with wireless or wired connection and acces to internet (successfully tested and running on ZeroW)\
 **Display:** Each HDMI connectable display
 
 **Operating System:** RaspberryPi OS (Lite installation is enough)\
@@ -20,6 +20,7 @@ This is a Smart Photo Frame to show a slideshow of pictures that were sent via e
 2. Create your own config.ini file (see chapter for config)
 3. If you want to be able to update the frame via Telegram, you need to store your GitHub login data in store manager on RasPi and copy the ".gitconfig" and ".git-credentials" files to "/root".
 4. Connect an HDMI screen to the RasPi (TV, computer monitor, HDMI display, etc.)
+5. If you're using Gmail as mailbox, you need to activate the Gmail API on your account and stroe the credentials.json in the root directory of the progam
 
 ## Folder structure
 
@@ -28,6 +29,7 @@ All other data is stored in the main folder of the cloned repository.\
 Automatic generated files by the frame are:
 * telegram_bot.db
 * messages.log
+* token.json (if using Gmail)
 
 If you delete these files manually after creation, some errors may occur or the download of the files will not work as expected for some time.
 
@@ -41,7 +43,7 @@ allowedsenders = 123456789,<comma seperated Telegram user id's>
 admins = <comma seperated Telegram user id's> ; will be allowed to send admin commands
 auth_password = <admin password>
 status_signal = True/False ; frame gives feedback via Telegram when it's started and shutdown
-poll_timeout = 60 ; Timeout for long poll configuration
+poll_timeout = 60 ; Timeout for long poll configuration (max. 90 seconds should be set)
 commands = [{"command": "deleteimg", "description": "Delete an image from frame"},
             {"command": "getconfig", "description": "Send configuration file as attachment"},
             {"command": "getident", "description": "Get current external ip address"},
@@ -80,11 +82,11 @@ debug = True/False ; set debug mode for more detailed messages
 [global]
 language = EN/DE ; language of return text messages - other languages need to be added to texts.py
 ```
-By not adding the sections *telegram*, *mail*, and/or *owncloud* into the config file, you can exclude this module from using. So, if you just want to use this frame with a Telegram Bot and by Mail, you can delete the owncloud section from your config file and the frame will not try to gather images files from Owncloud .
+By not adding the sections *telegram*, *mail*, and/or *owncloud* into the config file, you can exclude this module from using. So, if you just want to use this frame with a Telegram Bot and by Mail, you can delete the owncloud section from your config file and the frame will not try to gather image files from Owncloud .
 
 ## Creating a Telegram Bot
 
-You need to create your own Telegram Bot. For that just follow the tasks:
+You need to create your own Telegram Bot. For that, just follow the tasks:
 1. Open Telegram on your smartphone or in your browser (https://web.telegram.org/)
 2. Search for the global contact *@BotFather*
 3. Send the message "/newbot" and configure your Bot (name, settings, etc.)
@@ -106,18 +108,19 @@ As seen above in the config, the follwing bot commands will be placed to the bot
 * */getlog* - Returns the **message.log** file from frame root as downloadable file.
 * */listimg* - Lists all images stored in the images folder.
 * */reboot* - Reboots the whole system (RasPi).
-* */rotate <image_name_1>,<l/r> <image_name_2>,<l/r> etc.* - Rotates the named image(s) 90° to the left (l) or to the right (r). Files must be seperated by whitespaces and file names needs to be followed by orientation.
-* */toggle_signaling* - Toggles the Feedback from the frame when it's booted up or shutting down.
-* */toggle_verbose* - Toggled the display of additional information in the image presentation of the frame.
-* */update (<repository_name>)* - Update system with current master repository. If entered a name, then this command tries to checkout and update the named branch.
+* */rotate <image_name_1>,<l/r> <image_name_2>,<l/r> etc.* - Rotates the named image(s) 90° to the left (l) or to the right (r). Files must be seperated by whitespaces and file names need to be followed by orientation.
+* */toggle_signaling* - Toggles the feedback from the frame when it's booted up or shutting down.
+* */toggle_verbose* - Toggles the display of additional information in the image presentation of the frame.
+* */update \[<repository_name>\]* - Update system with current master repository. If entered a repository name, then this command tries to checkout and update the named branch.
 
-You can add some more commands by your own by just adding them to the configuration. All of the listed commands will be pushed to the Telegram Bot when starting the frame.
+You can add some more commands by your own by just adding them to the configuration. The functionality must be programmed in the appropriate module. All of the listed commands will be pushed to the Telegram Bot when starting the frame.
 
 ## Preparing your mailbox
 
 To only get those mails downloaded that are intended for the photo frame, you should create a subfolder in your mailbox. By default the system awaits the folder name to be **"Smart Photo Frame"**. You can change it in the source code as you want.\
 New mails should be moved automatically to this subfolder or sorted out by an inbox rule.\
-If you want to use a mailbox at Gmail, as I did, you need to adjust the mailbox settings. Either you activate the login for unsecure third party apps or you activate the 2FA and register another third party app where you create a new password which you can enter in the configuration of the Picture Frame.
+<!--If you want to use a mailbox at Gmail, as I did, you need to adjust the mailbox settings. Either you activate the login for unsecure third party apps or you activate the 2FA and register another third party app where you create a new password which you can enter in the configuration of the Picture Frame.-->
+If you want to use a mailbox at Gmail, as I did, you need to activate the Gmail API like described here: https://developers.google.com/gmail/api/quickstart/python. You just need to follow the steps *Enable the API* and *Authorize credentials for a desktop application*. But don't forget to add your email address to the testusers in the *OAuth-Consent Screen* section. Store the data for access (credentials.json) in the folder of the frame script. 
 
 ## Preparing your Owncloud account
 
@@ -149,3 +152,4 @@ For my use case I soldered them directly on the RasPi and gave the buttons that 
 - [ ] Complete the replacement of all texts in english and german
 - [x] Implement another interconnection between frame and sender (OwnCloud, Dropbox, etc.)
 - [ ] ~~Find a different presenter application to also display videos~~ *(rejected)*
+- [ ] Refactor all modules to fit for a successful palint run
