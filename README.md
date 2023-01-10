@@ -119,7 +119,7 @@ You can add some more commands by your own by just adding them to the configurat
 
 To only get those mails downloaded that are intended for the photo frame, you should create a subfolder in your mailbox. By default the system awaits the folder name to be **"Smart Photo Frame"**. You can change it in the source code as you want.\
 New mails should be moved automatically to this subfolder or sorted out by an inbox rule.\
-If you want to use a mailbox at Gmail, as I did, you need to activate the Gmail API like described here: https://developers.google.com/gmail/api/quickstart/python. You just need to follow the steps *Enable the API* and *Authorize credentials for a desktop application*. But don't forget to add your email address to the testusers in the *OAuth-Consent Screen* section. Store the data for access (credentials.json) in the folder of the frame script. 
+If you want to use a mailbox at Gmail, as I did, you need to activate the Two-Factor-Authentication (2FA) and create an App Password in the security configuration of your Google account. Then you can use this your mail address ...@gmail.com in combination with your app password as the login data in the config file.
 
 ## Preparing your Owncloud account
 

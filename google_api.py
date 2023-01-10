@@ -1,4 +1,4 @@
-""" Module to reach GMail, as IMAP connection is blocked by security reasons """
+""" Module to reach Google API. Module usage is DEPRECATED for project. """
 
 from pathlib import Path
 import base64

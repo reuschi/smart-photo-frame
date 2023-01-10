@@ -7,7 +7,6 @@ from imap import ImapMail
 from frame import Frame
 from telegram import Telegram
 from owncloud import Owncloud
-from google_api import Gmail
 import module_log
 import static_variables as static
 
@@ -24,12 +23,8 @@ if __name__ == "__main__":
     label_id = None
 
     if hasattr(static, 'EMAIL_ACCOUNT'):
-        if "gmail.com" in static.EMAIL_ACCOUNT:
-            imap = Gmail()
-            label_id = imap.get_label_id_by_name()
-        else:
-            imap = ImapMail(static.EMAIL_ACCOUNT, static.EMAIL_PASS,
-                            static.EMAIL_HOST, static.file_extensions)
+        imap = ImapMail(static.EMAIL_ACCOUNT, static.EMAIL_PASS,
+                        static.EMAIL_HOST, static.file_extensions)
 
     if hasattr(static, 'oc_host'):
         oc = Owncloud(static.oc_host, static.oc_username,
@@ -65,12 +60,7 @@ if __name__ == "__main__":
             # Request for new mails and new images on Owncloud every 120 seconds
             if int(time.time()) >= reference_time + 120:
                 if hasattr(static, 'EMAIL_ACCOUNT'):
-                    # If mail account is Gmail
-                    if "gmail.com" in static.EMAIL_ACCOUNT:
-                        mails = imap.get_message_ids_by_label_name()
-                        MAIL = imap.download_attachment(mails)
-                    else:
-                        MAIL = imap.init_imap()
+                    MAIL = imap.init_imap()
                 if hasattr(static, 'oc_host'):
                     OWNCLOUD = oc.download_file()
                 reference_time = int(time.time())
