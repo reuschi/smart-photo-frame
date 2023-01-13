@@ -260,7 +260,27 @@ class Telegram:
         except ValueError:
             module_log.log("Error. No new extension(s) added.")
 
-    def _add_sender(self, from_id, message_text):
+    def _add_mail_sender(self, from_id, message_text):
+        """ Add new sender to allowed sender list for mails """
+
+        try:
+            sender_id_txt = message_text.split(" ")
+            sender_ids = sender_id_txt[1].split(",")
+
+            for sender in sender_ids:
+                static.add_value_to_config("mail", "allowedsenders", sender)
+                static.mail_allowed_senders.append(sender)
+
+            self.send_message(from_id,
+                              texts.texts[static.language]['tg']['new_sender_id'].
+                              format(sender_ids))
+            module_log.log(f"New sender added to allowed sender list: {sender_ids}")
+        except AttributeError:
+            module_log.log("Error. No new sender added.")
+        except ValueError:
+            module_log.log("Error. No new sender added.")
+
+    def _add_telegram_sender(self, from_id, message_text):
         """ Add a new id to allowed sender list """
 
         try:
@@ -279,25 +299,6 @@ class Telegram:
             module_log.log("Error. No new sender added.")
         except ValueError:
             module_log.log("Error. No new sender added.")
-
-    def _get_identity(self, from_id):
-        """ Return public ip address to sender """
-
-        ip_address = requests.get("https://api.ipify.org", timeout=30).text
-        self.send_message(from_id, ip_address)
-        module_log.log(f"Request for Identity. Identity is: {ip_address}")
-
-    def _list_images(self, from_id):
-        """ List all images stored on the disk (in sub folder ./images) """
-
-        path = Path(Path(__file__).parent.absolute() / "images")
-        try:
-            files = [x.name for x in path.glob('**/*') if x.is_file()]
-            self.send_message(from_id, str(files))
-            module_log.log("Image listing sent.")
-        except FileNotFoundError:
-            self.send_message(from_id, "No image uploaded yet")
-            module_log.log("Image folder not yet created")
 
     def _delete_images(self, from_id, message_text):
         """ Delete images from disk """
@@ -326,12 +327,24 @@ class Telegram:
 
         return success
 
-    def _send_log(self, from_id):
-        """ Fetch log file and send it back to the user """
+    def _get_identity(self, from_id):
+        """ Return public ip address to sender """
 
-        file = Path(Path(__file__).parent.absolute() / "message.log")
-        if self.send_file(from_id, file):
-            module_log.log("Log File sent.")
+        ip_address = requests.get("https://api.ipify.org", timeout=30).text
+        self.send_message(from_id, ip_address)
+        module_log.log(f"Request for Identity. Identity is: {ip_address}")
+
+    def _list_images(self, from_id):
+        """ List all images stored on the disk (in sub folder ./images) """
+
+        path = Path(Path(__file__).parent.absolute() / "images")
+        try:
+            files = [x.name for x in path.glob('**/*') if x.is_file()]
+            self.send_message(from_id, str(files))
+            module_log.log("Image listing sent.")
+        except FileNotFoundError:
+            self.send_message(from_id, "No image uploaded yet")
+            module_log.log("Image folder not yet created")
 
     def _send_config(self, from_id):
         """ Fetch config file and send it back to the user """
@@ -339,6 +352,13 @@ class Telegram:
         file = Path(Path(__file__).parent.absolute() / "config.ini")
         if self.send_file(from_id, file):
             module_log.log("Configuration file sent.")
+
+    def _send_log(self, from_id):
+        """ Fetch log file and send it back to the user """
+
+        file = Path(Path(__file__).parent.absolute() / "message.log")
+        if self.send_file(from_id, file):
+            module_log.log("Log File sent.")
 
     def _system_reboot(self, from_id, update_id):
         """ Reboot system by shell command """
@@ -388,22 +408,6 @@ class Telegram:
 
         return success
 
-    def _toggle_signaling(self, from_id):
-        """ Switch status signaling """
-
-        if static.status_signal:
-            static.status_signal = False
-            static.change_config_value('telegram', 'status_signal', 'False')
-            self.send_message(from_id,
-                              texts.texts[static.language]['tg']['sw_signaling'].format("Off"))
-            module_log.log("Status signaling set to Off")
-        else:
-            static.status_signal = True
-            static.change_config_value('telegram', 'status_signal', 'True')
-            self.send_message(from_id,
-                              texts.texts[static.language]['tg']['sw_signaling'].format("On"))
-            module_log.log("Status signaling set to On")
-
     def _rotate(self, from_id, message_text) -> bool:
         """ Rotate images 90 degrees left or right """
 
@@ -436,6 +440,22 @@ class Telegram:
 
         return success
 
+    def _toggle_signaling(self, from_id):
+        """ Switch status signaling """
+
+        if static.status_signal:
+            static.status_signal = False
+            static.change_config_value('telegram', 'status_signal', 'False')
+            self.send_message(from_id,
+                              texts.texts[static.language]['tg']['sw_signaling'].format("Off"))
+            module_log.log("Status signaling set to Off")
+        else:
+            static.status_signal = True
+            static.change_config_value('telegram', 'status_signal', 'True')
+            self.send_message(from_id,
+                              texts.texts[static.language]['tg']['sw_signaling'].format("On"))
+            module_log.log("Status signaling set to On")
+
     def _toggle_verbose(self, from_id) -> bool:
         """ Toggle verbose view of image show """
 
@@ -461,7 +481,10 @@ class Telegram:
 
         if message_text.startswith("/addsender"):
             # Add new senders into the config file
-            self._add_sender(from_id, message_text)
+            self._add_telegram_sender(from_id, message_text)
+        elif message_text.startswith("/addmailsender"):
+            # Add new senders into the config file
+            self._add_mail_sender(from_id, message_text)
         elif message_text.startswith("/addextension"):
             # Add new extension(s) to the allowed list and restart the frame afterwards
             self._add_file_extension(from_id, message_text)

@@ -101,6 +101,7 @@ Now, the Bot should be ready to receive and send messages. If you send messages 
 As seen above in the config, the follwing bot commands will be placed to the bot configuration:
 
 * */addsender <sender_userid_1>,<sender_userid_2>,etc.* - Add new allowed sender to the Telegram user list (hidden function)
+* */addmailsender <sender_mail_address_1>,<sender_mail_address_2>,etc.* - Add new allowed sender to the mail user list (hidden function)
 * */addextension <extension_1>,<extension_2>,etc.* - Add new extension(s) to allowed file extensions of mail attachments (hidden function)
 * */deleteimg <name_of_image_1>,<name_of_image_2>,etc.* - Deletes one or more images from images folder of the frame.
 * */getconfig* - Returns the current **config.ini** as downloadable file.
