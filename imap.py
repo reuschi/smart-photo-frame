@@ -151,7 +151,7 @@ class ImapMail:
             module_log.log(data)
 
     def imap_close_connection(self, ):
-        """ Close connection to mail server """
+        """ Empty trash and close connection to mail server """
 
         self.imap.expunge()
         self.imap.close()
