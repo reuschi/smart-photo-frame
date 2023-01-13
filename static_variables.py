@@ -30,6 +30,8 @@ if 'mail' in config:
     EMAIL_HOST = config['mail']['hostname']
     mail_elements = config.get('mail', 'fileExtensions').split(',')
     file_extensions = [str(ext) for ext in mail_elements]
+    mail_senders = config.get('mail', 'allowedsenders').split(',')
+    mail_allowed_senders = [str(ext) for ext in mail_senders]
 
 
 # TELEGRAM STATICS

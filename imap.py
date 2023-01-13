@@ -23,7 +23,31 @@ class ImapMail:
         self.allowed_extensions = static.file_extensions
         self.subfolder = subfolder
         self.language = static.language
+        self.allowed_senders = static.mail_allowed_senders
         self.imap = None
+
+    def fetch_messages(self):
+        """ Build search string and search for messages only from allowed senders """
+
+        search_string = ""
+
+        if len(self.allowed_senders) > 1:
+            search_string = "OR "
+
+        for sender in self.allowed_senders:
+            search_string += f"FROM {sender} "
+
+        search_string = search_string.strip()
+        if static.debug:
+            module_log.log(f"Mail Sender Search-String: {search_string}")
+
+        #receive, data = self.imap.search(None, 'ALL')
+        receive, data = self.imap.search(None, search_string)
+        if receive != 'OK':
+            module_log.log("Request to Mailbox was not successful!")
+            return None
+
+        return data
 
     def get_filename(self, part):
         """ Get filename and extension of the downloadable file """
@@ -89,10 +113,8 @@ class ImapMail:
         """ Download attachments from mails stored in a specific sub folder """
 
         success = False
-        receive, data = mail.search(None, 'ALL')
-        if receive != 'OK':
-            module_log.log("Request to Mailbox was not successful!")
-            return False
+
+        data = self.fetch_messages()
 
         # Check if there is a new mail
         if not data[0]:
@@ -121,7 +143,7 @@ class ImapMail:
 
                 if static.debug:
                     module_log.log(f"Content-Type: {part.get_content_type()}")
-                
+
                 # Only download attachments, if they are real attachments
                 if "image" in part.get_content_type():
                     module_log.log("Image in attachment found")

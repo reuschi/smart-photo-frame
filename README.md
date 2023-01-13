@@ -59,6 +59,7 @@ account = <mail address>
 password = <mail account password>
 hostname = <hostname of imap or pop3 mail server>
 fileExtensions = jpg,png,<comma seperated list of allowed file extensions - case-insensitive>
+allowedsenders = <comma seperated mail addresses> ; are allowed to send mails with pictures
 
 [owncloud]
 host = <hostname>
@@ -152,4 +153,4 @@ For my use case I soldered them directly on the RasPi and gave the buttons that 
 - [ ] ~~Find a different presenter application to also display videos~~ *(rejected)*
 - [ ] Refactor all modules to fit for a successful pylint run
 - [ ] Let Telegram bot answer in language the user is located
-- [ ] Include mail sender selection by the frame - not by the mailbox
+- [x] Include mail sender selection by the frame - not by the mailbox
