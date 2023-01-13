@@ -229,10 +229,11 @@ class Telegram:
         if "caption" in message['message']:
             # Reformat the caption of the image to use it as filename
             caption = self.replace_special_signs(message['message']['caption'])
-            filename = caption + "_tg." + extension
         else:
-            # If no caption is set use the current date and time as filename
-            filename = time.strftime("%Y%m%d_%H%M%S") + "_tg." + extension
+            # If no caption is set use the current date and time
+            caption = time.strftime("%Y%m%d_%H%M%S")
+
+        filename = "tg_" + caption + extension
 
         return file, filename
 

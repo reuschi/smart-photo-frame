@@ -29,8 +29,8 @@ class ImapMail:
         """ Get filename and extension of the downloadable file """
 
         if part.get_filename():
-            #print(time.time_ns())
-            cur_time = str(int(time.time())) + "_"
+            #cur_time = str(int(time.time())) + "_"
+            cur_time = time.strftime("%Y%m%d_%H%M%S") + "_"
             file_name = "mail_" + cur_time + part.get_filename()
             file_extension = Path(file_name).suffix.replace('.', '').lower()
             module_log.log(f"File Extension: {file_extension}")
@@ -80,7 +80,6 @@ class ImapMail:
         try:
             if "gmail.com" in self.hostname:
                 mail.store(num, '+X-GM-LABELS', '\\Trash')
-                #mail.expunge()
             else:
                 mail.store(num, '+FLAGS', '\\Deleted')
         except Exception as exc:
@@ -120,12 +119,9 @@ class ImapMail:
                     module_log.log("No attachment found!")
                     continue
 
-                #if part.get('Content-Disposition') is None:
-                #    module_log.log("No attachment found!")
-                #    continue
-
                 if static.debug:
                     module_log.log(f"Content-Type: {part.get_content_type()}")
+                
                 # Only download attachments, if they are real attachments
                 if "image" in part.get_content_type():
                     module_log.log("Image in attachment found")
