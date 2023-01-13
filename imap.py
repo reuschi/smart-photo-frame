@@ -98,18 +98,18 @@ class ImapMail:
 
         return success
 
-    def delete_message(self, mail, num):
-        """ Delete mail from inbox """
+    def delete_message(self, num):
+        """ Delete mail from inbox / subfolder """
 
         try:
             if "gmail.com" in self.hostname:
-                mail.store(num, '+X-GM-LABELS', '\\Trash')
+                self.imap.store(num, '+X-GM-LABELS', '\\Trash')
             else:
-                mail.store(num, '+FLAGS', '\\Deleted')
+                self.imap.store(num, '+FLAGS', '\\Deleted')
         except Exception as exc:
             module_log.log(f"Exception while delete: {exc}")
 
-    def download_attachment(self, mail, directory: str = "images"):
+    def download_attachment(self, directory: str = "images"):
         """ Download attachments from mails stored in a specific sub folder """
 
         success = False
@@ -126,7 +126,7 @@ class ImapMail:
             module_log.log("Trying to fetch new mail...")
 
             # Try to fetch new mails
-            receive, data = mail.fetch(num, '(RFC822)')
+            receive, data = self.imap.fetch(num, '(RFC822)')
 
             if receive != 'OK':
                 module_log.log("ERROR getting message")
@@ -151,7 +151,7 @@ class ImapMail:
 
             # After downloading the attachments move the mail into Trash folder
             if receive == 'OK':
-                self.delete_message(mail, num)
+                self.delete_message(num)
 
                 if static.debug:
                     module_log.log(f"{num} deleted")
@@ -168,7 +168,7 @@ class ImapMail:
         if static.debug:
             module_log.log(data)
 
-    def imap_close_connection(self, ):
+    def imap_close_connection(self):
         """ Empty trash and close connection to mail server """
 
         self.imap.expunge()
@@ -202,7 +202,7 @@ class ImapMail:
             if receive == 'OK':
                 module_log.log("Processing mailbox...")
 
-                success = self.download_attachment(self.imap)
+                success = self.download_attachment()
             else:
                 return texts.texts[self.language]['imap']['mailbox_open_error'].format(receive)
 
