@@ -546,33 +546,36 @@ class Telegram:
             offset = self.db.get_last_update_id()
             answer = self.read_message(offset=offset, timeout=static.poll_timeout)
 
-            # Answer must not be a str
             for message in answer['result']:
-                from_id = message['message']['from']['id']
 
-                # For debugging purposes
-                if static.debug:
-                    module_log.log("Message: " + str(message['message']))
+                # Only process message if it contains the element 'message'
+                if "message" in message:
+                    from_id = message['message']['from']['id']
 
-                if from_id in self.allowed_senders:
-                    # Only allow specific senders to send a photo to the frame
-                    if "photo" in message['message']:
-                        # If user sent a photo
-                        success = self.process_new_photo(message)
-                    elif "text" in message['message'] and from_id in self.allowed_admins:
-                        # If user sent text
-                        success = self.process_admin_commands(message)
+                    # For debugging purposes
+                    if static.debug:
+                        module_log.log("Message: " + str(message['message']))
 
-                    #elif 'document' in message['message']:
-                        # If user sent photo as a document
-                    #    module_log.log("Document: " + str(message['message']['document']))
-                else:
-                    # If no allowed sender was found in config
-                    module_log.log(f"Sender not allowed to send photos. ID: {from_id}")
-                    self.send_message(from_id,
-                                      texts.texts[static.language]['tg']['sender_not_allowed'].
-                                      format(from_id))
+                    if from_id in self.allowed_senders:
+                        # Only allow specific senders to send a photo to the frame
+                        if "photo" in message['message']:
+                            # If user sent a photo
+                            success = self.process_new_photo(message)
+                        elif "text" in message['message'] and from_id in self.allowed_admins:
+                            # If user sent text
+                            success = self.process_admin_commands(message)
 
+                        #elif 'document' in message['message']:
+                            # If user sent photo as a document
+                        #    module_log.log("Document: " + str(message['message']['document']))
+                    else:
+                        # If no allowed sender was found in config
+                        module_log.log(f"Sender not allowed to send photos. ID: {from_id}")
+                        self.send_message(from_id,
+                                          texts.texts[static.language]['tg']['sender_not_allowed'].
+                                          format(from_id))
+
+                # Set latest update_id in database
                 self.db.set_last_update_id(message['update_id'] + 1)
                 self.db.commit()
 
@@ -582,6 +585,7 @@ class Telegram:
             # Terminate the script
             module_log.log("Script interrupted by terminal input")
             sys.exit(1)
+            return False
         except TypeError as exc:
             module_log.log("TypeError: " + str(exc))
             return False
