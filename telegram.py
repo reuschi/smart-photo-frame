@@ -274,7 +274,7 @@ class Telegram:
         except ValueError:
             module_log.log("Error. No new extension(s) added.")
 
-    def _add_mail_sender(self, from_id, message_text, language="EN"):
+    def _add_sender(self, from_id, message_text, target, language="EN"):
         """ Admin command: Add new sender to allowed sender list for mails """
 
         try:
@@ -282,28 +282,11 @@ class Telegram:
             sender_ids = sender_id_txt[1].split(",")
 
             for sender in sender_ids:
-                static.add_value_to_config("mail", "allowedsenders", sender)
-                static.mail_allowed_senders.append(sender)
-
-            self.send_message(from_id,
-                              texts.texts[language]['tg']['new_sender_id'].
-                              format(sender_ids))
-            module_log.log(f"New sender added to allowed sender list: {sender_ids}")
-        except AttributeError:
-            module_log.log("Error. No new sender added.")
-        except ValueError:
-            module_log.log("Error. No new sender added.")
-
-    def _add_telegram_sender(self, from_id, message_text, language="EN"):
-        """ Admin command: Add a new id to allowed sender list """
-
-        try:
-            sender_id_txt = message_text.split(" ")
-            sender_ids = sender_id_txt[1].split(",")
-
-            for sender in sender_ids:
-                static.add_value_to_config("telegram", "allowedsenders", sender)
-                self.allowed_senders.append(int(sender))
+                static.add_value_to_config(target, "allowedsenders", sender)
+                if target == "mail":
+                    static.mail_allowed_senders.append(sender)
+                elif target == "telegram":
+                    self.allowed_senders.append(int(sender))
 
             self.send_message(from_id,
                               texts.texts[language]['tg']['new_sender_id'].
@@ -498,10 +481,10 @@ class Telegram:
 
         if message_text.startswith("/addsender"):
             # Add new senders into the config file
-            self._add_telegram_sender(from_id, message_text, language)
+            self._add_sender(from_id, message_text, "telegram", language)
         elif message_text.startswith("/addmailsender"):
             # Add new senders into the config file
-            self._add_mail_sender(from_id, message_text, language)
+            self._add_sender(from_id, message_text, "mail", language)
         elif message_text.startswith("/addextension"):
             # Add new extension(s) to the allowed list and restart the frame afterwards
             self._add_file_extension(from_id, message_text, language)
@@ -535,7 +518,7 @@ class Telegram:
         elif message_text == "/toggle_verbose":
             # Toggle between "verbose" and "non verbose" in frame view
             success = self._toggle_verbose(from_id, language)
-        else:
+        elif message_text.startswith("/"):
             self.send_message(from_id,
                               texts.texts[language]['tg']['no_command_found'])
 
