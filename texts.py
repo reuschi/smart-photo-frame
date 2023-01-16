@@ -14,8 +14,8 @@ texts = {
             "sender_not_allowed": "Sie sind nicht berechtigt! ID:",
             "extension_not_allowed": "Die Dateierweiterung ist nicht erlaubt!",
             "new_file_extension": "Neue Extension(s) aufgenommen: {}",
-            "new_sender_id": "Neuen Absender zur Liste hinzugefügt: {}",
-            "id_delete_success": "Das Bild {} erfolgreich gelöscht",
+            "new_sender_id": "Neue(n) Absender zur Liste hinzugefügt: {}",
+            "id_delete_success": "Das Bild {} wurde erfolgreich gelöscht",
             "no_reboot_possible": "Reboot konnte nicht ausgeführt werden.",
             "sys_upd_success": "System erfolgreich aktualisiert.",
             "sys_upd_no_need": "System ist bereits auf dem neuesten Stand",
@@ -28,6 +28,7 @@ texts = {
             "rotate_image_fail": "Das Bild wurde nicht gedreht: {}",
             "toggle_verbose": "Anzeige von Bilddetails auf {} gesetzt",
             "rotate_index_error": "Bitte geben Sie den Befehl in folgendem Format an: '/rotate <dateiname>,<rotationsrichtung>'",
+            "no_command_found": "Ungültiges Kommando verwendet",
 
         },
         "imap": {
@@ -80,6 +81,7 @@ texts = {
             "rotate_image_fail": "The image has not been rotated: {}",
             "toggle_verbose": "Verbose of details set to {}",
             "rotate_index_error": "Please send command in following format: '/rotate <filename>,<rotation_direction>'",
+            "no_command_found": "Command could not be found",
 
         },
         "imap": {

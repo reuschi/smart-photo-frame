@@ -120,6 +120,20 @@ class Telegram:
                               texts.texts[static.language]['tg']['snd_signal'])
             module_log.log("Signaling sent")
 
+    def get_sender_id(self, message):
+        """ Return user id from current message """
+
+        return message['message']['from']['id']
+
+    def get_sender_language(self, message):
+        """ Return the user language for the message """
+
+        language = str(message['message']['from']['language_code']).upper()
+        if language not in texts.texts:
+            language = "EN"
+
+        return language
+
     def get_file_link(self, file_id) -> str:
         """ To download a file it's necessary to get the direct link to the file """
 
@@ -237,8 +251,8 @@ class Telegram:
 
         return file, filename
 
-    def _add_file_extension(self, from_id, message_text):
-        """ Add a new file extension to allowed extension list """
+    def _add_file_extension(self, from_id, message_text, language="EN"):
+        """ Admin command: Add a new file extension to allowed extension list """
 
         try:
             extension_txt = message_text.split(" ")
@@ -252,7 +266,7 @@ class Telegram:
                     static.add_value_to_config("mail", "fileExtensions", ext)
 
             self.send_message(from_id,
-                              texts.texts[static.language]['tg']['new_file_extension'].
+                              texts.texts[language]['tg']['new_file_extension'].
                               format(extensions))
             module_log.log(f"New extension(s) added: {extensions}")
         except AttributeError:
@@ -260,8 +274,8 @@ class Telegram:
         except ValueError:
             module_log.log("Error. No new extension(s) added.")
 
-    def _add_mail_sender(self, from_id, message_text):
-        """ Add new sender to allowed sender list for mails """
+    def _add_mail_sender(self, from_id, message_text, language="EN"):
+        """ Admin command: Add new sender to allowed sender list for mails """
 
         try:
             sender_id_txt = message_text.split(" ")
@@ -272,7 +286,7 @@ class Telegram:
                 static.mail_allowed_senders.append(sender)
 
             self.send_message(from_id,
-                              texts.texts[static.language]['tg']['new_sender_id'].
+                              texts.texts[language]['tg']['new_sender_id'].
                               format(sender_ids))
             module_log.log(f"New sender added to allowed sender list: {sender_ids}")
         except AttributeError:
@@ -280,8 +294,8 @@ class Telegram:
         except ValueError:
             module_log.log("Error. No new sender added.")
 
-    def _add_telegram_sender(self, from_id, message_text):
-        """ Add a new id to allowed sender list """
+    def _add_telegram_sender(self, from_id, message_text, language="EN"):
+        """ Admin command: Add a new id to allowed sender list """
 
         try:
             sender_id_txt = message_text.split(" ")
@@ -292,7 +306,7 @@ class Telegram:
                 self.allowed_senders.append(int(sender))
 
             self.send_message(from_id,
-                              texts.texts[static.language]['tg']['new_sender_id'].
+                              texts.texts[language]['tg']['new_sender_id'].
                               format(sender_ids))
             module_log.log(f"New sender added to allowed sender list: {sender_ids}")
         except AttributeError:
@@ -300,8 +314,8 @@ class Telegram:
         except ValueError:
             module_log.log("Error. No new sender added.")
 
-    def _delete_images(self, from_id, message_text):
-        """ Delete images from disk """
+    def _delete_images(self, from_id, message_text, language="EN"):
+        """ Admin command: Delete images from disk """
 
         success = False
 
@@ -313,7 +327,7 @@ class Telegram:
                 error = IProc.delete_image(img)
                 if error == "":
                     self.send_message(from_id,
-                                      texts.texts[static.language]['tg']['id_delete_success'].
+                                      texts.texts[language]['tg']['id_delete_success'].
                                       format(img))
                     module_log.log(f"{img} deleted.")
                     success = True
@@ -328,14 +342,14 @@ class Telegram:
         return success
 
     def _get_identity(self, from_id):
-        """ Return public ip address to sender """
+        """ Admin command: Return public ip address to sender """
 
         ip_address = requests.get("https://api.ipify.org", timeout=30).text
         self.send_message(from_id, ip_address)
         module_log.log(f"Request for Identity. Identity is: {ip_address}")
 
     def _list_images(self, from_id):
-        """ List all images stored on the disk (in sub folder ./images) """
+        """ Admin command: List all images stored on the disk (in sub folder ./images) """
 
         path = Path(Path(__file__).parent.absolute() / "images")
         try:
@@ -347,21 +361,21 @@ class Telegram:
             module_log.log("Image folder not yet created")
 
     def _send_config(self, from_id):
-        """ Fetch config file and send it back to the user """
+        """ Admin command: Fetch config file and send it back to the user """
 
         file = Path(Path(__file__).parent.absolute() / "config.ini")
         if self.send_file(from_id, file):
             module_log.log("Configuration file sent.")
 
     def _send_log(self, from_id):
-        """ Fetch log file and send it back to the user """
+        """ Admin command: Fetch log file and send it back to the user """
 
         file = Path(Path(__file__).parent.absolute() / "message.log")
         if self.send_file(from_id, file):
             module_log.log("Log File sent.")
 
-    def _system_reboot(self, from_id, update_id):
-        """ Reboot system by shell command """
+    def _system_reboot(self, from_id, update_id, language="EN"):
+        """ Admin command: Reboot system by shell command """
 
         try:
             self.db.set_last_update_id(update_id + 1)
@@ -375,13 +389,13 @@ class Telegram:
             if str(stderr, encoding) == "":
                 module_log.log("Reboot initiated")
             else:
-                self.send_message(from_id, texts.texts[static.language]['tg']['no_reboot_possible'])
+                self.send_message(from_id, texts.texts[language]['tg']['no_reboot_possible'])
                 module_log.log("Error while rebooting")
         except Exception as exc:
             module_log.log(exc)
 
-    def _system_update(self, from_id, message_text):
-        """ Update system to current version from GitHub repository """
+    def _system_update(self, from_id, message_text, language="EN"):
+        """ Admin command: Update system to current version from GitHub repository """
 
         success = False
 
@@ -396,20 +410,20 @@ class Telegram:
         repo.git.checkout(branch)
         update = repo.git.pull('origin', branch)
         if "Updating" in update:
-            self.send_message(from_id, texts.texts[static.language]['tg']['sys_upd_success'])
+            self.send_message(from_id, texts.texts[language]['tg']['sys_upd_success'])
             module_log.log("Application update done. System needs to be restarted.")
             success = True
         elif "Already up to date" in update:
-            self.send_message(from_id, texts.texts[static.language]['tg']['sys_upd_no_need'])
+            self.send_message(from_id, texts.texts[language]['tg']['sys_upd_no_need'])
             module_log.log("Application was up to date")
         else:
-            self.send_message(from_id, texts.texts[static.language]['tg']['sys_upd_failed'])
+            self.send_message(from_id, texts.texts[language]['tg']['sys_upd_failed'])
             module_log.log("Application update failed!")
 
         return success
 
-    def _rotate(self, from_id, message_text) -> bool:
-        """ Rotate images 90 degrees left or right """
+    def _rotate(self, from_id, message_text, language="EN") -> bool:
+        """ Admin command: Rotate images 90 degrees left or right """
 
         success = False
 
@@ -423,68 +437,71 @@ class Telegram:
                 result = IProc.rotate(filename, rotation)
                 if result.startswith("Ok"):
                     self.send_message(from_id,
-                                      texts.texts[static.language]['tg']['rotate_image_success'].
+                                      texts.texts[language]['tg']['rotate_image_success'].
                                       format(filename))
                     success = True
                     # rotate = False
                 else:
                     self.send_message(from_id,
-                                      texts.texts[static.language]['tg']['rotate_image_fail'].
+                                      texts.texts[language]['tg']['rotate_image_fail'].
                                       format(result))
 
         except IndexError as inderr:
-            module_log.log(texts.texts[static.language]['tg']['rotate_image_fail'].format(inderr))
-            self.send_message(from_id, texts.texts[static.language]['tg']['rotate_index_error'])
+            module_log.log(texts.texts[language]['tg']['rotate_image_fail'].format(inderr))
+            self.send_message(from_id, texts.texts[language]['tg']['rotate_index_error'])
         except Exception as exc:
             module_log.log(exc)
 
         return success
 
-    def _toggle_signaling(self, from_id):
-        """ Switch status signaling """
+    def _toggle_signaling(self, from_id, language="EN"):
+        """ Admin command: Switch status signaling """
 
         if static.status_signal:
             static.status_signal = False
             static.change_config_value('telegram', 'status_signal', 'False')
-            self.send_message(from_id,
-                              texts.texts[static.language]['tg']['sw_signaling'].format("Off"))
-            module_log.log("Status signaling set to Off")
+            on_off = "Off"
         else:
             static.status_signal = True
             static.change_config_value('telegram', 'status_signal', 'True')
-            self.send_message(from_id,
-                              texts.texts[static.language]['tg']['sw_signaling'].format("On"))
-            module_log.log("Status signaling set to On")
+            on_off = "On"
 
-    def _toggle_verbose(self, from_id) -> bool:
-        """ Toggle verbose view of image show """
+        self.send_message(from_id,
+                          texts.texts[language]['tg']['sw_signaling'].format(on_off))
+        module_log.log(texts.texts[language]['tg']['sw_signaling'].format(on_off))
 
-        on_off = ""
+    def _toggle_verbose(self, from_id, language="EN") -> bool:
+        """ Admin command: Toggle verbose view of image show """
+
         if not static.verbose:
             static.verbose = True
+            static.change_config_value('frame', 'verbose', 'True')
             on_off = "On"
         else:
             static.verbose = False
+            static.change_config_value('frame', 'verbose', 'False')
             on_off = "Off"
+
         self.send_message(from_id,
-                          texts.texts[static.language]['tg']['toggle_verbose'].format(on_off))
-        module_log.log(texts.texts[static.language]['tg']['toggle_verbose'].format(on_off))
+                          texts.texts[language]['tg']['toggle_verbose'].format(on_off))
+        module_log.log(texts.texts[language]['tg']['toggle_verbose'].format(on_off))
         return True
 
     def process_admin_commands(self, message) -> bool:
         """ Process admin commands """
 
         success = False
-        from_id = message['message']['from']['id']
+        from_id = self.get_sender_id(message)
+        language = self.get_sender_language(message)
         message_text = message['message']['text']
         update_id = message['update_id']
 
         if message_text.startswith("/addsender"):
             # Add new senders into the config file
-            self._add_telegram_sender(from_id, message_text)
+            self._add_telegram_sender(from_id, message_text, language)
         elif message_text.startswith("/addmailsender"):
             # Add new senders into the config file
-            self._add_mail_sender(from_id, message_text)
+            self._add_mail_sender(from_id, message_text, language)
         elif message_text.startswith("/addextension"):
             # Add new extension(s) to the allowed list and restart the frame afterwards
             self._add_file_extension(from_id, message_text)
@@ -511,26 +528,30 @@ class Telegram:
             success = self._system_update(from_id, message_text)
         elif message_text == "/toggle_signaling":
             # Switch the signaling return via Telegram when system boots up
-            self._toggle_signaling(from_id)
+            self._toggle_signaling(from_id, language)
         elif message_text.startswith("/rotate"):
             # Rotate image 90 degrees left or right
             success = self._rotate(from_id, message_text)
         elif message_text == "/toggle_verbose":
             # Toggle between "verbose" and "non verbose" in frame view
-            success = self._toggle_verbose(from_id)
+            success = self._toggle_verbose(from_id, language)
+        else:
+            self.send_message(from_id,
+                              texts.texts[language]['tg']['no_command_found'])
 
         return success
 
     def process_new_photo(self, message):
         """ Process a new photo """
 
-        from_id = message['message']['from']['id']
+        from_id = self.get_sender_id(message)
+        language = self.get_sender_language(message)
         file, filename = self.process_photo_name(message)
 
         if self.download_file(file, filename):
             # If download of the sent photo is successfully reply to it
             self.send_message(from_id,
-                              texts.texts[static.language]['tg']['thanks_image_upload'],
+                              texts.texts[language]['tg']['thanks_image_upload'],
                               message['message']['message_id'])
             return True
 
@@ -550,7 +571,8 @@ class Telegram:
 
                 # Only process message if it contains the element 'message'
                 if "message" in message:
-                    from_id = message['message']['from']['id']
+                    from_id = self.get_sender_id(message)
+                    language = self.get_sender_language(message)
 
                     # For debugging purposes
                     if static.debug:
@@ -572,7 +594,7 @@ class Telegram:
                         # If no allowed sender was found in config
                         module_log.log(f"Sender not allowed to send photos. ID: {from_id}")
                         self.send_message(from_id,
-                                          texts.texts[static.language]['tg']['sender_not_allowed'].
+                                          texts.texts[language]['tg']['sender_not_allowed'].
                                           format(from_id))
 
                 # Set latest update_id in database
@@ -585,7 +607,7 @@ class Telegram:
             # Terminate the script
             module_log.log("Script interrupted by terminal input")
             sys.exit(1)
-            return False
         except TypeError as exc:
             module_log.log("TypeError: " + str(exc))
-            return False
+
+        return False
