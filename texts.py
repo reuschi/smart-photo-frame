@@ -11,7 +11,7 @@ texts = {
             "return_420": "420 - The maximum allowed number of attempts to invoke the given method with the given input parameters has been exceeded.",
             "return_500": "500 - An internal server error occurred while a request was being processed.",
             "thanks_image_upload": "Danke für das Bild. Ich habe es für die Verwendung in der Datenbank gespeichert und die Präsentation neu gestartet.",
-            "sender_not_allowed": "Sie sind nicht berechtigt! ID:",
+            "sender_not_allowed": "Sie sind nicht berechtigt! ID: {}",
             "extension_not_allowed": "Die Dateierweiterung ist nicht erlaubt!",
             "new_file_extension": "Neue Extension(s) aufgenommen: {}",
             "new_sender_id": "Neue(n) Absender zur Liste hinzugefügt: {}",
