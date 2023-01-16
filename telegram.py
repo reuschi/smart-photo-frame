@@ -504,7 +504,7 @@ class Telegram:
             self._add_mail_sender(from_id, message_text, language)
         elif message_text.startswith("/addextension"):
             # Add new extension(s) to the allowed list and restart the frame afterwards
-            self._add_file_extension(from_id, message_text)
+            self._add_file_extension(from_id, message_text, language)
         elif message_text == "/getident":
             # Get current external ip address
             self._get_identity(from_id)
@@ -513,7 +513,7 @@ class Telegram:
             self._list_images(from_id)
         elif message_text.startswith("/deleteimg"):
             # Delete images from frame and restart presentation
-            success = self._delete_images(from_id, message_text)
+            success = self._delete_images(from_id, message_text, language)
         elif message_text == "/getlog":
             # Send log file as attachment
             self._send_log(from_id)
@@ -522,16 +522,16 @@ class Telegram:
             self._send_config(from_id)
         elif message_text == "/reboot":
             # Reboot whole system
-            self._system_reboot(from_id, update_id)
+            self._system_reboot(from_id, update_id, language)
         elif message_text.startswith("/update"):
             # Update system with current repository and restart with new code
-            success = self._system_update(from_id, message_text)
+            success = self._system_update(from_id, message_text, language)
         elif message_text == "/toggle_signaling":
             # Switch the signaling return via Telegram when system boots up
             self._toggle_signaling(from_id, language)
         elif message_text.startswith("/rotate"):
             # Rotate image 90 degrees left or right
-            success = self._rotate(from_id, message_text)
+            success = self._rotate(from_id, message_text, language)
         elif message_text == "/toggle_verbose":
             # Toggle between "verbose" and "non verbose" in frame view
             success = self._toggle_verbose(from_id, language)
