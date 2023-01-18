@@ -153,5 +153,5 @@ For my use case I soldered them directly on the RasPi and gave the buttons that 
 - [x] Implement another interconnection between frame and sender (OwnCloud, Dropbox, etc.)
 - [ ] ~~Find a different presenter application to also display videos~~ *(rejected)*
 - [ ] Refactor all modules to fit for a successful pylint run
-- [ ] Let Telegram bot answer in language the user is located
+- [x] Let Telegram bot answer in language the user is located (implemented in reactions on user input)
 - [x] Include mail sender selection by the frame - not by the mailbox
