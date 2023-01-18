@@ -84,6 +84,7 @@ class Telegram:
         }
 
         try:
+            module_log.log(answer.json())
             return return_statements.get(answer.status_code)
         except Exception:
             return "Unknown Error! " + str(answer)
@@ -178,7 +179,7 @@ class Telegram:
         content = answer.json()
         module_log.log(content['result'].keys())
 
-    def send_message(self, chat_id: int, message, reply_to_message_id: int = None):
+    def send_message(self, chat_id: int, message, reply_to_message_id: int = None, keyboard=None):
         """ Send a message back to a chat_id """
 
         link = self.weblink + "sendMessage"
@@ -187,8 +188,14 @@ class Telegram:
             "text": message
         }
 
+        # If the message is a reply to a message
         if reply_to_message_id:
-            data['reply_to_message_id'] = reply_to_message_id
+            data["reply_to_message_id"] = reply_to_message_id
+
+        if keyboard:
+            data["reply_markup"] = keyboard
+            #module_log.log(data)
+            return self.telegram_POST(link, data)
 
         return self.telegram_POST(link, data)
 
@@ -251,6 +258,47 @@ class Telegram:
 
         return file, filename
 
+    def send_inline_keyboard(self, from_id):
+        """ Admin command: Respond with an inline keyboard """
+
+        message = "Hey there"
+        keyboard = {
+            "inline_keyboard": [
+                [
+                    {
+                        "text": "Get identity",
+                        "callback_data": "/getident"
+                    },
+                    {
+                        "text": "Get images",
+                        "callback_data": "/listimg"
+                    }
+                ], [
+                    {
+                        "text": "Get config",
+                        "callback_data": "/getconfig"
+                    },
+                    {
+                        "text": "Get Log",
+                        "callback_data": "/getlog"
+                    }
+                ], [
+                    {
+                        "text": "Toggle Signaling",
+                        "callback_data": "/toggle_signaling"
+                    },
+                    {
+                        "text": "Toggle Verbose",
+                        "callback_data": "/toggle_verbose"
+                    }
+                ]
+            ],
+            "is_persistent": True,
+            "one_time_keyboard": False
+        }
+
+        return self.send_message(from_id, message, keyboard=keyboard)
+
     def _add_file_extension(self, from_id, message_text, language="EN"):
         """ Admin command: Add a new file extension to allowed extension list """
 
@@ -263,8 +311,7 @@ class Telegram:
                 static.add_value_to_config("mail", "fileExtensions", ext)
 
             self.send_message(from_id,
-                              texts.texts[language]['tg']['new_file_extension'].
-                              format(extensions))
+                              texts.texts[language]['tg']['new_file_extension'].format(extensions))
             module_log.log(f"New extension(s) added: {extensions}")
         except AttributeError:
             module_log.log("Error. No new extension(s) added.")
@@ -286,8 +333,7 @@ class Telegram:
                     self.allowed_senders.append(int(sender))
 
             self.send_message(from_id,
-                              texts.texts[language]['tg']['new_sender_id'].
-                              format(sender_ids))
+                              texts.texts[language]['tg']['new_sender_id'].format(sender_ids))
             module_log.log(f"New sender added to allowed sender list: {sender_ids}")
         except AttributeError:
             module_log.log("Error. No new sender added.")
@@ -307,8 +353,7 @@ class Telegram:
                 error = IProc.delete_image(img)
                 if error == "":
                     self.send_message(from_id,
-                                      texts.texts[language]['tg']['id_delete_success'].
-                                      format(img))
+                                      texts.texts[language]['tg']['id_delete_success'].format(img))
                     module_log.log(f"{img} deleted.")
                     success = True
                 else:
@@ -515,6 +560,9 @@ class Telegram:
         elif message_text == "/toggle_verbose":
             # Toggle between "verbose" and "non verbose" in frame view
             success = self._toggle_verbose(from_id, language)
+        elif message_text == "show_buttons":
+            # Preparation for implementing Inline Keyboards to control the bot
+            self.send_inline_keyboard(from_id)
         elif message_text.startswith("/"):
             self.send_message(from_id,
                               texts.texts[language]['tg']['no_command_found'])
