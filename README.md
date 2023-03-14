@@ -122,9 +122,9 @@ To only get those mails downloaded that are intended for the photo frame, you sh
 New mails should be moved automatically to this subfolder or sorted out by an inbox rule.\
 If you want to use Gmail as your mail provider, as I did, you need to activate the Two-Factor-Authentication (2FA) and create an App Password in the security configuration of your Google account. Then you can use your mail address ...@gmail.com in combination with your App Password as the login data in the config file.
 
-## Preparing your Owncloud account
+## Preparing your Owncloud / Nextcloud account
 
-For the possibility to let the frame download images from your owncloud account, a subfolder named **"images"** should be added to the root directory of your owncloud. All files added to this folder will be downloaded by the frame and automatically deleted from the owncloud account, unless you deactivate the deletion in the config file.
+For the possibility to let the frame download images from your owncloud or nextcloud account, a subfolder named **"images"** should be added to the root directory of your owncloud / nextcloud. All files added to this folder will be downloaded by the frame and automatically deleted from the source, unless you deactivate the deletion in the config file.
 
 ## Creating the automatic run of the script
 
