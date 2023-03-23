@@ -90,7 +90,7 @@ class DBHelper:
             update_id = None
 
             # Get last update id from database
-            for row in self.select("SELECT last_update_id FROM telegram_bot WHERE id=1"):
+            for row in self.select(f"SELECT last_update_id FROM {self.table} WHERE id=1"):
                 update_id = row[0]
 
             if update_id is not None:
