@@ -23,7 +23,7 @@ class DBHelper:
         return self.db_cursor.execute(command)
 
     def create_table(self):
-        """ Create a specific table in database """
+        """ Create a specific table in database, only if it does not exist """
 
         self.db_cursor.execute(f"""CREATE TABLE IF NOT EXISTS {self.table} (
                                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -81,8 +81,8 @@ class DBHelper:
 
     def get_last_update_id(self):
         """
-        To only receive the newest message since the last request it's necessary to send
-        an offset id in the request.
+        To only receive the newest telegram message since the last request it's necessary
+        to send an offset id in the request.
         This information is stored in the database and will be gathered by this function.
         """
         try:
