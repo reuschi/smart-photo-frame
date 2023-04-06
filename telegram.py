@@ -84,7 +84,8 @@ class Telegram:
         }
 
         try:
-            module_log.log(answer.json())
+            if static.debug:
+                module_log.log(answer.json())
             return return_statements.get(answer.status_code)
         except Exception:
             return "Unknown Error! " + str(answer)
