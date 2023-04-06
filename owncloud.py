@@ -2,6 +2,8 @@
 
 from pathlib import Path
 import easywebdav2
+#import urllib3
+import requests
 
 import module_log
 import static_variables as static
@@ -20,9 +22,12 @@ class Owncloud:
     def connect(self):
         """ Connect to the webdav webservice of owncloud """
 
-        self.owncloud = easywebdav2.connect(self.host, username=self.username,
-                                            password=self.password)
-        self.owncloud.cd("/remote.php/webdav/" + static.oc_subfolder)
+        try:
+            self.owncloud = easywebdav2.connect(self.host, username=self.username,
+                                                password=self.password)
+            self.owncloud.cd("/remote.php/webdav/" + static.oc_subfolder)
+        except Exception as exc:
+            module_log.log(f"Exception while owncloud connect:\nType: {type(exc)}\nText: {exc}")
 
     def create_dir(self, dirname: str):
         """ Create a sub directory """
@@ -36,8 +41,11 @@ class Owncloud:
 
         try:
             return self.owncloud.ls()
-        except ConnectionError:
-            module_log.log("Connection Error. Connection reset by peer. Try again.")
+        except requests.exceptions.ConnectionError:
+            module_log.log("Webdav connection Error. Connection reset by peer. Try again.")
+            raise ConnectionError
+        except Exception as exc:
+            module_log.log(f"owncloud/list: Type: {type(exc)}\nText: {exc}")
 
         return None
 
@@ -57,11 +65,11 @@ class Owncloud:
     def download_file(self):
         """ Download a file """
 
-        listing = self.list()
-        success = False
-        module_log.log("Requesting new files from OwnCloud...")
-
         try:
+            module_log.log("Requesting new files from OwnCloud...")
+            listing = self.list()
+            success = False
+
             for file in listing:
                 if getattr(file, "contenttype") == "image/jpeg":
                     module_log.log("New file found on Owncloud. Start downloading.")
@@ -79,4 +87,9 @@ class Owncloud:
         except easywebdav2.WebdavException as exc:
             module_log.log("Error while downloading.")
             module_log.log(exc)
-            return False
+        except ConnectionError:
+            pass
+        except Exception as exc:
+            module_log.log(f"An exception occured:\nType:{type(exc)}\nText: {exc}")
+
+        return False

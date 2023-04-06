@@ -81,4 +81,4 @@ if __name__ == "__main__":
                 frame.restart_slideshow(static.verbose)
 
         except Exception as exc:
-            module_log.log(f"An exception occured: {exc}")
+            module_log.log(f"An exception occured:\nType:{type(exc)}\nText: {exc}")
