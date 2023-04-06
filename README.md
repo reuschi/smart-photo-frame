@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a Smart Photo Frame to run a slideshow of pictures that were sent via email, via a Telegram Bot, or by dropping the files to an Owncloud share with the possibility to add more sources. Originally this was developed for my family, as we don't see each other so often and give a possibility to share images right from vacation or from far away. To run it completely, you need to create your own Telegram Bot token at *@BotFather* (described below). Within your mailbox a folder named "Smart Photo Frame" should be present where all new photos for the frame will be automatically moved to. In your Owncloud share all images should be uploaded to a subfolder named "images". 
+This is a Smart Photo Frame to run a slideshow of pictures that were sent via email, via a Telegram Bot, or by dropping the files to an Owncloud / Nextcloud share with the possibility to add more sources. Originally this was developed for my family, as we don't see each other so often and give a possibility to share images right from vacation or from far away. To run it completely, you need to create your own Telegram Bot token at *@BotFather* (described below). Within your mailbox a folder named "Smart Photo Frame" should be present where all new photos for the frame will be automatically moved to. In your Owncloud share all images should be uploaded to a subfolder named "images". 
 
 ## Recommended hardware and software
 
@@ -82,7 +82,7 @@ debug = True/False ; set debug mode for more detailed messages
 [global]
 language = EN/DE ; language of return text messages - other languages need to be added to texts.py
 ```
-By not adding the sections *telegram*, *mail*, and/or *owncloud* into the config file, you can exclude this module from usage. So, if you just want to use this frame with a Telegram Bot and by email, you can delete the owncloud section from your config file and the frame will not try to gather image files from Owncloud .
+By not adding the sections *telegram*, *mail*, and/or *owncloud / nextcloud* into the config file, you can exclude this module from usage. So, if you just want to use this frame with a Telegram Bot and by email, you can delete the owncloud section from your config file and the frame will not try to gather image files from Owncloud / Nextcloud.
 
 ## Creating a Telegram Bot
 
