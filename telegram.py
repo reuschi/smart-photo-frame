@@ -80,7 +80,8 @@ class Telegram:
             404: texts.texts[static.language]['tg']['return_404'],
             406: texts.texts[static.language]['tg']['return_406'],
             420: texts.texts[static.language]['tg']['return_420'],
-            500: texts.texts[static.language]['tg']['return_500']
+            500: texts.texts[static.language]['tg']['return_500'],
+            502: texts.texts[static.language]['tg']['return_502']
         }
 
         try:
