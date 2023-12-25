@@ -381,7 +381,7 @@ class Telegram:
         path = Path(Path(__file__).parent.absolute() / "images")
         try:
             files = [x.name for x in path.glob('**/*') if x.is_file()]
-            number_of_files = files.__len__()
+            number_of_files = str(files.__len__())
 
             message = "Number of Files: " + number_of_files + "\n" + str(files)
 
