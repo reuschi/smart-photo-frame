@@ -256,7 +256,7 @@ class Telegram:
             # If no caption is set use the current date and time
             caption = time.strftime("%Y%m%d_%H%M%S")
 
-        filename = "tg_" + caption + extension
+        filename = "tg_" + caption + "." + extension
 
         return file, filename
 
