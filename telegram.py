@@ -381,7 +381,11 @@ class Telegram:
         path = Path(Path(__file__).parent.absolute() / "images")
         try:
             files = [x.name for x in path.glob('**/*') if x.is_file()]
-            self.send_message(from_id, str(files))
+            number_of_files = files.__len__()
+
+            message = "Number of Files: " + number_of_files + "\n" + str(files)
+
+            self.send_message(from_id, message)
             module_log.log("Image listing sent.")
         except FileNotFoundError:
             self.send_message(from_id, "No image uploaded yet")
