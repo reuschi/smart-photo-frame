@@ -35,7 +35,7 @@ class ImapMail:
             search_string = "OR "
 
         for sender in self.allowed_senders:
-            search_string += f"FROM {sender} "
+            search_string += f"FROM {sender.strip()} "
 
         search_string = search_string.strip()
         if static.debug:
