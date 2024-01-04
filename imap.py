@@ -2,8 +2,9 @@
 
 from imaplib import IMAP4_SSL
 from socket import gaierror
-import email
-import email.header
+#import email
+#import email.header
+import email.utils
 import time
 from pathlib import Path
 
@@ -29,20 +30,9 @@ class ImapMail:
     def fetch_messages(self):
         """ Build search string and search for messages only from allowed senders """
 
-        search_string = ""
+        # Receive all messages from Inbox subfolder for Smart Photo Frame
+        receive, data = self.imap.search(None, 'ALL')
 
-        if len(self.allowed_senders) > 1:
-            search_string = "OR "
-
-        for sender in self.allowed_senders:
-            search_string += f"FROM {sender.strip()} "
-
-        search_string = search_string.strip()
-        if static.debug:
-            module_log.log(f"Mail Sender Search-String: {search_string}")
-
-        #receive, data = self.imap.search(None, 'ALL')
-        receive, data = self.imap.search(None, search_string)
         if receive != 'OK':
             module_log.log("Request to Mailbox was not successful!")
             return None
@@ -69,7 +59,7 @@ class ImapMail:
         return file
 
     def get_attachment(self, part, directory, success):
-        """ Get attachment of mail and write it into the correct directory """
+        """ Get attachment of mail and write it into the correct local directory """
 
         # Get filename and extension of the downloadable file
         file = self.get_filename(part)
@@ -99,13 +89,17 @@ class ImapMail:
         return success
 
     def delete_message(self, num):
-        """ Delete mail from inbox / subfolder """
+        """ Delete mail from inbox / sub folder """
 
         try:
             if "gmail.com" in self.hostname:
                 self.imap.store(num, '+X-GM-LABELS', '\\Trash')
             else:
                 self.imap.store(num, '+FLAGS', '\\Deleted')
+
+            if static.debug:
+                module_log.log(f"{num} deleted")
+
         except Exception as exc:
             module_log.log(f"Exception while delete: {exc}")
 
@@ -134,6 +128,15 @@ class ImapMail:
 
             msg = email.message_from_bytes(data[0][1])
 
+            # Extract 'From' mail address
+            mail_from = email.utils.parseaddr(msg['from'])[1].lower()
+
+            # Only mails from allowed senders should be walked through
+            if mail_from not in self.allowed_senders:
+                module_log.log(f"Sender {mail_from} not allowed! Mail will be deleted.")
+                self.delete_message(num)
+                continue
+
             # Downloading attachments
             for part in msg.walk():
                 if part.get_content_maintype() == 'multipart' or \
@@ -152,9 +155,6 @@ class ImapMail:
             # After downloading the attachments move the mail into Trash folder
             if receive == 'OK':
                 self.delete_message(num)
-
-                if static.debug:
-                    module_log.log(f"{num} deleted")
 
         return success
 
