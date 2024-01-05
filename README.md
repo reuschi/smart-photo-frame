@@ -17,14 +17,15 @@ This is a Smart Photo Frame to run a slideshow of pictures that were sent via em
 ## Installation guide
 
 1. Install the package by cloning the repository.
-2. Create your own config.ini file (see config file chapter below).
+2. Create your own config.ini file (see [config file](#config-file) chapter).
 3. If you want to be able to update the frame via Telegram, you need to store your GitHub login data in store manager on RasPi and copy the ".gitconfig" and ".git-credentials" files to "/root".
 4. Connect an HDMI screen to the RasPi (TV, computer monitor, HDMI display, etc.).
-5. If you're using Gmail as mailbox, you need to activate Two-Factor-Authentication and set an App Password in the security settings of you mail account.
+5. If you're using Gmail as mailbox, you need to activate Two-Factor-Authentication and set an App Password in the security settings of your mail account.
+6. To run the frame, start the python script **main.py** as *sudo*.
 
 ## Folder structure
 
-When repository is cloned, no subfolders are created. To store your images, a subfolder named **"images"** will be created while importing the first image. Within this folder you can delete or add new photos manually or by Telegram command. After adding or deleting (if done by hand) the frame needs to be restarted manually. If uploaded or deleted by Telegram command, this is done automatically.\
+When repository is cloned, no subfolders are created. To store your images, a subfolder named **"images"** will be automatically created while importing the first image. Within this folder you can delete or add new photos manually or by Telegram command. After adding or deleting (if done by hand) the frame needs to be restarted manually. If uploaded or deleted by Telegram command, this is done automatically.\
 All other data is stored in the main folder of the cloned repository.\
 Automatic generated files by the frame are:
 * telegram_bot.db
@@ -65,11 +66,11 @@ allowedsenders = <comma seperated mail addresses> ; are allowed to send mails wi
 host = <hostname>
 username = <username>
 password = <password>
-delete_after_download = True/False ; remote files on owncloud will be deleted 
+delete_after_download = True/False ; remote files on owncloud will be deleted after download
 subfolder = <foldername> ; subfolder on owncloud
 
 [frame]
-timer = 10 ; single photo display time in seconds 
+timer = 10 ; single photo display time in seconds
 blend = 750 ; blend time between two photos in ms
 photocount = 200 ; amount of maximum photos to circle
 verbose = True/False ; verbose file information during slideshow
@@ -94,27 +95,28 @@ If you want to send pictures via Telegram, you need to create your own Telegram 
 5. Copy the token and store it in the config file as shown above
 6. Open the conversation with the Bot
 
-Now, the Bot should be ready to receive and send messages. If you send messages via web browser or mobile phone to the Bot while the frame is not running, nothing is going to happen. To get a reply on your sent photos, you must run the **main.py**. In most cases the script must run as *sudo*.
+Now, the Bot should be ready to receive and send messages. If you send messages via web browser or mobile phone to the Bot while the frame is not running, nothing is going to happen. To get a reply on your sent photos, the frame must be running.\
+Please keep in mind, that messages will be deleted from the Telegram servers 24 hours after sending, if they have not been retrieved from the frame. This is a default from Telegram and can not be changed anyhow.
 
 ## Current implemented Telegram Bot commands
 
-As seen above in the config, the follwing bot commands will be placed to the bot configuration:
+To control the frame from remote, Telegram Bot commands are implemented. As seen above in the config, the follwing bot commands will be pushed to the bot configuration:
 
 * */addsender <sender_userid_1>,<sender_userid_2>,etc.* - Add new allowed sender to the Telegram user list (hidden function)
 * */addmailsender <sender_mail_address_1>,<sender_mail_address_2>,etc.* - Add new allowed sender to the mail user list (hidden function)
 * */addextension <extension_1>,<extension_2>,etc.* - Add new extension(s) to allowed file extensions of mail attachments (hidden function)
 * */deleteimg <name_of_image_1>,<name_of_image_2>,etc.* - Deletes one or more images from images folder of the frame.
-* */getconfig* - Returns the current **config.ini** as downloadable file.
+* */getconfig* - Returns the current **config.ini** as downloadable file to the chat.
 * */getident* - Returns the current public IP address of the frame.
-* */getlog* - Returns the **message.log** as downloadable file.
+* */getlog* - Returns the **message.log** as downloadable file to the chat.
 * */listimg* - Lists all images stored in the images folder.
 * */reboot* - Reboots the whole system (RasPi).
 * */rotate <image_name_1>,<l/r> <image_name_2>,<l/r> etc.* - Rotates the named image(s) 90° to the left (l) or to the right (r). Files must be seperated by whitespaces and file names need to be followed by orientation.
 * */toggle_signaling* - Toggles the feedback from the frame when it's booted up or shutting down.
 * */toggle_verbose* - Toggles the display of additional information in the image presentation of the frame.
-* */update \[<repository_name>\]* - Update system with current master repository. If entered a repository name, then this command tries to checkout and update the named branch. If you cahnge by that the branch, then you need to fully restart the application.
+* */update \[<repository_name>\]* - Update system with current master repository. If entered a repository name, then this command tries to checkout and update the named branch. If you change by that the branch, then you need to fully restart the application/system.
 
-You can add some more commands by your own by just adding them to the configuration file. The functionality must be programmed in the appropriate module. All of the listed commands will be pushed to the Telegram Bot when starting the frame.
+You can add some more commands by your own by just adding them to the configuration file. The functionality must be programmed in the appropriate module of the frame script. All of the listed commands will be pushed to the Telegram Bot when starting the frame.
 
 ## Preparing your mailbox
 
