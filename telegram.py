@@ -381,9 +381,24 @@ class Telegram:
         path = Path(Path(__file__).parent.absolute() / "images")
         try:
             files = [x.name for x in path.glob('**/*') if x.is_file()]
-            number_of_files = str(files.__len__())
-            message = "Number of Files: " + number_of_files + "\n\n" + str(files)
+            amount_of_files = files.__len__()
+            max_files_per_message = 100
+
+            message = "Total number of images: " + str(amount_of_files)
             self.send_message(from_id, message)
+
+            # By telegram API, there are only 4096 chars allowed in a message. To not exceeding this limit,
+            # we have to split the response for larger amounts of files
+            sent_file_index = 0
+            while sent_file_index < amount_of_files:
+                message = ""
+                for index in range(sent_file_index, sent_file_index + max_files_per_message):
+                    if index == amount_of_files:
+                        break
+                    message += str(files[index]) + "\n"
+                self.send_message(from_id, message)
+                sent_file_index += max_files_per_message
+
             module_log.log("Image listing sent.")
         except FileNotFoundError:
             self.send_message(from_id, "No image uploaded yet")
