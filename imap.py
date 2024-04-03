@@ -8,6 +8,7 @@ import email.utils
 import time
 from pathlib import Path
 
+from image_processing import IProc
 import module_log
 import static_variables as static
 import texts
@@ -75,6 +76,11 @@ class ImapMail:
                 with open(file_path, 'wb') as file:
                     file.write(part.get_payload(decode=True))
                 module_log.log(f"New file downloaded: {file_path}")
+
+                # Checking new file for correct orientation
+                module_log.log("Checking image for correct orientation")
+                IProc.check_orientation(file_path)
+
                 success = True
             elif Path.is_file(file_path):
                 # If file already exists, don't download it

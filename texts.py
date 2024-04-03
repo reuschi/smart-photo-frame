@@ -30,6 +30,8 @@ texts = {
             "toggle_verbose": "Anzeige von Bilddetails auf {} gesetzt",
             "rotate_index_error": "Bitte geben Sie den Befehl in folgendem Format an: '/rotate <dateiname>,<rotationsrichtung>'",
             "no_command_found": "Ungültiges Kommando verwendet",
+            "image_orientation_check_init": "Alle gespeicherten Bilder werden überprüft und - falls notwendig - gedreht. Bitte warten Sie...",
+            "image_orientation_check_success": "Überprüfung abgeschlossen. **{}** Bilder wurden gedreht.",
 
         },
         "imap": {
@@ -84,7 +86,8 @@ texts = {
             "toggle_verbose": "Verbose of details set to {}",
             "rotate_index_error": "Please send command in following format: '/rotate <filename>,<rotation_direction>'",
             "no_command_found": "Command could not be found",
-
+            "image_orientation_check_init": "Will check all stored images if they need to be rotated. Please be patient...",
+            "image_orientation_check_success": "Checking finished. **{}** images have been rotated.",
         },
         "imap": {
             "no_mailbox_found": "ERROR: No Mailbox to open",

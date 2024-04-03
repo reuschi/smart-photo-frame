@@ -48,23 +48,90 @@ class IProc:
             path = Path(Path(__file__).parent.absolute() / "images" / image.lower())
             file = Image.open(path)
             if orientation == "l":
-                rotated = IProc.__rotate_left(file)
+                file = IProc.__rotate_left(file)
             elif orientation == "r":
-                rotated = IProc.__rotate_right(file)
+                file = IProc.__rotate_right(file)
             elif orientation == "tv":
                 pass
             elif orientation == "tp":
                 pass
+            elif orientation == "check":
+                if IProc.check_orientation(path):
+                    return "Ok"
             else:
-                rotated = file.rotate(0, expand=True)
+                file = file.rotate(0, expand=True)
 
-            rotated.save(path)
+            file.save(path)
+            file.close()
             return "Ok"
         except FileNotFoundError:
             module_log.log(f"No such file or directory: {image}")
             return f"No such file or directory: {image}"
         except Exception as exc:
             module_log.log(exc)
+            return exc
+
+    @staticmethod
+    def check_orientation(image_path):
+        """ Check if image is oriented portrait and needs to be rotated """
+
+        success = False
+
+        try:
+            path = str(image_path)
+            file = Image.open(path)
+
+            # Read EXIF data from image
+            exif_data = file.getexif()
+
+            if exif_data.get(274) and exif_data[274] == 6:
+                module_log.log(f"Orientation of {image_path.name} is portrait and needs to be "
+                               f"rotated right.")
+                file = IProc.__rotate_right(file)
+                file.save(path)
+                success = True
+            elif exif_data.get(274) and exif_data[274] == 8:
+                module_log.log(f"Orientation of {image_path.name} is portrait and needs to be "
+                               f"rotated left.")
+                file = IProc.__rotate_left(file)
+                file.save(path)
+                success = True
+            elif exif_data.get(274):
+                module_log.log(f"Orientation of {image_path.name} is landscape; no rotation "
+                               f"needed.")
+            else:
+                module_log.log(f"Orientation of {image_path.name} can't be catched; no rotation "
+                               f"needed.")
+
+            file.close()
+            #return "Ok"
+        except KeyError:
+            # Exception if EXIF data not present in image file
+            module_log.log(f"Orientation of {image_path.name} can't be catched; no rotation "
+                           f"needed.")
+        except Exception as exc:
+            module_log.log(f"Exception: {exc} of type {type(exc)}")
+
+        return success
+
+    @staticmethod
+    def check_all_file_orientation(image_path="images"):
+        """ Check orientation of all image files in folder and correct if needed """
+
+        try:
+            path = Path(Path(__file__).parent.absolute() / image_path.lower())
+
+            return_value = False
+            counter = 0
+
+            for file in path.glob('**/*'):
+                if file.is_file():
+                    return_value = IProc.check_orientation(file)
+                    if return_value:
+                        counter += 1
+
+            return counter
+        except Exception as exc:
             return exc
 
     @staticmethod

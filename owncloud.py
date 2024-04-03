@@ -5,6 +5,7 @@ import easywebdav2
 #import urllib3
 import requests
 
+from image_processing import IProc
 import module_log
 import static_variables as static
 
@@ -77,8 +78,13 @@ class Owncloud:
                     filename = str(self._get_filename(path))
                     upload_path = Path(Path(__file__).parent.absolute() / "images" / filename)
                     self.owncloud.download(path, upload_path)
-                    success = True
                     module_log.log(f"File {filename} downloaded successfully from Owncloud.")
+
+                    # Checking new file for correct orientation
+                    module_log.log("Checking image for correct orientation")
+                    IProc.check_orientation(upload_path)
+
+                    success = True
                     if static.oc_delete:
                         self.delete_file(path)
             if not success:

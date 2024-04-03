@@ -27,12 +27,12 @@ class Telegram:
         self.weblink = f"https://api.telegram.org/bot{token}/"
         self.filelink = f"https://api.telegram.org/file/bot{token}/"
         self.http = urllib3.PoolManager()
-        self.db = DBHelper("telegram_bot")
+        self.db_helper = DBHelper("telegram_bot")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.db.close_connection()
+        self.db_helper.close_connection()
 
-    def telegram_POST(self, link, data=None, file=None) -> dict:
+    def telegram_post(self, link, data=None, file=None) -> dict:
         """ Requesting Telegram API via POST Method """
 
         if data is None:
@@ -67,7 +67,7 @@ class Telegram:
         for key, value in kwargs.items():
             data[key] = value
 
-        return self.telegram_POST(link, data)
+        return self.telegram_post(link, data)
 
     def return_status_code(self, answer):
         """ Return a readable status code """
@@ -102,7 +102,7 @@ class Telegram:
         for key, value in kwargs.items():
             data[key] = value
 
-        return self.telegram_POST(link, data)
+        return self.telegram_post(link, data)
 
     def set_commands(self):
         """ Set all commands defined in the config as shown commands in the bot """
@@ -112,7 +112,7 @@ class Telegram:
             "commands": json.dumps(static.tg_bot_commands)
         }
 
-        return self.telegram_POST(link, data)
+        return self.telegram_post(link, data)
 
     def send_signal(self):
         """ If signaling is activated, send signal """
@@ -146,7 +146,7 @@ class Telegram:
                 "file_id": file_id
             }
 
-            file_json = self.telegram_POST(link, data)
+            file_json = self.telegram_post(link, data)
 
             return self.filelink + file_json['result']['file_path']
         except Exception as exc:
@@ -186,6 +186,7 @@ class Telegram:
 
         link = self.weblink + "sendMessage"
         data = {
+            #"parse_mode": "MarkdownV2",
             "chat_id": chat_id,
             "text": message
         }
@@ -197,9 +198,9 @@ class Telegram:
         if keyboard:
             data["reply_markup"] = keyboard
             #module_log.log(data)
-            return self.telegram_POST(link, data)
+            return self.telegram_post(link, data)
 
-        return self.telegram_POST(link, data)
+        return self.telegram_post(link, data)
 
     def send_photo(self, chat_id: int, photo):
         """ Send a photo as a reply """
@@ -210,7 +211,7 @@ class Telegram:
             "photo": photo
         }
 
-        return self.telegram_POST(link, data)
+        return self.telegram_post(link, data)
 
     def send_file(self, chat_id: int, file):
         """ Send a byte file as a reply """
@@ -223,7 +224,7 @@ class Telegram:
             "document": (str(file), open(str(file), "rb"))
         }
 
-        return_value = self.telegram_POST(link, data, document)
+        return_value = self.telegram_post(link, data, document)
 
         return bool(return_value['result']['document'])
 
@@ -381,14 +382,15 @@ class Telegram:
         path = Path(Path(__file__).parent.absolute() / "images")
         try:
             files = [x.name for x in path.glob('**/*') if x.is_file()]
-            amount_of_files = files.__len__()
+            #amount_of_files = files.__len__()
+            amount_of_files = len(files)
             max_files_per_message = 100
 
             message = "Total number of images: " + str(amount_of_files)
             self.send_message(from_id, message)
 
-            # By telegram API, there are only 4096 chars allowed in a message. To not exceeding this limit,
-            # we have to split the response for larger amounts of files
+            # By telegram API, there are only 4096 chars allowed in a message. To not exceeding
+            # this limit, we have to split the response for larger amounts of files
             sent_file_index = 0
             while sent_file_index < amount_of_files:
                 message = ""
@@ -422,8 +424,8 @@ class Telegram:
         """ Admin command: Reboot system by shell command """
 
         try:
-            self.db.set_last_update_id(update_id + 1)
-            self.db.commit()
+            self.db_helper.set_last_update_id(update_id + 1)
+            self.db_helper.commit()
 
             bash_command = "sudo reboot"
             with subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE,
@@ -497,6 +499,20 @@ class Telegram:
             module_log.log(exc)
 
         return success
+
+    def _check_image_orientation(self, from_id, language="EN"):
+
+        success = False
+
+        try:
+            self.send_message(from_id, texts.texts[language]['tg']['image_orientation_check_init'])
+            success = IProc.check_all_file_orientation()
+            self.send_message(from_id, texts.texts[language]['tg']['image_orientation_check_success']
+                              .format(success))
+        except Exception as exc:
+            module_log.log(exc)
+
+        return bool(success)
 
     def _toggle_signaling(self, from_id, language="EN"):
         """ Admin command: Switch status signaling """
@@ -579,6 +595,9 @@ class Telegram:
         elif message_text == "/toggle_verbose":
             # Toggle between "verbose" and "non verbose" in frame view
             success = self._toggle_verbose(from_id, language)
+        elif message_text == "/check_orientation":
+            # Check orientation
+            success = self._check_image_orientation(from_id, language)
         elif message_text == "show_buttons":
             # Preparation for implementing Inline Keyboards to control the bot
             self.send_inline_keyboard(from_id)
@@ -611,7 +630,7 @@ class Telegram:
             success = False
 
             # Get the last requested id and read the latest messages
-            offset = self.db.get_last_update_id()
+            offset = self.db_helper.get_last_update_id()
             answer = self.read_message(offset=offset, timeout=static.poll_timeout)
 
             for message in answer['result']:
@@ -645,8 +664,8 @@ class Telegram:
                                           format(from_id))
 
                 # Set latest update_id in database
-                self.db.set_last_update_id(message['update_id'] + 1)
-                self.db.commit()
+                self.db_helper.set_last_update_id(message['update_id'] + 1)
+                self.db_helper.commit()
 
             return success
 
