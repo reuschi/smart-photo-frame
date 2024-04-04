@@ -53,9 +53,9 @@ class ImapMail:
         """ Get filename and extension of the downloadable file """
 
         if part.get_filename():
-            cur_time = time.strftime("%Y%m%d_%H%M%S") + "_"
+            cur_time = time.strftime("%Y%m%d_%H%M%S")
             original_filename = self._replace_chars(part.get_filename())
-            file_name = "mail_" + cur_time + original_filename
+            file_name = f"mail_{cur_time}_{original_filename}"
             file_extension = Path(file_name).suffix.replace('.', '').lower()
             module_log.log(f"File Extension: {file_extension}")
 
