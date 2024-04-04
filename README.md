@@ -105,6 +105,7 @@ To control the frame from remote, Telegram Bot commands are implemented. As seen
 * */addsender <sender_userid_1>,<sender_userid_2>,etc.* - Add new allowed sender to the Telegram user list (hidden function)
 * */addmailsender <sender_mail_address_1>,<sender_mail_address_2>,etc.* - Add new allowed sender to the mail user list (hidden function)
 * */addextension <extension_1>,<extension_2>,etc.* - Add new extension(s) to allowed file extensions of mail attachments (hidden function)
+* */check_orientation* - Regarding to the EXIF information of an image it may be needed to rotate the image, as the presenter does not interpret any EXIF information. With this function all stroed images will be checked and rotated automatically - if needed (hidden function)
 * */deleteimg <name_of_image_1>,<name_of_image_2>,etc.* - Deletes one or more images from images folder of the frame.
 * */getconfig* - Returns the current **config.ini** as downloadable file to the chat.
 * */getident* - Returns the current public IP address of the frame.
