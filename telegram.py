@@ -185,8 +185,9 @@ class Telegram:
         """ Send a message back to a chat_id """
 
         link = self.weblink + "sendMessage"
+        message = self._format_markdown(message)
         data = {
-            #"parse_mode": "MarkdownV2",
+            "parse_mode": "MarkdownV2",
             "chat_id": chat_id,
             "text": message
         }
@@ -244,6 +245,25 @@ class Telegram:
         text = text.replace("ü", "ue")
 
         return text
+
+    def _format_markdown(self, message: str):
+        """ Reformat text for sending it as a markdown text to the Telegram API """
+
+        message = message.replace("_", "\_")
+        message = message.replace("-", "\-")
+        message = message.replace(".", "\.")
+        message = message.replace(":", "\:")
+        message = message.replace(">", "\>")
+        message = message.replace("!", "\!")
+        message = message.replace("(", "\(")
+        message = message.replace(")", "\)")
+        message = message.replace("[", "\[")
+        message = message.replace("]", "\]")
+        message = message.replace("=", "\=")
+        message = message.replace("#", "\#")
+        #message = message.replace("|", "\|")
+
+        return message
 
     def process_photo_name(self, message):
         """ Rename image file if there is a comment added to the photo """
@@ -360,6 +380,7 @@ class Telegram:
                     module_log.log(f"{img} deleted.")
                     success = True
                 else:
+                    #error = str(error).replace(":", "\:")
                     self.send_message(from_id, str(error))
                     module_log.log("No image file deleted.")
         except AttributeError:
@@ -373,6 +394,7 @@ class Telegram:
         """ Admin command: Return public ip address to sender """
 
         ip_address = requests.get("https://api.ipify.org", timeout=30).text
+        #ip_address = ip_address.replace(".", "\.")
         self.send_message(from_id, ip_address)
         module_log.log(f"Request for Identity. Identity is: {ip_address}")
 
