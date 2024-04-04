@@ -40,13 +40,22 @@ class ImapMail:
 
         return data
 
+    def _replace_chars(self, string: str):
+        """ Replace chars in string for better further processing """
+
+        string = string.replace(" ", "")
+        string = string.replace(",", "_")
+        string = string.replace("/", "")
+
+        return string
+
     def get_filename(self, part):
         """ Get filename and extension of the downloadable file """
 
         if part.get_filename():
-            #cur_time = str(int(time.time())) + "_"
             cur_time = time.strftime("%Y%m%d_%H%M%S") + "_"
-            file_name = "mail_" + cur_time + part.get_filename()
+            original_filename = self._replace_chars(part.get_filename())
+            file_name = "mail_" + cur_time + original_filename
             file_extension = Path(file_name).suffix.replace('.', '').lower()
             module_log.log(f"File Extension: {file_extension}")
 
