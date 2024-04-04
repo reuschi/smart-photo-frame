@@ -18,7 +18,7 @@ class ImapMail:
     """ Get mails and process the attachments """
 
     def __init__(self, account: str, passwd: str, hostname: str,
-                 ext: str = "jpg,JPG", subfolder: str = "Smart Photo Frame"):
+                 subfolder: str = "Smart Photo Frame"):
         self.email_account = account
         self.email_password = passwd
         self.hostname = hostname

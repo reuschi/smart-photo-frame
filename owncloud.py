@@ -42,9 +42,9 @@ class Owncloud:
 
         try:
             return self.owncloud.ls()
-        except requests.exceptions.ConnectionError:
+        except requests.exceptions.ConnectionError as error:
             module_log.log("Webdav connection Error. Connection reset by peer. Try again.")
-            raise ConnectionError
+            raise ConnectionError from error
         except Exception as exc:
             module_log.log(f"owncloud/list: Type: {type(exc)}\nText: {exc}")
 

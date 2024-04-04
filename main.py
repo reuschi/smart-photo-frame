@@ -20,11 +20,11 @@ GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 if __name__ == "__main__":
     frame = Frame(static.timer, static.blend, static.photocount)
 
-    label_id = None
+    #label_id = None
 
     if hasattr(static, 'EMAIL_ACCOUNT'):
         imap = ImapMail(static.EMAIL_ACCOUNT, static.EMAIL_PASS,
-                        static.EMAIL_HOST, static.file_extensions)
+                        static.EMAIL_HOST)
 
     if hasattr(static, 'oc_host'):
         oc = Owncloud(static.oc_host, static.oc_username,

@@ -88,7 +88,7 @@ class Telegram:
             if static.debug:
                 module_log.log(answer.json())
             return return_statements.get(answer.status_code)
-        except Exception:
+        except (IndexError, KeyError):
             return "Unknown Error! " + str(answer)
 
     def set_webhook(self, url: str, **kwargs):
@@ -171,7 +171,7 @@ class Telegram:
         except IOError:
             module_log.log("Unable to download file.")
         except Exception as exc:
-            module_log.log(exc)
+            module_log.log(f"Exception {type(exc)}: {exc}")
 
         return False
 
@@ -217,17 +217,24 @@ class Telegram:
     def send_file(self, chat_id: int, file):
         """ Send a byte file as a reply """
 
-        link = self.weblink + "sendDocument"
-        data = {
-            "chat_id": chat_id
-        }
-        document = {
-            "document": (str(file), open(str(file), "rb"))
-        }
+        try:
+            link = self.weblink + "sendDocument"
+            data = {
+                "chat_id": chat_id
+            }
 
-        return_value = self.telegram_post(link, data, document)
+            filename = str(file)
+            with open(filename, "rb") as file_open:
+                document = {
+                    "document": (filename, file_open)
+                }
 
-        return bool(return_value['result']['document'])
+                return_value = self.telegram_post(link, data, document)
+
+            return bool(return_value['result']['document'])
+        except FileNotFoundError:
+            module_log.log("File not found!")
+            return False
 
     def replace_special_signs(self, input_text: str):
         """ Replace special signs in comment to store it as file name """
@@ -249,18 +256,18 @@ class Telegram:
     def _format_markdown(self, message: str):
         """ Reformat text for sending it as a markdown text to the Telegram API """
 
-        message = message.replace("_", "\_")
-        message = message.replace("-", "\-")
-        message = message.replace(".", "\.")
-        message = message.replace(":", "\:")
-        message = message.replace(">", "\>")
-        message = message.replace("!", "\!")
-        message = message.replace("(", "\(")
-        message = message.replace(")", "\)")
-        message = message.replace("[", "\[")
-        message = message.replace("]", "\]")
-        message = message.replace("=", "\=")
-        message = message.replace("#", "\#")
+        message = message.replace("_", r"\_")
+        message = message.replace("-", r"\-")
+        message = message.replace(".", r"\.")
+        message = message.replace(":", r"\:")
+        message = message.replace(">", r"\>")
+        message = message.replace("!", r"\!")
+        message = message.replace("(", r"\(")
+        message = message.replace(")", r"\)")
+        message = message.replace("[", r"\[")
+        message = message.replace("]", r"\]")
+        message = message.replace("=", r"\=")
+        message = message.replace("#", r"\#")
         #message = message.replace("|", "\|")
 
         return message
@@ -529,8 +536,9 @@ class Telegram:
         try:
             self.send_message(from_id, texts.texts[language]['tg']['image_orientation_check_init'])
             success = IProc.check_all_file_orientation()
-            self.send_message(from_id, texts.texts[language]['tg']['image_orientation_check_success']
-                              .format(success))
+            self.send_message(from_id,
+                              texts.texts[language]['tg']['image_orientation_check_success'].
+                              format(success))
         except Exception as exc:
             module_log.log(exc)
 
