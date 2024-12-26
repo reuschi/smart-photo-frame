@@ -105,6 +105,10 @@ class IProc:
 
             file.close()
             #return "Ok"
+        except AttributeError:
+            # Exception if EXIF data not present in image file
+            module_log.log(f"Orientation of {image_path.name} can't be catched; no rotation "
+                           f"needed.")
         except KeyError:
             # Exception if EXIF data not present in image file
             module_log.log(f"Orientation of {image_path.name} can't be catched; no rotation "
